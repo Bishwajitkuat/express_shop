@@ -1,4 +1,5 @@
 const http = require("http");
+const fs = require("fs");
 
 const server = http.createServer(async (req, res) => {
   const url = req.url;
@@ -14,10 +15,12 @@ const server = http.createServer(async (req, res) => {
     // we must use return because we do not want end the execution here
     return res.end();
   } else if (url === "/message" && req.method === "POST") {
-    res.setHeader("Content-Type", "text/html");
-    res.write("<html>");
-    res.write("<body> <h1>Your message is received</h1> </body>");
-    res.write("</html>");
+    // creating message.txt file with content Message
+    fs.writeFileSync("message.txt", "Message");
+    // Sending status code with response
+    res.statusCode = 302;
+    // Rederecting to root route by passing "Location" as header name and "/" as value
+    res.setHeader("Location", "/");
     return res.end();
   }
   // if no route is matched, this response will be sent
