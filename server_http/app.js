@@ -15,8 +15,19 @@ const server = http.createServer(async (req, res) => {
     // we must use return because we do not want end the execution here
     return res.end();
   } else if (url === "/message" && req.method === "POST") {
-    // creating message.txt file with content Message
-    fs.writeFileSync("message.txt", "Message");
+    const data = [];
+    req.on("data", (chunk) => {
+      console.log(chunk);
+      data.push(chunk);
+    });
+    req.on("end", () => {
+      const parseData = Buffer.concat(data).toString();
+      const message = parseData.split("=")[1].replaceAll("+", " ");
+
+      console.log(parseData);
+      // creating message.txt file with content Message
+      fs.writeFileSync("message.txt", message);
+    });
     // Sending status code with response
     res.statusCode = 302;
     // Rederecting to root route by passing "Location" as header name and "/" as value
