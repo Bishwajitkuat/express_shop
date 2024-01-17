@@ -17,18 +17,17 @@ const server = http.createServer(async (req, res) => {
   } else if (url === "/message" && req.method === "POST") {
     const data = [];
     req.on("data", (chunk) => {
-      console.log(chunk);
       data.push(chunk);
     });
-    req.on("end", () => {
+    return req.on("end", () => {
       const parseData = Buffer.concat(data).toString();
       const message = parseData.split("=")[1].replaceAll("+", " ");
       // writeFileSync will block further operation, we can add a callback func into writeFile method to add non-blocking behaviour
-      fs.writeFileSync("message.txt", message, (err) => {
+      fs.writeFile("message.txt", message, (err) => {
         // should handle err if there is any
         // Sending status code with response
         res.statusCode = 302;
-        // Rederecting to root route by passing "Location" as header name and "/" as value
+        // // Rederecting to root route by passing "Location" as header name and "/" as value
         res.setHeader("Location", "/");
         return res.end();
       });
