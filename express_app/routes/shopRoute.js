@@ -1,8 +1,11 @@
 const express = require("express");
+const path = require("path");
+const rootDir = require("../lib/paths");
+
 const shopRoute = express.Router();
 
-shopRoute.use("/", (req, res, next) => {
-  res.send("<h1>Hello from express!!!</h1>");
+shopRoute.get("/", (req, res, next) => {
+  res.sendFile(path.join(rootDir, "views", "shop.html"));
 });
 
 module.exports = shopRoute;
