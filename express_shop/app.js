@@ -19,6 +19,9 @@ const shopRoute = require("./routes/shopRoute");
 const app = express();
 
 // middleware
+// by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 // admin route
 app.use("/admin", adminRoute);
