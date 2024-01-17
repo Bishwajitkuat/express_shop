@@ -23,16 +23,16 @@ const server = http.createServer(async (req, res) => {
     req.on("end", () => {
       const parseData = Buffer.concat(data).toString();
       const message = parseData.split("=")[1].replaceAll("+", " ");
-
-      console.log(parseData);
-      // creating message.txt file with content Message
-      fs.writeFileSync("message.txt", message);
+      // writeFileSync will block further operation, we can add a callback func into writeFile method to add non-blocking behaviour
+      fs.writeFileSync("message.txt", message, (err) => {
+        // should handle err if there is any
+        // Sending status code with response
+        res.statusCode = 302;
+        // Rederecting to root route by passing "Location" as header name and "/" as value
+        res.setHeader("Location", "/");
+        return res.end();
+      });
     });
-    // Sending status code with response
-    res.statusCode = 302;
-    // Rederecting to root route by passing "Location" as header name and "/" as value
-    res.setHeader("Location", "/");
-    return res.end();
   }
   // if no route is matched, this response will be sent
   res.setHeader("Content-Type", "text/html");
