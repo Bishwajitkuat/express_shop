@@ -1,5 +1,5 @@
 {
-  "name": "express_app",
+  "name": "express_shop",
   "version": "1.0.0",
   "description": "a simple express app",
   "main": "app.js",
