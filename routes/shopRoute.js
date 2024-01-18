@@ -1,13 +1,9 @@
 const express = require("express");
-const path = require("path");
-const rootDir = require("../lib/paths");
-const { products } = require("../routes/adminRoute");
+
+const { getProducts } = require("../controllers/products-controller");
 
 const shopRoute = express.Router();
 
-shopRoute.get("/", (req, res, next) => {
-  // sending response through ejs templeting engine
-  res.render("./shop.ejs", { products, docTitle: "Shop" });
-});
+shopRoute.get("/", getProducts);
 
 module.exports = shopRoute;
