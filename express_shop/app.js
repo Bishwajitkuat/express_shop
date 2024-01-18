@@ -19,9 +19,14 @@ const shopRoute = require("./routes/shopRoute");
 const app = express();
 
 // setting templating which templating engin we are going to use.
-app.set("view engine", "pug");
+// app.set("view engine", "pug");
 // setting which dir will be used for views, here, views dir will be used as views
-app.set("views", "views/pug");
+// app.set("views", "views/pug");
+
+// registering ejs templeting engine
+app.set("view engine", "ejs");
+// registering default view dir
+app.set("views", "./views/ejs");
 
 // middleware
 // by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.
@@ -34,6 +39,9 @@ app.use("/admin", adminRoute);
 app.use(shopRoute);
 // 404 response
 app.use((req, res, next) => {
-  res.status(404).render("./404.pug", { docTitle: "404 | page not found" });
+  // response in pug templeting engine
+  // res.status(404).render("./404.pug", { docTitle: "404 | page not found" });
+  // response in ejs templeting engine
+  res.status(404).render("./404.ejs", { docTitle: "404 | page not found" });
 });
 app.listen(3000, () => console.log("listening at port 3000"));
