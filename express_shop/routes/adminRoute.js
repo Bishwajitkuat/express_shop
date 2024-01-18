@@ -2,12 +2,18 @@ const express = require("express");
 const path = require("path");
 const rootDir = require("../lib/paths");
 
-const products = [{ title: "Book" }, { title: "Mobile" }];
+const products = [
+  { title: "Book", price: "15" },
+  { title: "Mobile", price: "150" },
+];
 
 const adminRoute = express.Router();
 
 adminRoute.get("/add-product", (req, res, next) => {
-  res.render("./add-product.pug", { docTitle: "Add product" });
+  // sending respone from pug templeting engine
+  // res.render("./add-product.pug", { docTitle: "Add product" });
+  // sending response form ejs templeting engine
+  res.render("./add-product.ejs", { docTitle: "Add Product" });
 });
 
 // receiving post request
