@@ -1,19 +1,15 @@
 // importing express module
 const express = require("express");
-
 // importing body-parser module
 const bodyParser = require("body-parser");
-
 // importing path module for node
 const path = require("path");
-
 const rootDir = require("./lib/paths");
-
 // importing admin routes
 const adminRoute = require("./routes/adminRoute");
-
 // importing shop routes
 const shopRoute = require("./routes/shopRoute");
+const { get404 } = require("./controllers/error-controller");
 
 // creating app
 const app = express();
@@ -33,8 +29,5 @@ app.use("/admin", adminRoute);
 // shop route
 app.use(shopRoute);
 // 404 response
-app.use((req, res, next) => {
-  // response in ejs templeting engine
-  res.status(404).render("./404.ejs", { docTitle: "404 | page not found" });
-});
+app.use(get404);
 app.listen(3000, () => console.log("listening at port 3000"));
