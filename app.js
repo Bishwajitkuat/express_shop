@@ -10,7 +10,7 @@ const path = require("path");
 const rootDir = require("./lib/paths");
 
 // importing admin routes
-const { adminRoute } = require("./routes/adminRoute");
+const adminRoute = require("./routes/adminRoute");
 
 // importing shop routes
 const shopRoute = require("./routes/shopRoute");
