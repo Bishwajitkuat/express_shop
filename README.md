@@ -1,1 +1,3 @@
-# nodejs_lessons_projects
+# Express shop
+
+A CRUID app with nodejs, express, ejs

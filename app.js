@@ -18,11 +18,6 @@ const shopRoute = require("./routes/shopRoute");
 // creating app
 const app = express();
 
-// setting templating which templating engin we are going to use.
-// app.set("view engine", "pug");
-// setting which dir will be used for views, here, views dir will be used as views
-// app.set("views", "views/pug");
-
 // registering ejs templeting engine
 app.set("view engine", "ejs");
 // registering default view dir
@@ -39,8 +34,6 @@ app.use("/admin", adminRoute);
 app.use(shopRoute);
 // 404 response
 app.use((req, res, next) => {
-  // response in pug templeting engine
-  // res.status(404).render("./404.pug", { docTitle: "404 | page not found" });
   // response in ejs templeting engine
   res.status(404).render("./404.ejs", { docTitle: "404 | page not found" });
 });

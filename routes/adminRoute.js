@@ -10,8 +10,6 @@ const products = [
 const adminRoute = express.Router();
 
 adminRoute.get("/add-product", (req, res, next) => {
-  // sending respone from pug templeting engine
-  // res.render("./add-product.pug", { docTitle: "Add product" });
   // sending response form ejs templeting engine
   res.render("./add-product.ejs", { docTitle: "Add Product" });
 });
