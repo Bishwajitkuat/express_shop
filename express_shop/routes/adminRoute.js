@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const rootDir = require("../lib/paths");
 
+const products = [{ title: "Book" }, { title: "Mobile" }];
+
 const adminRoute = express.Router();
 
 adminRoute.get("/add-product", (req, res, next) => {
@@ -14,4 +16,4 @@ adminRoute.post("/add-product", (req, res, next) => {
   res.redirect("/admin/add-product");
 });
 
-module.exports = adminRoute;
+module.exports = { adminRoute, products };
