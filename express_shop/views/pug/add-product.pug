@@ -1,14 +1,11 @@
-<!--extending layout.pug means, conten of blocks of this page will placeed into blocks of layout.pug file respectively-->
-extends layout.pug
-<!--content of this block style will be added in place of "block style in layout.pug"-->
+extends layout.pug 
 block style
   link(rel="stylesheet", href="/css/forms.css")
   link(rel="stylesheet", href="/css/product.css")
-<!--block name must be same in here and layout.pug page"-->
 block content
   main 
     form.product-form(action="/admin/add-product",method="POST")
       div.form-control
           label.title Title
           input(type="text", name="title", id="title")
-      button.btn(type="submit") Add Product
+      button.btn(type="submit") Add Products
