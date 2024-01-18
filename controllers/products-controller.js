@@ -11,8 +11,7 @@ exports.postAddProduct = (req, res, next) => {
   res.redirect("/admin/add-product");
 };
 
-exports.getProducts = (req, res, next) => {
-  // sending response through ejs templeting engine
-  const products = Product.getAllProducts();
+exports.getProducts = async (req, res, next) => {
+  const products = await Product.getAllProducts();
   res.render("./shop.ejs", { products, docTitle: "Shop" });
 };
