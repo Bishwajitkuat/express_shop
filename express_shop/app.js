@@ -10,13 +10,18 @@ const path = require("path");
 const rootDir = require("./lib/paths");
 
 // importing admin routes
-const adminRoute = require("./routes/adminRoute");
+const { adminRoute } = require("./routes/adminRoute");
 
 // importing shop routes
 const shopRoute = require("./routes/shopRoute");
 
 // creating app
 const app = express();
+
+// setting templating which templating engin we are going to use.
+app.set("view engine", "pug");
+// setting which dir will be used for views, here, views dir will be used as views
+app.set("views", "views/pug");
 
 // middleware
 // by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.
