@@ -34,6 +34,6 @@ app.use("/admin", adminRoute);
 app.use(shopRoute);
 // 404 response
 app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(rootDir, "views", "404.html"));
+  res.status(404).render("./404.pug", { docTitle: "404 | page not found" });
 });
 app.listen(3000, () => console.log("listening at port 3000"));
