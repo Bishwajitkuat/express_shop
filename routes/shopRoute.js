@@ -8,6 +8,8 @@ const {
 const shopRoute = express.Router();
 
 shopRoute.get("/products", getProducts);
+shopRoute.get("/cart");
+shopRoute.get("/checkout");
 shopRoute.get("/", getHomePage);
 
 module.exports = shopRoute;
