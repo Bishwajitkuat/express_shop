@@ -9,10 +9,17 @@ const adminRoute = require("./routes/adminRoute");
 // importing shop routes
 const shopRoute = require("./routes/shopRoute");
 const { get404 } = require("./controllers/error-controller");
+// livereload
+const liveReload = require("livereload");
+const connectLiveReload = require("connect-livereload");
+const liverReloadServer = liveReload.createServer();
+liverReloadServer.watch(path.join(__dirname, "public"));
 
 // creating app
 const app = express();
 
+//registering connectliveReload
+app.use(connectLiveReload());
 // registering ejs templeting engine
 app.set("view engine", "ejs");
 // registering default view dir
