@@ -16,7 +16,6 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   res.render("./shop/cart.ejs", {
-    products,
     docTitle: "Cart",
     path: "/cart",
   });
@@ -24,7 +23,6 @@ exports.getCart = (req, res, next) => {
 
 exports.getCheckout = (req, res, next) => {
   res.render("./shop/checkout.ejs", {
-    products,
     docTitle: "Checkout",
     path: "/checkout",
   });
