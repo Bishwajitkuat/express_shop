@@ -1,12 +1,11 @@
 <%- include("./components/head.ejs")%> <%- include("./components/navbar.ejs")%>
 <main>
-  <form class="product-form" action="/admin/add-product" method="POST">
-    <div class="form-control">
-      <label for="title">Title</label>
-      <input type="text" name="title" id="title" />
+  <form class="max-w-[70%] grid justify-center " action="/admin/add-product" method="POST">
+    <div class="my-5 grid grid-cols-3 gap-3 items-center ">
+      <label class=" w-full text-[1.5rem] tracking-widest" for="title">Title</label>
+      <input class="col-span-2 p-2 w-full h-[2.5rem] border-[1px] border-blue-400 rounded-md ring-0 outline-0" type="text" name="title" id="title" />
     </div>
-
-    <button class="btn" type="submit">Add Product</button>
+    <button class="justify-self-center mt-[2rem] max-w-[15rem] h-[3rem] w-[75%] text-center rounded-[5px] bg-blue-400 hover:bg-lime-600 " type="submit">Add Product</button>
   </form>
 </main>
 <%- include("./components/footer.ejs")%>

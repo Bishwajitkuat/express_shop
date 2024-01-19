@@ -4,7 +4,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 // importing path module for node
 const path = require("path");
-const rootDir = require("./lib/paths");
 // importing admin routes
 const adminRoute = require("./routes/adminRoute");
 // importing shop routes
