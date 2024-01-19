@@ -1,9 +1,5 @@
 const express = require("express");
-
-const {
-  getProducts,
-  getHomePage,
-} = require("../controllers/products-controller");
+const { getProducts, getHomePage } = require("../controllers/shop-controller");
 
 const shopRoute = express.Router();
 
