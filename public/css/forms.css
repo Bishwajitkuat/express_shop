@@ -3,18 +3,23 @@
 }
 
 .form-control label,
-.form-control input {
+.form-control input,
+.form-control textarea {
   display: block;
   width: 100%;
   margin-bottom: 0.25rem;
 }
 
-.form-control input {
-  border: 1px solid #13a5d1;
+.form-control input,
+.form-control textarea {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #3c558472;
   font: inherit;
   border-radius: 2px;
 }
 
-.form-control input:focus {
-  outline-color: #00695c;
+.form-control input:focus,
+.form-control textarea:focus {
+  outline-color: #e1e3a9ac;
 }
