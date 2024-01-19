@@ -4,8 +4,11 @@ const productsFile = path.join(__dirname, "data", "products.json");
 // const products = [{ title: "Book" }, { title: "Mobile" }];
 
 class Product {
-  constructor(title) {
+  constructor(title, imgUrl, description, price) {
     this.title = title;
+    this.imgUrl = imgUrl;
+    this.description = description;
+    this.price = price;
   }
 
   save() {
