@@ -15,6 +15,16 @@ exports.getProducts = async (req, res, next) => {
   });
 };
 
+exports.getProductsById = async (req, res, next) => {
+  const productId = req.params.productId;
+  const products = await Product.getProductById(productId);
+  res.render("./shop/product-detail.ejs", {
+    product: products[0],
+    docTitle: products[0].title,
+    path: "/products",
+  });
+};
+
 exports.getCart = (req, res, next) => {
   res.render("./shop/cart.ejs", {
     docTitle: "Cart",
