@@ -2,5 +2,33 @@
 include("../components/navbar.ejs")%>
 <main>
   <h1>Wellcom to express shop</h1>
+  <% if (products.length > 0) { %>
+  <div class="grid">
+    <% for (let product of products){ %>
+    <article class="card product-item">
+      <header class="card__header">
+        <h1 class="product__title"><%= product.title%></h1>
+      </header>
+      <div class="card__image">
+        <img
+          src="<%= product.imgUrl%>"
+          alt="<%= product.title%>"
+        />
+      </div>
+      <div class="card__content">
+        <h2 class="product__price">$<%=product.price%></h2>
+        <p class="product__description">
+          <%= product.description%>
+        </p>
+      </div>
+      <div class="card__actions">
+        <button class="btn">Add to Cart</button>
+      </div>
+    </article>
+    <%} %>
+  </div>
+  <% } else { %>
+  <h3>Product is not available</h3>
+  <% } %>
 </main>
 <%- include("../components/footer.ejs")%>
