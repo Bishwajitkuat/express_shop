@@ -9,6 +9,8 @@ const adminRoute = express.Router();
 
 adminRoute.get("/add-product", getAddProduct);
 
+adminRoute.get("/products");
+
 // receiving post request
 adminRoute.post("/add-product", postAddProduct);
 
