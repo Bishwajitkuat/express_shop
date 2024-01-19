@@ -37,6 +37,15 @@ class Product {
       return [];
     }
   }
+
+  static async getProductById(id) {
+    try {
+      const data = await fs.promises.readFile(productsFile, "utf-8");
+      return JSON.parse(data).filter((item) => item.id === id);
+    } catch (err) {
+      return [];
+    }
+  }
 }
 
 module.exports = Product;
