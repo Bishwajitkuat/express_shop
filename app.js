@@ -23,7 +23,7 @@ app.use(connectLiveReload());
 // registering ejs templeting engine
 app.set("view engine", "ejs");
 // registering default view dir
-app.set("views", "./views/ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // middleware
 // by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.

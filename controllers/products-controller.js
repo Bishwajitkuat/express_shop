@@ -2,7 +2,7 @@ const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
   // sending response form ejs templeting engine
-  res.render("./add-product.ejs", { docTitle: "Add Product" });
+  res.render("./admin/add-product.ejs", { docTitle: "Add Product" });
 };
 
 exports.postAddProduct = (req, res, next) => {
@@ -13,5 +13,5 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   const products = await Product.getAllProducts();
-  res.render("./shop.ejs", { products, docTitle: "Shop" });
+  res.render("./shop/product-list.ejs", { products, docTitle: "Shop" });
 };
