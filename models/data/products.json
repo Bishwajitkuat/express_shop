@@ -3,24 +3,28 @@
     "title": "Show piece",
     "imgUrl": "https://images.unsplash.com/photo-1595717998081-e8d12c78e784?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cGFwYWVyfGVufDB8fDB8fHww",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam a diam lectus. Ut enim arcu, ultrices id dignissim at, hendrerit eu .",
-    "price": "5"
+    "price": "5",
+    "id": "0.25363099499617214"
   },
   {
     "title": "Book",
     "imgUrl": "https://images.unsplash.com/photo-1576872381149-7847515ce5d8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Ym9va3xlbnwwfHwwfHx8MA%3D%3D",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam a diam lectus. Ut enim arcu, ultrices id dignissim at, hendrerit eu .",
-    "price": "15"
+    "price": "15",
+    "id": "0.9726626528464428"
   },
   {
     "title": "Flower",
     "imgUrl": "https://images.unsplash.com/photo-1470509037663-253afd7f0f51?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGZsb3dlcnxlbnwwfHwwfHx8MA%3D%3D",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam a diam lectus. Ut enim arcu, ultrices id dignissim at, hendrerit eu .",
-    "price": "10"
+    "price": "10",
+    "id": "0.2272252757003066"
   },
   {
     "title": "Tomatos",
     "imgUrl": "https://images.unsplash.com/photo-1610099167931-33655a52194b?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dmVnaXRhYmxlc3xlbnwwfHwwfHx8MA%3D%3D",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam a diam lectus. Ut enim arcu, ultrices id dignissim at, hendrerit eu .",
-    "price": "2"
+    "price": "2",
+    "id": "0.8235930812780594"
   }
 ]

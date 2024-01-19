@@ -12,6 +12,7 @@ class Product {
   }
 
   save() {
+    this.id = Math.random().toString();
     fs.readFile(productsFile, (err, data) => {
       let products = [];
       // only read file if there is no error
