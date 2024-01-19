@@ -13,3 +13,12 @@ exports.postAddProduct = (req, res, next) => {
   product.save();
   res.redirect("/admin/add-product");
 };
+
+exports.getProducts = async (req, res, next) => {
+  const products = await Product.getAllProducts();
+  res.render("./admin/products.ejs", {
+    products,
+    docTitle: "Admin Product",
+    path: "/admin/products",
+  });
+};
