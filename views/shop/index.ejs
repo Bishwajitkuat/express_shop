@@ -10,19 +10,17 @@ include("../components/navbar.ejs")%>
         <h1 class="product__title"><%= product.title%></h1>
       </header>
       <div class="card__image">
-        <img
-          src="<%= product.imgUrl%>"
-          alt="<%= product.title%>"
-        />
+        <img src="<%= product.imgUrl%>" alt="<%= product.title%>" />
       </div>
       <div class="card__content">
         <h2 class="product__price">$<%=product.price%></h2>
-        <p class="product__description">
-          <%= product.description%>
-        </p>
+        <p class="product__description"><%= product.description%></p>
       </div>
       <div class="card__actions">
-        <button class="btn">Add to Cart</button>
+        <form action="/cart" method="POST">
+          <input type="hidden" name="productId" value="<%= product.id %>" />
+          <button class="btn">Add to Cart</button>
+        </form>
       </div>
     </article>
     <%} %>
