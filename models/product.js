@@ -29,22 +29,33 @@ class Product {
     });
   }
 
-  static async getAllProducts() {
-    try {
-      const data = await fs.promises.readFile(productsFile, "utf-8");
-      return JSON.parse(data);
-    } catch (err) {
-      return [];
-    }
+  static getAllProducts() {
+    return new Promise((resolve, reject) => {
+      fs.readFile(productsFile, (err, data) => {
+        try {
+          const products = JSON.parse(data);
+          resolve(products);
+        } catch (err) {
+          console.log(err);
+          resolve(false);
+        }
+      });
+    });
   }
 
-  static async getProductById(id) {
-    try {
-      const data = await fs.promises.readFile(productsFile, "utf-8");
-      return JSON.parse(data).filter((item) => item.id === id);
-    } catch (err) {
-      return [];
-    }
+  static getProductById(id) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(productsFile, (err, data) => {
+        try {
+          const allProducts = JSON.parse(data);
+          const foundProduct = allProducts.find((item) => item.id == id);
+          if (foundProduct) resolve(foundProduct);
+          else resolve(false);
+        } catch (err) {
+          resolve(false);
+        }
+      });
+    });
   }
 }
 
