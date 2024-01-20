@@ -2,7 +2,7 @@ const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
   // sending response form ejs templeting engine
-  res.render("./admin/add-product.ejs", {
+  res.render("./admin/add-edit-product.ejs", {
     docTitle: "Add Product",
     path: "/admin/add-product",
   });
