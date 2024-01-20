@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const Cart = require("../models/cart");
 
 // controllers for shop
 exports.getHomePage = async (req, res, next) => {
@@ -33,8 +34,8 @@ exports.getCart = (req, res, next) => {
 };
 
 exports.postCart = (req, res, next) => {
-  const productId = req.body.productId;
-  console.log(productId);
+  const { productId, price } = req.body;
+  Cart.addProduct(productId, price);
   res.redirect("/cart");
 };
 
