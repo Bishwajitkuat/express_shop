@@ -2,27 +2,36 @@ const Product = require("../models/product");
 const Cart = require("../models/cart");
 
 // controllers for shop
-exports.getHomePage = async (req, res, next) => {
-  const products = await Product.getAllProducts();
-  res.render("./shop/index.ejs", { products, docTitle: "Shop", path: "/" });
-};
-
-exports.getProducts = async (req, res, next) => {
-  const products = await Product.getAllProducts();
-  res.render("./shop/product-list.ejs", {
-    products,
-    docTitle: "Shop",
-    path: "/products",
+exports.getHomePage = (req, res, next) => {
+  Product.getAllProducts().then((products) => {
+    if (products) {
+      res.render("./shop/index.ejs", { products, docTitle: "Shop", path: "/" });
+    }
   });
 };
 
-exports.getProductsById = async (req, res, next) => {
+exports.getProducts = (req, res, next) => {
+  Product.getAllProducts().then((products) => {
+    if (products) {
+      res.render("./shop/product-list.ejs", {
+        products,
+        docTitle: "Shop",
+        path: "/products",
+      });
+    }
+  });
+};
+
+exports.getProductsById = (req, res, next) => {
   const productId = req.params.productId;
-  const products = await Product.getProductById(productId);
-  res.render("./shop/product-detail.ejs", {
-    product: products[0],
-    docTitle: products[0].title,
-    path: "/products",
+  Product.getProductById(productId).then((product) => {
+    if (product) {
+      res.render("./shop/product-detail.ejs", {
+        product: product,
+        docTitle: product.title,
+        path: "/products",
+      });
+    }
   });
 };
 
