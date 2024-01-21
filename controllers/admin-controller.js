@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 
+// controllers for adding new product
 exports.getAddProduct = (req, res, next) => {
   // sending response form ejs templeting engine
   res.render("./admin/add-edit-product.ejs", {
@@ -13,6 +14,19 @@ exports.postAddProduct = (req, res, next) => {
   const product = new Product(title, imgUrl, description, price);
   product.save();
   res.redirect("/admin/add-product");
+};
+
+// controllers for editing products
+exports.getEditProduct = (req, res, next) => {
+  const productId = res.params.productId;
+  if (productId) {
+    res.render("./admin/add-edit-product.ejs", {
+      productId,
+      docTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: true,
+    });
+  }
 };
 
 exports.getProducts = async (req, res, next) => {
