@@ -21,11 +21,16 @@ exports.postAddProduct = (req, res, next) => {
 exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
   if (productId) {
-    res.render("./admin/add-edit-product.ejs", {
-      productId,
-      docTitle: "Add Product",
-      path: "/admin/add-product",
-      editing: true,
+    Product.getProductById(productId).then((product) => {
+      // product could be false or an object
+      if (product) {
+        res.render("./admin/add-edit-product.ejs", {
+          product,
+          docTitle: "Edit Product",
+          path: "/admin/edit-product",
+          editing: true,
+        });
+      }
     });
   }
 };
