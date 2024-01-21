@@ -19,7 +19,7 @@ exports.postAddProduct = (req, res, next) => {
 
 // controllers for editing products
 exports.getEditProduct = (req, res, next) => {
-  const productId = res.params.productId;
+  const productId = req.params.productId;
   if (productId) {
     res.render("./admin/add-edit-product.ejs", {
       productId,
