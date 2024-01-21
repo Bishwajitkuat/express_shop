@@ -200,7 +200,11 @@ a {
   background-color: #00695c;
   color: white;
 }
-
+.delete:hover {
+  background-color: hsla(0, 100%, 50%, 0.567);
+  border: 1px solid hsla(0, 100%, 50%, 0.567);
+  color: black;
+}
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;

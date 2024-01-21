@@ -18,9 +18,13 @@ include("../components/navbar.ejs")%>
         <p class="product__description"><%= product.description%></p>
       </div>
       <div class="card__actions">
-      <button class="btn">
-        <a href="/admin/edit-product/<%= product.id %>">Edit Product</a>
-      </button>
+        <button class="btn">
+          <a href="/admin/edit-product/<%= product.id %>">Edit</a>
+        </button>
+        <form action="/admin/delete-product" method="POST">
+          <input type="hidden" name="id" value="<%=product.id%>" />
+          <button class="btn delete">Delete</button>
+        </form>
       </div>
     </article>
     <%} %>
