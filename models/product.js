@@ -31,8 +31,8 @@ class Product {
 
   static updateProduct(updatedProduct) {
     return new Promise((resolve, reject) => {
-      fs.readFile(productsFile, (err, data) => {
-        try {
+      try {
+        fs.readFile(productsFile, (err, data) => {
           // as we are updating, so I am assuming the file and data is already existed
           const products = JSON.parse(data);
           // finding the index of the product, I am assuming index already existed
@@ -45,11 +45,32 @@ class Product {
             resolve("failed")
           );
           resolve("success");
-        } catch (err) {
-          console.log(err);
-          reject("failed");
-        }
-      });
+        });
+      } catch (err) {
+        console.log(err);
+        reject("failed");
+      }
+    });
+  }
+
+  static deleteProduct(id) {
+    return new Promise((resolve, reject) => {
+      try {
+        fs.readFile(productsFile, (err, data) => {
+          const products = JSON.parse(data);
+
+          // filtering out the product to be deleted
+          const updatedProducts = products.filter((item) => item.id !== id);
+          fs.writeFile(productsFile, JSON.stringify(updatedProducts), (err) => {
+            console.log(err);
+            resolve("failed");
+          });
+          resolve("success");
+        });
+      } catch (err) {
+        console.log(err);
+        resolve("failed");
+      }
     });
   }
 
