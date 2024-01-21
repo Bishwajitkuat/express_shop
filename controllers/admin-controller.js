@@ -35,6 +35,19 @@ exports.getEditProduct = (req, res, next) => {
   }
 };
 
+exports.postEditProduct = (req, res, next) => {
+  const updatedProduct = req.body;
+  // updateProduct method of Product classe will replace the old product with the updatedProduct
+  Product.updateProduct(updatedProduct).then((status) => {
+    // will return success or failed
+    if (status === "success") {
+      res.redirect("/admin/products");
+    } else {
+      res.redirect("/");
+    }
+  });
+};
+
 exports.getProducts = async (req, res, next) => {
   const products = await Product.getAllProducts();
   res.render("./admin/products.ejs", {
