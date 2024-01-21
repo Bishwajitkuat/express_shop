@@ -5,6 +5,7 @@ const {
   postAddProduct,
   getProducts,
   getEditProduct,
+  postEditProduct,
 } = require("../controllers/admin-controller");
 
 const adminRoute = express.Router();
@@ -15,6 +16,9 @@ adminRoute.post("/add-product", postAddProduct);
 
 // GET request for editing the product
 adminRoute.get("/edit-product/:productId", getEditProduct);
+
+// POST request for editing the product
+adminRoute.post("/edit-product/", postEditProduct);
 
 adminRoute.get("/products", getProducts);
 
