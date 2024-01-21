@@ -35,6 +35,14 @@ exports.getEditProduct = (req, res, next) => {
   }
 };
 
+exports.postDeleteProduct = (req, res, next) => {
+  const id = req.body.id;
+  Product.deleteProduct(id).then((status) => {
+    console.log(status);
+    res.redirect("/admin/products");
+  });
+};
+
 exports.postEditProduct = (req, res, next) => {
   const updatedProduct = req.body;
   // updateProduct method of Product classe will replace the old product with the updatedProduct
