@@ -6,6 +6,7 @@ exports.getAddProduct = (req, res, next) => {
   res.render("./admin/add-edit-product.ejs", {
     docTitle: "Add Product",
     path: "/admin/add-product",
+    editing: false,
   });
 };
 
