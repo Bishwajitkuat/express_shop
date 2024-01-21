@@ -25,7 +25,7 @@ include("../components/navbar.ejs")%>
       <%}else{''}%> />
     </div>
     <% if(editing){ %> 
-      <input type="hidden" name="productId" value="<%=product.id%>">
+      <input type="hidden" name="id" value="<%=product.id%>">
       <%} %>
     <button class="btn" type="submit"><%= editing ? "Update Product": "Add Product"; %></button>
   </form>
