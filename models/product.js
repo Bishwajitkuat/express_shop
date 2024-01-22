@@ -1,7 +1,3 @@
-const fs = require("fs");
-const path = require("path");
-const productsFile = path.join(__dirname, "data", "products.json");
-// importing db connection pool
 const db = require("../lib/database");
 
 class Product {
@@ -33,24 +29,7 @@ class Product {
   }
 
   static deleteProduct(id) {
-    return new Promise((resolve, reject) => {
-      try {
-        fs.readFile(productsFile, (err, data) => {
-          const products = JSON.parse(data);
-
-          // filtering out the product to be deleted
-          const updatedProducts = products.filter((item) => item.id !== id);
-          fs.writeFile(productsFile, JSON.stringify(updatedProducts), (err) => {
-            console.log(err);
-            resolve("failed");
-          });
-          resolve("success");
-        });
-      } catch (err) {
-        console.log(err);
-        resolve("failed");
-      }
-    });
+    return db.execute("DELETE FROM products WHERE id=?;", [id]);
   }
 
   static getAllProducts() {
