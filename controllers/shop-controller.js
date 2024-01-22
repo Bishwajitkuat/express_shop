@@ -35,17 +35,38 @@ exports.getProductsById = (req, res, next) => {
   });
 };
 
-exports.getCart = (req, res, next) => {
+exports.getCart = async (req, res, next) => {
+  const cart = await Cart.getCart();
+  const products = await Product.getAllProducts();
+  const productsWithQty = [];
+  if (cart.products.length > 0) {
+    // if cart.products is empty, following code will cause error
+    for (let item of cart.products) {
+      const product = products.find((prod) => prod.id === item.id);
+      item.title = product.title;
+      item.imgUrl = product.imgUrl;
+      productsWithQty.push(item);
+    }
+  }
+  cart.products = productsWithQty;
   res.render("./shop/cart.ejs", {
+    cart,
     docTitle: "Cart",
     path: "/cart",
   });
 };
 
-exports.postCart = (req, res, next) => {
+exports.postAddToCart = (req, res, next) => {
   const { productId, price } = req.body;
   Cart.addProduct(productId, price).then((status) => {
     if (status) res.redirect("/cart");
+  });
+};
+
+exports.postRemoveFromCart = (req, res, next) => {
+  const { id, qty } = req.body;
+  Cart.removeProduct(id, qty).then((status) => {
+    if (status === "success") res.redirect("/cart");
   });
 };
 
