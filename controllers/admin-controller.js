@@ -38,6 +38,7 @@ exports.getEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const id = req.body.id;
   Product.deleteProduct(id).then((status) => {
+    // I shoud remove this product if it exists in cart
     console.log(status);
     res.redirect("/admin/products");
   });
