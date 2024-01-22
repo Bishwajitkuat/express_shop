@@ -11,13 +11,15 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imgUrl, description, price } = req.body;
-  const product = new Product(title, imgUrl, description, price);
-  product
-    .save()
-    .then((response) => {
-      res.redirect("/admin/add-product");
-    })
+  const { title, imgUrl, description } = req.body;
+  const price = Number(req.body.price);
+  Product.create({
+    title: title,
+    imgUrl: imgUrl,
+    description: description,
+    price: price,
+  })
+    .then((response) => res.redirect("/admin/products"))
     .catch((err) => console.log(err));
 };
 
