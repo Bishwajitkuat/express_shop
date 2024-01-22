@@ -77,7 +77,7 @@ class Product {
 
   static getAllProducts() {
     return new Promise((resolve, reject) => {
-      db.execute("SELECT * FROM products")
+      db.execute("SELECT * FROM products;")
         .then((res) => resolve(res[0]))
         .catch((err) => resolve(false));
     });
@@ -85,16 +85,9 @@ class Product {
 
   static getProductById(id) {
     return new Promise((resolve, reject) => {
-      fs.readFile(productsFile, (err, data) => {
-        try {
-          const allProducts = JSON.parse(data);
-          const foundProduct = allProducts.find((item) => item.id == id);
-          if (foundProduct) resolve(foundProduct);
-          else resolve(false);
-        } catch (err) {
-          resolve(false);
-        }
-      });
+      db.execute(`SELECT * FROM products WHERE id=${id};`)
+        .then((res) => resolve(res[0][0]))
+        .catch((err) => resolve(false));
     });
   }
 }
