@@ -13,8 +13,12 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const { title, imgUrl, description, price } = req.body;
   const product = new Product(title, imgUrl, description, price);
-  product.save();
-  res.redirect("/admin/add-product");
+  product
+    .save()
+    .then((response) => {
+      res.redirect("/admin/add-product");
+    })
+    .catch((err) => console.log(err));
 };
 
 // controllers for editing products

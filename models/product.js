@@ -9,25 +9,14 @@ class Product {
     this.title = title;
     this.imgUrl = imgUrl;
     this.description = description;
-    this.price = price;
+    this.price = Number(price);
   }
 
   save() {
-    this.id = Math.random().toString();
-    fs.readFile(productsFile, (err, data) => {
-      let products = [];
-      // only read file if there is no error
-      if (!err) {
-        // reading data from file
-        products = JSON.parse(data);
-      }
-      // appending new object
-      products.push(this);
-      // // writing back to file
-      fs.writeFile(productsFile, JSON.stringify(products), (err) =>
-        console.log(err)
-      );
-    });
+    return db.execute(
+      `INSERT INTO products (title, price, imgUrl, description) VALUES (?, ?, ?, ?);`,
+      [this.title, this.price, this.imgUrl, this.description]
+    );
   }
 
   static updateProduct(updatedProduct) {
