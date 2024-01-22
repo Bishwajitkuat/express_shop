@@ -1,105 +1,50 @@
-const fs = require("fs");
-const path = require("path");
-const productsFile = path.join(__dirname, "data", "products.json");
-// const products = [{ title: "Book" }, { title: "Mobile" }];
+const db = require("../lib/database");
 
 class Product {
   constructor(title, imgUrl, description, price) {
     this.title = title;
     this.imgUrl = imgUrl;
     this.description = description;
-    this.price = price;
+    this.price = Number(price);
   }
 
   save() {
-    this.id = Math.random().toString();
-    fs.readFile(productsFile, (err, data) => {
-      let products = [];
-      // only read file if there is no error
-      if (!err) {
-        // reading data from file
-        products = JSON.parse(data);
-      }
-      // appending new object
-      products.push(this);
-      // // writing back to file
-      fs.writeFile(productsFile, JSON.stringify(products), (err) =>
-        console.log(err)
-      );
-    });
+    return db.execute(
+      `INSERT INTO products (title, price, imgUrl, description) VALUES (?, ?, ?, ?);`,
+      [this.title, this.price, this.imgUrl, this.description]
+    );
   }
 
   static updateProduct(updatedProduct) {
-    return new Promise((resolve, reject) => {
-      try {
-        fs.readFile(productsFile, (err, data) => {
-          // as we are updating, so I am assuming the file and data is already existed
-          const products = JSON.parse(data);
-          // finding the index of the product, I am assuming index already existed
-          const updateIndex = products.findIndex(
-            (item) => item.id === updatedProduct.id
-          );
-          products[updateIndex] = updatedProduct;
-          // // writing back to file
-          fs.writeFile(productsFile, JSON.stringify(products), (err) =>
-            resolve("failed")
-          );
-          resolve("success");
-        });
-      } catch (err) {
-        console.log(err);
-        reject("failed");
-      }
-    });
+    return db.execute(
+      "UPDATE products SET title=?, price=?, imgUrl=?, description=? WHERE id=?;",
+      [
+        updatedProduct.title,
+        Number(updatedProduct.price),
+        updatedProduct.imgUrl,
+        updatedProduct.description,
+        updatedProduct.id,
+      ]
+    );
   }
 
   static deleteProduct(id) {
-    return new Promise((resolve, reject) => {
-      try {
-        fs.readFile(productsFile, (err, data) => {
-          const products = JSON.parse(data);
-
-          // filtering out the product to be deleted
-          const updatedProducts = products.filter((item) => item.id !== id);
-          fs.writeFile(productsFile, JSON.stringify(updatedProducts), (err) => {
-            console.log(err);
-            resolve("failed");
-          });
-          resolve("success");
-        });
-      } catch (err) {
-        console.log(err);
-        resolve("failed");
-      }
-    });
+    return db.execute("DELETE FROM products WHERE id=?;", [id]);
   }
 
   static getAllProducts() {
     return new Promise((resolve, reject) => {
-      fs.readFile(productsFile, (err, data) => {
-        try {
-          const products = JSON.parse(data);
-          resolve(products);
-        } catch (err) {
-          console.log(err);
-          resolve(false);
-        }
-      });
+      db.execute("SELECT * FROM products;")
+        .then((res) => resolve(res[0]))
+        .catch((err) => resolve(false));
     });
   }
 
   static getProductById(id) {
     return new Promise((resolve, reject) => {
-      fs.readFile(productsFile, (err, data) => {
-        try {
-          const allProducts = JSON.parse(data);
-          const foundProduct = allProducts.find((item) => item.id == id);
-          if (foundProduct) resolve(foundProduct);
-          else resolve(false);
-        } catch (err) {
-          resolve(false);
-        }
-      });
+      db.execute(`SELECT * FROM products WHERE id=${id};`)
+        .then((res) => resolve(res[0][0]))
+        .catch((err) => resolve(false));
     });
   }
 }
