@@ -13,6 +13,7 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const { title, imgUrl, description } = req.body;
   const price = Number(req.body.price);
+  // creating instance from schema and saving into database
   Product.create({
     title: title,
     imgUrl: imgUrl,

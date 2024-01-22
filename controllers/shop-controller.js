@@ -3,23 +3,25 @@ const Cart = require("../models/cart");
 
 // controllers for shop
 exports.getHomePage = (req, res, next) => {
-  Product.getAllProducts().then((products) => {
-    if (products) {
+  // findAll() method will return all products in an array
+  Product.findAll()
+    .then((products) => {
       res.render("./shop/index.ejs", { products, docTitle: "Shop", path: "/" });
-    }
-  });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.getAllProducts().then((products) => {
-    if (products) {
+  // findAll() method will return all products in an array
+  Product.findAll()
+    .then((products) => {
       res.render("./shop/product-list.ejs", {
         products,
-        docTitle: "Shop",
+        docTitle: "Products",
         path: "/products",
       });
-    }
-  });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProductsById = (req, res, next) => {
