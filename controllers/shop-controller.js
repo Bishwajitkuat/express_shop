@@ -26,15 +26,15 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProductsById = (req, res, next) => {
   const productId = req.params.productId;
-  Product.getProductById(productId).then((product) => {
-    if (product) {
+  Product.findByPk(productId)
+    .then((product) => {
       res.render("./shop/product-detail.ejs", {
         product: product,
         docTitle: product.title,
         path: "/products",
       });
-    }
-  });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getCart = async (req, res, next) => {
