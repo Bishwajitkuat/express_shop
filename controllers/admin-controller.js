@@ -59,11 +59,14 @@ exports.postEditProduct = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.getProducts = async (req, res, next) => {
-  const products = await Product.getAllProducts();
-  res.render("./admin/products.ejs", {
-    products,
-    docTitle: "Admin Product",
-    path: "/admin/products",
-  });
+exports.getProducts = (req, res, next) => {
+  Product.findAll()
+    .then((products) =>
+      res.render("./admin/products.ejs", {
+        products,
+        docTitle: "Admin Product",
+        path: "/admin/products",
+      })
+    )
+    .catch((err) => console.log(err));
 };
