@@ -20,27 +20,16 @@ class Product {
   }
 
   static updateProduct(updatedProduct) {
-    return new Promise((resolve, reject) => {
-      try {
-        fs.readFile(productsFile, (err, data) => {
-          // as we are updating, so I am assuming the file and data is already existed
-          const products = JSON.parse(data);
-          // finding the index of the product, I am assuming index already existed
-          const updateIndex = products.findIndex(
-            (item) => item.id === updatedProduct.id
-          );
-          products[updateIndex] = updatedProduct;
-          // // writing back to file
-          fs.writeFile(productsFile, JSON.stringify(products), (err) =>
-            resolve("failed")
-          );
-          resolve("success");
-        });
-      } catch (err) {
-        console.log(err);
-        reject("failed");
-      }
-    });
+    return db.execute(
+      "UPDATE products SET title=?, price=?, imgUrl=?, description=? WHERE id=?;",
+      [
+        updatedProduct.title,
+        Number(updatedProduct.price),
+        updatedProduct.imgUrl,
+        updatedProduct.description,
+        updatedProduct.id,
+      ]
+    );
   }
 
   static deleteProduct(id) {
