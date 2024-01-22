@@ -15,6 +15,9 @@ const connectLiveReload = require("connect-livereload");
 const liverReloadServer = liveReload.createServer();
 liverReloadServer.watch(path.join(__dirname, "public"));
 
+// importing db
+const sequelize = require("./lib/database");
+
 // creating app
 const app = express();
 
@@ -36,4 +39,11 @@ app.use("/admin", adminRoute);
 app.use(shopRoute);
 // 404 response
 app.use(get404);
-app.listen(3000, () => console.log("listening at port 3000"));
+
+// sysnc the data base before starting the app
+sequelize
+  .sync()
+  .then((response) => {
+    app.listen(3000, () => console.log("listening at port 3000"));
+  })
+  .catch((err) => console.log(err));
