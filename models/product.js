@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const productsFile = path.join(__dirname, "data", "products.json");
-// const products = [{ title: "Book" }, { title: "Mobile" }];
+// importing db connection pool
+const db = require("../lib/database");
 
 class Product {
   constructor(title, imgUrl, description, price) {
@@ -76,15 +77,9 @@ class Product {
 
   static getAllProducts() {
     return new Promise((resolve, reject) => {
-      fs.readFile(productsFile, (err, data) => {
-        try {
-          const products = JSON.parse(data);
-          resolve(products);
-        } catch (err) {
-          console.log(err);
-          resolve(false);
-        }
-      });
+      db.execute("SELECT * FROM products")
+        .then((res) => resolve(res[0]))
+        .catch((err) => resolve(false));
     });
   }
 
