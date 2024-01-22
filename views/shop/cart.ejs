@@ -1,11 +1,50 @@
 <%- include("../components/head.ejs") %> <%-
 include("../components/navbar.ejs")%>
 
-<main>
-  <h1>
-    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Architecto
-    accusantium excepturi rerum aut sequi fugiat unde aliquid nobis, repellendus
-    eum iusto. Hic recusandae velit aut vitae, aperiam saepe? At, id.
-  </h1>
+<main class="cart-main">
+  <% if(cart.products.length>0) { %>
+  <ul class="cart-ul">
+    <li class="li-border-down">
+      <p></p>
+      <p>Products</p>
+      <p>Unit Price($)</p>
+      <p>Quantity</p>
+    </li>
+    <% cart.products.forEach(product =>{%>
+    <li>
+      <img src="<%=product.imgUrl%>" alt="<%=product.title%>" />
+      <p><%=product.title%></p>
+      <p><%=product.price%></p>
+      <div class="cart-li-btnDiv">
+        <form action="/cart" method="POST">
+          <input type="hidden" name="productId" value="<%=product.id%>" />
+          <input type="hidden" name="price" value="<%product.price%>" />
+          <button class="btn" type="submit">+</button>
+        </form>
+        <p><%=product.qty%></p>
+        <form action="/cart-remove" method="POST">
+          <input type="hidden" name="id" value="<%=product.id%>" />
+          <input type="hidden" name="qty" value="1" />
+          <button class="btn delete" type="submit">-</button>
+        </form>
+        <form action="/cart-remove" method="POST">
+          <input type="hidden" name="id" value="<%=product.id%>" />
+          <input type="hidden" name="qty" value="<%=product.qty%>" />
+          <button class="btn delete" type="submit">&#128465;</button>
+        </form>
+      </div>
+    </li>
+
+    <%}) %>
+    <li class="li-border-top">
+      <p>Totals</p>
+      <p></p>
+      <p><%= cart.totalPrice %></p>
+      <p><%= cart.totalQty %></p>
+    </li>
+  </ul>
+  <%} else { %>
+  <h1>No product available in the cart</h1>
+  <% }%>
 </main>
 <%- include("../components/footer.ejs")%>

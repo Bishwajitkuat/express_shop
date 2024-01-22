@@ -205,6 +205,45 @@ a {
   border: 1px solid hsla(0, 100%, 50%, 0.567);
   color: black;
 }
+.delete {
+  color: red;
+}
+
+/* CART */
+
+.cart-ul {
+  display: grid;
+  gap: 1rem;
+}
+.cart-ul li {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  align-items: center;
+  justify-items: center;
+}
+.cart-ul img {
+  width: 20%;
+  border-radius: 0.5rem;
+}
+.cart-ul button {
+  min-height: 2rem;
+}
+.cart-li-btnDiv {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cart-li-btnDiv p {
+  font-size: 1.5rem;
+}
+.li-border-down {
+  border-bottom: 1px dotted #00695c;
+}
+.li-border-top {
+  border-top: 1px dotted #00695c;
+  border-bottom: 1px dotted #00695c;
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;
