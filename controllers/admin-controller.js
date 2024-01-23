@@ -29,10 +29,11 @@ exports.postAddProduct = (req, res, next) => {
 // controllers for editing products
 exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
-  if (productId) {
-    Product.findByPk(productId).then((product) => {
+  if (productId && req.user) {
+    // fetching the product and send it view only if it belongs to current user
+    req.user.getProducts({ where: { id: productId } }).then((products) => {
       res.render("./admin/add-edit-product.ejs", {
-        product,
+        product: products[0],
         docTitle: "Edit Product",
         path: "/admin/edit-product",
         editing: true,
