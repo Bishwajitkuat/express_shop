@@ -11,9 +11,15 @@ const shopRoute = require("./routes/shopRoute");
 const { get404 } = require("./controllers/error-controller");
 // livereload
 const liveReload = require("livereload");
-const connectLiveReload = require("connect-livereload");
 const liverReloadServer = liveReload.createServer();
-liverReloadServer.watch(path.join(__dirname, "public"));
+liverReloadServer.watch(path.join(__dirname));
+liverReloadServer.server.once("connection", () => {
+  setTimeout(() => {
+    liverReloadServer.refresh("/");
+  }, 100);
+});
+
+const connectLiveReload = require("connect-livereload");
 
 // importing db
 const sequelize = require("./lib/database");
