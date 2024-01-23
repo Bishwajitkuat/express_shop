@@ -5,7 +5,7 @@ include("../components/navbar.ejs")%>
   <% if (products.length > 0) { %>
   <div class="grid md:grid-cols-4 gap-[3rem] justify-center">
     <% for (let product of products){ %>
-    <article class="group shadow-[0_2px_8px] shadow-[#00000042] rounded-md hover:shadow-[#c94c4c42] hover:bg-[#000000c8] ease-in-200 ">
+    <article class="group shadow-[0_2px_8px] shadow-[#00000042] rounded-md hover:shadow-[#c94c4c42] hover:bg-[#000000c8] ease-in duration-700 ">
       <header class="">
         <h1 class="group-hover:text-white text-xl text-bold tracking-widest text-center py-[2rem]"><%= product.title%></h1>
       </header>
@@ -17,7 +17,7 @@ include("../components/navbar.ejs")%>
         <p class="group-hover:text-white"><%= product.description%></p>
       </div>
       <div class=" card__actions">
-        <button class="btn hover:bg-blue-500 group-hover:bg-lime-400 group-hover:text-black group-hover:border-black  ">
+        <button class="btn group-hover:bg-lime-400 group-hover:text-black group-hover:border-black ease-in duration-700 ">
           <a href="/products/<%= product.id %>">Details</a>
         </button>
         <%- include("../components/add-to-cart.ejs", {product}) %>
