@@ -62,9 +62,14 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const id = req.body.id;
-  Product.destroy({ where: { id: id } })
-    .then((response) => res.redirect("/admin/products"))
-    .catch((err) => console.log(err));
+  if (id && req.user) {
+    // Deletion of the product will only carried out, if the product belongs to current user
+    req.user
+      .getProducts({ where: { id: id } })
+      .then((products) => products[0].destroy())
+      .then((response) => res.redirect("/admin/products"))
+      .catch((err) => console.log(err));
+  }
 };
 
 exports.getProducts = (req, res, next) => {
