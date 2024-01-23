@@ -1,24 +1,23 @@
 <%- include("../components/head.ejs") %> <%-
 include("../components/navbar.ejs")%>
-<main>
-  <h1>My Products</h1>
-  <p>List of all the products...</p>
+<main class="mt-[2rem] grid gap-[2rem]" >
+  <h1 class="text-center text-[3rem] tracking-widest" >Products</h1>
   <% if (products.length > 0) { %>
-  <div class="grid">
+  <div class="grid md:grid-cols-4 gap-[3rem] justify-center">
     <% for (let product of products){ %>
-    <article class="card product-item">
-      <header class="card__header">
-        <h1 class="product__title"><%= product.title%></h1>
+    <article class="group shadow-[0_2px_8px] shadow-[#00000042] rounded-md hover:shadow-[#c94c4c42] hover:bg-[#000000c8] ease-in-200 ">
+      <header class="">
+        <h1 class="group-hover:text-white text-xl text-bold tracking-widest text-center py-[2rem]"><%= product.title%></h1>
       </header>
       <div class="card__image">
         <img src="<%= product.imgUrl%>" alt="<%= product.title%>" />
       </div>
-      <div class="card__content">
-        <h2 class="product__price">$<%=product.price%></h2>
-        <p class="product__description"><%= product.description%></p>
+      <div class="text-center py-[2rem]">
+        <h2 class="text-xl text-bold tracking-widest group-hover:text-white ">$<%=product.price%></h2>
+        <p class="group-hover:text-white"><%= product.description%></p>
       </div>
-      <div class="card__actions">
-        <button class="btn">
+      <div class=" card__actions">
+        <button class="btn hover:bg-blue-500 group-hover:bg-lime-400 group-hover:text-black group-hover:border-black  ">
           <a href="/products/<%= product.id %>">Details</a>
         </button>
         <%- include("../components/add-to-cart.ejs", {product}) %>

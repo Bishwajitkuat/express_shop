@@ -142,27 +142,15 @@ a {
   display: none;
 }
 
-.grid {
+/* .grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: stretch;
-}
+} */
 
 .card {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
-}
-
-.card__header,
-.card__content {
-  padding: 1rem;
-}
-
-.card__header h1,
-.card__content h1,
-.card__content h2,
-.card__content p {
-  margin: 0;
+  box-shadow: 0 2px 8px #00000042;
 }
 
 .card__image {
