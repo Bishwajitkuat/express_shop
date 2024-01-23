@@ -26,6 +26,7 @@ const sequelize = require("./lib/database");
 const Product = require("./models/product");
 const User = require("./models/user");
 const Cart = require("./models/cart");
+const CartItem = require("./models/cartItem");
 
 // creating app
 const app = express();
@@ -67,12 +68,17 @@ Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 // creating one to one relationship between User and Cart
 Cart.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
+// creating many to many relationships among Cart and Product
+// CartItem will be intermediary to store the relationships along with quantity information
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
 // sysnc the data base before starting the app
 // if we want to overwrite old database with new configaration (relationship)
 // NOTE: we have to pass a condition {force: true} into sync() method.
 // AFTER sync in , we have to remove the condition, otherwise it will erase db and rewrite
 sequelize
-  .sync({ force: true })
+  .sync()
   .then((response) => {
     app.listen(3000, () => console.log("listening at port 3000"));
   })
