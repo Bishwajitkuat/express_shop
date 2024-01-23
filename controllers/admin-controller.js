@@ -45,8 +45,11 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const updatedProduct = req.body;
   // save() method of entry will save the updated entry
-  Product.findByPk(updatedProduct.id)
-    .then((product) => {
+  // existing product will be updated only if both existing and updated product from POST request belongs to current user.
+  req.user
+    .getProducts({ where: { id: updatedProduct.id } })
+    .then((products) => {
+      const product = products[0];
       product.title = updatedProduct.title;
       product.price = Number(updatedProduct.price);
       product.imgUrl = updatedProduct.imgUrl;
