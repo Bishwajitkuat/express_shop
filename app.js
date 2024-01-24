@@ -21,7 +21,7 @@ liverReloadServer.server.once("connection", () => {
 
 const connectLiveReload = require("connect-livereload");
 // importing db
-const sequelize = require("./lib/database");
+const db = require("./lib/database");
 // importing models created with sequelize to create on to many relationship
 const Product = require("./models/product");
 const User = require("./models/user");
@@ -63,9 +63,11 @@ app.use(get404);
 
 // creating one to many relationship User to
 // onDelete: 'CASCADE' => deletion of User will delete User's Product
+User.hasMany(Product);
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
 // creating one to one relationship between User and Cart
+User.hasOne(Cart);
 Cart.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
 // creating many to many relationships among Cart and Product
@@ -77,8 +79,7 @@ Product.belongsToMany(Cart, { through: CartItem });
 // if we want to overwrite old database with new configaration (relationship)
 // NOTE: we have to pass a condition {force: true} into sync() method.
 // AFTER sync in , we have to remove the condition, otherwise it will erase db and rewrite
-sequelize
-  .sync()
+db.sync()
   .then((response) => {
     app.listen(3000, () => console.log("listening at port 3000"));
   })

@@ -1,7 +1,7 @@
 const sqzType = require("sequelize");
-const sequelize = require("../lib/database");
+const db = require("../lib/database");
 
-const User = sequelize.define("user", {
+const User = db.define("user", {
   id: {
     type: sqzType.INTEGER,
     allowNull: false,
