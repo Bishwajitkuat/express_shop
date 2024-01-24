@@ -57,11 +57,11 @@ exports.getCart = async (req, res, next) => {
       totolQty,
     };
     // rendering view and passing data to it
-  res.render("./shop/cart.ejs", {
+    res.render("./shop/cart.ejs", {
       cart: cartForView,
-    docTitle: "Cart",
-    path: "/cart",
-  });
+      docTitle: "Cart",
+      path: "/cart",
+    });
   } catch (err) {
     console.log(err);
     res.redirect("/");
@@ -70,7 +70,7 @@ exports.getCart = async (req, res, next) => {
 
 exports.postAddToCart = async (req, res, next) => {
   try {
-  const { productId, price } = req.body;
+    const { productId, price } = req.body;
     const cart = await req.user.getCart();
     // checking whether the product already in cartItem table, retrun empty array if does not exits
     const isProductExists = await cart.getProducts({
@@ -100,11 +100,25 @@ exports.postAddToCart = async (req, res, next) => {
   }
 };
 
-exports.postRemoveFromCart = (req, res, next) => {
+exports.postRemoveFromCart = async (req, res, next) => {
   const { id, qty } = req.body;
-  Cart.removeProduct(id, qty).then((status) => {
-    if (status === "success") res.redirect("/cart");
-  });
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts({ where: { id: id } });
+    const product = products[0];
+    const newQty = product.cartItem.quantity - Number(qty);
+    if (newQty < 1) {
+      // removing relationship
+      await product.cartItem.destroy();
+    } else {
+      // updating quantity in cartItem table
+      await cart.addProduct(product, { through: { quantity: newQty } });
+    }
+    res.redirect("/cart");
+  } catch (err) {
+    console.log(err);
+    res.redirect("/");
+  }
 };
 
 exports.getCheckout = (req, res, next) => {
