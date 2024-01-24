@@ -38,24 +38,34 @@ exports.getProductsById = (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
-  const cart = await Cart.getCart();
-  const products = await Product.getAllProducts();
-  const productsWithQty = [];
-  if (cart.products.length > 0) {
-    // if cart.products is empty, following code will cause error
-    for (let item of cart.products) {
-      const product = products.find((prod) => prod.id === item.id);
-      item.title = product.title;
-      item.imgUrl = product.imgUrl;
-      productsWithQty.push(item);
+  try {
+    // as User has one to one relationship with Cart, instance of User has getCart() method to fetch the cart associated with the user
+    const cart = await req.user.getCart();
+    // as Cart has many to many relationship with Product, instance of Cart has getProducts() method to fetch all Product intances associated with the Cart instance.
+    const products = await cart.getProducts();
+    // calculating total price and total quantity
+    let totalPrice = 0;
+    let totolQty = 0;
+    for (let product of products) {
+      totalPrice += product.price * product.cartItem.quantity;
+      totolQty += product.cartItem.quantity;
     }
-  }
-  cart.products = productsWithQty;
+    // creating cart object for the view
+    const cartForView = {
+      products,
+      totalPrice,
+      totolQty,
+    };
+    // rendering view and passing data to it
   res.render("./shop/cart.ejs", {
-    cart,
+      cart: cartForView,
     docTitle: "Cart",
     path: "/cart",
   });
+  } catch (err) {
+    console.log(err);
+    res.redirect("/");
+  }
 };
 
 exports.postAddToCart = (req, res, next) => {

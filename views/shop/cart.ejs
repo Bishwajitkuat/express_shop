@@ -21,7 +21,7 @@ include("../components/navbar.ejs")%>
           <input type="hidden" name="price" value="<%product.price%>" />
           <button class="btn" type="submit">+</button>
         </form>
-        <p><%=product.qty%></p>
+        <p><%=product.cartItem.quantity%></p>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product.id%>" />
           <input type="hidden" name="qty" value="1" />
@@ -29,7 +29,7 @@ include("../components/navbar.ejs")%>
         </form>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product.id%>" />
-          <input type="hidden" name="qty" value="<%=product.qty%>" />
+          <input type="hidden" name="qty" value="<%=product.cartItem.quantity%>" />
           <button class="btn delete" type="submit">&#128465;</button>
         </form>
       </div>
