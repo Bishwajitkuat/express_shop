@@ -68,11 +68,36 @@ exports.getCart = async (req, res, next) => {
   }
 };
 
-exports.postAddToCart = (req, res, next) => {
+exports.postAddToCart = async (req, res, next) => {
+  try {
   const { productId, price } = req.body;
-  Cart.addProduct(productId, price).then((status) => {
-    if (status) res.redirect("/cart");
-  });
+    const cart = await req.user.getCart();
+    // checking whether the product already in cartItem table, retrun empty array if does not exits
+    const isProductExists = await cart.getProducts({
+      where: { id: productId },
+    });
+    if (isProductExists.length < 1) {
+      // this product does not exists in cartItem (connecting) table for this user and product
+      // we need to fetch the product, to add into cartItem table
+      const product = await Product.findByPk(productId);
+      // as Cart has many to many relationship with Product, it has addProduct().
+      // as the connecting table (cartItem) holds info of quantity, we can update the connecting tables fields by through property
+      await cart.addProduct(product, {
+        through: { quantity: 1 },
+      });
+      res.redirect("/products");
+    } else {
+      const product = isProductExists[0];
+      const newQty = product.cartItem.quantity + 1;
+      // updating the relationship with updated into
+      await cart.addProduct(product, {
+        through: { quantity: newQty },
+      });
+      res.redirect("/cart");
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.postRemoveFromCart = (req, res, next) => {
