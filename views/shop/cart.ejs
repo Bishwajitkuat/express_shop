@@ -29,7 +29,11 @@ include("../components/navbar.ejs")%>
         </form>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product.id%>" />
-          <input type="hidden" name="qty" value="<%=product.cartItem.quantity%>" />
+          <input
+            type="hidden"
+            name="qty"
+            value="<%=product.cartItem.quantity%>"
+          />
           <button class="btn delete" type="submit">&#128465;</button>
         </form>
       </div>
@@ -43,6 +47,14 @@ include("../components/navbar.ejs")%>
       <p><%= cart.totalQty %></p>
     </li>
   </ul>
+  <form class="flex justify-end mt-[2rem]" action="/create-order" method="POST">
+    <button
+      class="me-[2rem] broder-1 border-gray-500 bg-gradient-to-tr from-blue-500 to-green-500 py-[0.5rem] px-[2rem] rounded-xl shadow-blue-200 shadow-xl hover:from-yellow-500 hover:to-lime-500 hover:shadow-yellow-200"
+      type="submit"
+    >
+      Checkout
+    </button>
+  </form>
   <%} else { %>
   <h1>No product available in the cart</h1>
   <% }%>
