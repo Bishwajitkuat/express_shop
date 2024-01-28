@@ -1,30 +1,47 @@
 <%- include("../components/head.ejs") %> <%-
 include("../components/navbar.ejs")%>
-<main>
-  <h1>Wellcom to express shop</h1>
+<main class="bg-gray-900 text-slate-400 px-[5rem] py-[3rem]">
+  <h1 class="text-[3rem] text-center pb-[3rem] tracking-wide">
+    Wellcom to express shop
+  </h1>
+  <h2 class="text-[1.5rem] text-center pb-[3rem]">
+    Sell your old stuff && buy stuff cheap!!!
+  </h2>
   <% if (products.length > 0) { %>
-  <div class="grid">
+  <div class="grid md:grid-cols-3 gap-8">
     <% for (let product of products){ %>
-    <article class="card product-item">
-      <header class="card__header">
-        <h1 class="product__title"><%= product.title%></h1>
-      </header>
-      <div class="card__image">
-        <img src="<%= product.imgUrl%>" alt="<%= product.title%>" />
-      </div>
-      <div class="card__content">
-        <h2 class="product__price">$<%=product.price%></h2>
-        <p class="product__description"><%= product.description%></p>
-      </div>
-      <div class="card__actions">
-      <%- include("../components/add-to-cart.ejs", {product}) %>
+    <article
+      class="h-full bg-gradient-to-br from-blue-500 via-red-500 to-lime-500 p-[1px] rounded shadow-sm shadow-yellow-100 hover:shadow-md hover:shadow-yellow-100"
+    >
+      <div class="bg-gray-900 h-full p-2 flex flex-col">
+        <h1
+          class="text-[1.5rem] text-center py-[1rem] font-semibold tracking-widest"
+        >
+          <%= product.title%>
+        </h1>
+        <img
+          class="w-full overflow-hidden rounded-md shadow-lg shadow-gray-700"
+          src="<%= product.imgUrl%>"
+          alt="<%= product.title%>"
+        />
+        <h2
+          class="my-[1rem] text-[1.5rem] text-slate-200 tracking-tighter text-left"
+        >
+          €<%=product.price%>
+        </h2>
+        <p class="text-justify"><%= product.description%></p>
 
+        <div class="flex justify-center items-center gap-2 my-[2rem]">
+          <%- include("../components/add-to-cart.ejs", {product}) %>
+        </div>
       </div>
     </article>
     <%} %>
   </div>
   <% } else { %>
-  <h3>Product is not available</h3>
+  <h3 class="flex justify-center items-center text-[3rem] text-red-400">
+    No product is available!
+  </h3>
   <% } %>
 </main>
 <%- include("../components/footer.ejs")%>
