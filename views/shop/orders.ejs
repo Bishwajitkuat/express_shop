@@ -1,9 +1,43 @@
-<%- include("../components/head.ejs") %> <%- include("../components/navbar.ejs")%>
+<%- include("../components/head.ejs") %> <%-
+include("../components/navbar.ejs")%>
 <main>
-  <h1>
-    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Architecto
-    accusantium excepturi rerum aut sequi fugiat unde aliquid nobis, repellendus
-    eum iusto. Hic recusandae velit aut vitae, aperiam saepe? At, id.
-  </h1>
+  <% if (orders.length > 0) { %>
+  <ul class="grid gap-8">
+    <% orders.forEach(order =>{ %>
+    <li>
+      <p class="text-[1.2rem] font-semibold mb-[1rem]">
+        Order ID: <%= order.id%>
+      </p>
+      <ul class="grid gap-2">
+        <li class="grid grid-cols-4">
+          <p class="font-bold">Products</p>
+          <p class="font-bold">Price($)</p>
+          <p class="font-bold">Qty</p>
+          <p class="font-bold">Total($)</p>
+        </li>
+        <% order.products.forEach(product=>{ %>
+        <li class="grid grid-cols-4">
+          <p><%=product.title%></p>
+          <p><%=product.price%></p>
+          <p><%=product.orderItem.quantity %></p>
+          <p><%=(product.price * product.orderItem.quantity) %></p>
+        </li>
+        <%})%>
+        <li
+          class="grid grid-cols-4 font-bold tracking-widest border-t-2 border-dotted"
+        >
+          <p class="col-span-3">Total</p>
+          <p>
+            <%= order.products.reduce((acc, product)=>acc +
+            product.price*product.orderItem.quantity,0) %>
+          </p>
+        </li>
+      </ul>
+    </li>
+    <%}) %>
+  </ul>
+  <% } else { %>
+  <h1>No order in available</h1>
+  <%} %>
 </main>
 <%- include("../components/footer.ejs")%>
