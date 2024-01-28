@@ -89,7 +89,7 @@ Product.belongsToMany(Order, { through: OrderItem });
 // if we want to overwrite old database with new configaration (relationship)
 // NOTE: we have to pass a condition {force: true} into sync() method.
 // AFTER sync in , we have to remove the condition, otherwise it will erase db and rewrite
-db.sync({ alter: true })
+db.sync()
   .then((response) => {
     app.listen(3000, () => console.log("listening at port 3000"));
   })
