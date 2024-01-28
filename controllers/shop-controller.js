@@ -128,9 +128,39 @@ exports.getCheckout = (req, res, next) => {
   });
 };
 
-exports.getOrders = (req, res, next) => {
-  res.render("./shop/orders.ejs", {
-    docTitle: "Your orders",
-    path: "/orders",
-  });
+exports.postOrder = async (req, res, next) => {
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts();
+    const order = await req.user.createOrder();
+    // we are use addProducts() method to add multiple entries and we pass a arry of product as parameter
+    await order.addProducts(
+      products.map((item) => {
+        item.orderItem = { quantity: item.cartItem.quantity };
+        return item;
+      })
+    );
+    // here we can empty the cart
+    await cart.setProducts(null);
+    res.redirect("/orders");
+  } catch (err) {
+    console.log(err);
+    res.redirect("/");
+  }
+};
+
+exports.getOrders = async (req, res, next) => {
+  // providing include option will fetch related table data
+  try {
+    const orders = await req.user.getOrders({ include: ["products"] });
+    console.log(orders);
+    res.render("./shop/orders.ejs", {
+      orders,
+      docTitle: "Orders",
+      path: "/orders",
+    });
+  } catch (err) {
+    console.log(err);
+    res.redirect("/");
+  }
 };
