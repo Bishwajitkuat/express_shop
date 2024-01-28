@@ -27,6 +27,9 @@ const Product = require("./models/product");
 const User = require("./models/user");
 const Cart = require("./models/cart");
 const CartItem = require("./models/cartItem");
+const Order = require("./models/order");
+const OderItem = require("./models/orderItem");
+const OrderItem = require("./models/orderItem");
 
 // creating app
 const app = express();
@@ -75,12 +78,21 @@ Cart.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
+// creating one to many relationships between Order and User
+Order.belongsTo(User);
+User.hasMany(Order);
+// creating many to many relationships between Order and Product
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
 // sysnc the data base before starting the app
 // if we want to overwrite old database with new configaration (relationship)
 // NOTE: we have to pass a condition {force: true} into sync() method.
 // AFTER sync in , we have to remove the condition, otherwise it will erase db and rewrite
-db.sync()
+db.sync({ alter: true })
   .then((response) => {
     app.listen(3000, () => console.log("listening at port 3000"));
   })
   .catch((err) => console.log(err));
+
+// app.listen(3000, () => console.log("listening at port 3000"));
