@@ -39,7 +39,9 @@ include("../components/navbar.ejs")%>
     <%}) %>
   </ul>
   <% } else { %>
-  <h1>No order in available</h1>
+  <div class="h-full flex justify-center items-center">
+    <h1 class="text-[3rem] text-red-400">You do not have any product yet!</h1>
+  </div>
   <%} %>
 </main>
 <%- include("../components/footer.ejs")%>

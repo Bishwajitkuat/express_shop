@@ -1,7 +1,7 @@
 <%- include("../components/head.ejs") %> <%-
 include("../components/navbar.ejs")%>
 
-<main class="centered">
+<main class="">
   <h1><%= product.title%></h1>
   <hr />
   <div>
@@ -9,6 +9,6 @@ include("../components/navbar.ejs")%>
   </div>
   <h2>$<%= product.price%></h2>
   <p><%= product.description%></p>
- <%- include("../components/add-to-cart.ejs", {product}) %>
+  <%- include("../components/add-to-cart.ejs", {product}) %>
 </main>
 <%- include("../components/footer.ejs")%>

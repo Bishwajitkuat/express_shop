@@ -56,9 +56,9 @@ include("../components/navbar.ejs")%>
     </button>
   </form>
   <%} else { %>
-  <h1 class="flex justify-center items-center text-[3rem] text-red-400">
-    No product available in the cart
-  </h1>
+  <div class="h-full flex justify-center items-center">
+    <h1 class="text-[3rem] text-red-400">No product available in the cart</h1>
+  </div>
   <% }%>
 </main>
 <%- include("../components/footer.ejs")%>
