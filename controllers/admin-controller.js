@@ -11,56 +11,84 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imgUrl, description, price } = req.body;
-  const product = new Product(title, imgUrl, description, price);
-  product
-    .save()
-    .then((response) => {
-      res.redirect("/admin/add-product");
-    })
-    .catch((err) => console.log(err));
+  const { title, imgUrl, description } = req.body;
+  const price = Number(req.body.price);
+  // as user is a sequelize object and it has one to many relatinship with Product model, it will have createProduct() method
+  // which takes product object as argument and creates and store product data with relationship info
+  if (req.user) {
+    req.user
+      .createProduct({
+        title: title,
+        imgUrl: imgUrl,
+        description: description,
+        price: price,
+      })
+      .then((response) => res.redirect("/admin/products"))
+      .catch((err) => console.log(err));
+  } else {
+    res.redirect("/");
+  }
 };
 
 // controllers for editing products
 exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
-  if (productId) {
-    Product.getProductById(productId).then((product) => {
-      // product could be false or an object
-      if (product) {
-        res.render("./admin/add-edit-product.ejs", {
-          product,
-          docTitle: "Edit Product",
-          path: "/admin/edit-product",
-          editing: true,
-        });
-      }
+  if (productId && req.user) {
+    // fetching the product and send it view only if it belongs to current user
+    req.user.getProducts({ where: { id: productId } }).then((products) => {
+      res.render("./admin/add-edit-product.ejs", {
+        product: products[0],
+        docTitle: "Edit Product",
+        path: "/admin/edit-product",
+        editing: true,
+      });
     });
   }
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const id = req.body.id;
-  Product.deleteProduct(id)
+exports.postEditProduct = (req, res, next) => {
+  const updatedProduct = req.body;
+  // save() method of entry will save the updated entry
+  // existing product will be updated only if both existing and updated product from POST request belongs to current user.
+  req.user
+    .getProducts({ where: { id: updatedProduct.id } })
+    .then((products) => {
+      const product = products[0];
+      product.title = updatedProduct.title;
+      product.price = Number(updatedProduct.price);
+      product.imgUrl = updatedProduct.imgUrl;
+      product.description = updatedProduct.description;
+      return product.save();
+    })
     .then((response) => res.redirect("/admin/products"))
     .catch((err) => console.log(err));
 };
 
-exports.postEditProduct = (req, res, next) => {
-  const updatedProduct = req.body;
-  // updateProduct method of Product classe will replace the old product with the updatedProduct
-  Product.updateProduct(updatedProduct)
-    .then((response) => {
-      res.redirect("/admin/products");
-    })
-    .catch((err) => console.log(err));
+exports.postDeleteProduct = (req, res, next) => {
+  const id = req.body.id;
+  if (id && req.user) {
+    // Deletion of the product will only carried out, if the product belongs to current user
+    req.user
+      .getProducts({ where: { id: id } })
+      .then((products) => products[0].destroy())
+      .then((response) => res.redirect("/admin/products"))
+      .catch((err) => console.log(err));
+  }
 };
 
-exports.getProducts = async (req, res, next) => {
-  const products = await Product.getAllProducts();
-  res.render("./admin/products.ejs", {
-    products,
-    docTitle: "Admin Product",
-    path: "/admin/products",
-  });
+exports.getProducts = (req, res, next) => {
+  if (req.user) {
+    req.user
+      .getProducts()
+      .then((products) =>
+        res.render("./admin/products.ejs", {
+          products,
+          docTitle: "Admin Product",
+          path: "/admin/products",
+        })
+      )
+      .catch((err) => console.log(err));
+  } else {
+    res.redirect("/");
+  }
 };

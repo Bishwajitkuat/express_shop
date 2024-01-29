@@ -3,71 +3,122 @@ const Cart = require("../models/cart");
 
 // controllers for shop
 exports.getHomePage = (req, res, next) => {
-  Product.getAllProducts().then((products) => {
-    if (products) {
+  // findAll() method will return all products in an array
+  Product.findAll()
+    .then((products) => {
       res.render("./shop/index.ejs", { products, docTitle: "Shop", path: "/" });
-    }
-  });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.getAllProducts().then((products) => {
-    if (products) {
+  // findAll() method will return all products in an array
+  Product.findAll()
+    .then((products) => {
       res.render("./shop/product-list.ejs", {
         products,
-        docTitle: "Shop",
+        docTitle: "Products",
         path: "/products",
       });
-    }
-  });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProductsById = (req, res, next) => {
   const productId = req.params.productId;
-  Product.getProductById(productId).then((product) => {
-    if (product) {
+  Product.findByPk(productId)
+    .then((product) => {
       res.render("./shop/product-detail.ejs", {
         product: product,
         docTitle: product.title,
         path: "/products",
       });
-    }
-  });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getCart = async (req, res, next) => {
-  const cart = await Cart.getCart();
-  const products = await Product.getAllProducts();
-  const productsWithQty = [];
-  if (cart.products.length > 0) {
-    // if cart.products is empty, following code will cause error
-    for (let item of cart.products) {
-      const product = products.find((prod) => prod.id === item.id);
-      item.title = product.title;
-      item.imgUrl = product.imgUrl;
-      productsWithQty.push(item);
+  try {
+    // as User has one to one relationship with Cart, instance of User has getCart() method to fetch the cart associated with the user
+    const cart = await req.user.getCart();
+    // as Cart has many to many relationship with Product, instance of Cart has getProducts() method to fetch all Product intances associated with the Cart instance.
+    const products = await cart.getProducts();
+    // calculating total price and total quantity
+    let totalPrice = 0;
+    let totolQty = 0;
+    for (let product of products) {
+      totalPrice += product.price * product.cartItem.quantity;
+      totolQty += product.cartItem.quantity;
     }
+    // creating cart object for the view
+    const cartForView = {
+      products,
+      totalPrice,
+      totolQty,
+    };
+    // rendering view and passing data to it
+    res.render("./shop/cart.ejs", {
+      cart: cartForView,
+      docTitle: "Cart",
+      path: "/cart",
+    });
+  } catch (err) {
+    console.log(err);
+    res.redirect("/");
   }
-  cart.products = productsWithQty;
-  res.render("./shop/cart.ejs", {
-    cart,
-    docTitle: "Cart",
-    path: "/cart",
-  });
 };
 
-exports.postAddToCart = (req, res, next) => {
-  const { productId, price } = req.body;
-  Cart.addProduct(productId, price).then((status) => {
-    if (status) res.redirect("/cart");
-  });
+exports.postAddToCart = async (req, res, next) => {
+  try {
+    const { productId, price } = req.body;
+    const cart = await req.user.getCart();
+    // checking whether the product already in cartItem table, retrun empty array if does not exits
+    const isProductExists = await cart.getProducts({
+      where: { id: productId },
+    });
+    if (isProductExists.length < 1) {
+      // this product does not exists in cartItem (connecting) table for this user and product
+      // we need to fetch the product, to add into cartItem table
+      const product = await Product.findByPk(productId);
+      // as Cart has many to many relationship with Product, it has addProduct().
+      // as the connecting table (cartItem) holds info of quantity, we can update the connecting tables fields by through property
+      await cart.addProduct(product, {
+        through: { quantity: 1 },
+      });
+      res.redirect("/products");
+    } else {
+      const product = isProductExists[0];
+      const newQty = product.cartItem.quantity + 1;
+      // updating the relationship with updated into
+      await cart.addProduct(product, {
+        through: { quantity: newQty },
+      });
+      res.redirect("/cart");
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-exports.postRemoveFromCart = (req, res, next) => {
+exports.postRemoveFromCart = async (req, res, next) => {
   const { id, qty } = req.body;
-  Cart.removeProduct(id, qty).then((status) => {
-    if (status === "success") res.redirect("/cart");
-  });
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts({ where: { id: id } });
+    const product = products[0];
+    const newQty = product.cartItem.quantity - Number(qty);
+    if (newQty < 1) {
+      // removing relationship
+      await product.cartItem.destroy();
+    } else {
+      // updating quantity in cartItem table
+      await cart.addProduct(product, { through: { quantity: newQty } });
+    }
+    res.redirect("/cart");
+  } catch (err) {
+    console.log(err);
+    res.redirect("/");
+  }
 };
 
 exports.getCheckout = (req, res, next) => {
@@ -77,9 +128,39 @@ exports.getCheckout = (req, res, next) => {
   });
 };
 
-exports.getOrders = (req, res, next) => {
-  res.render("./shop/orders.ejs", {
-    docTitle: "Your orders",
-    path: "/orders",
-  });
+exports.postOrder = async (req, res, next) => {
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts();
+    const order = await req.user.createOrder();
+    // we are use addProducts() method to add multiple entries and we pass a arry of product as parameter
+    await order.addProducts(
+      products.map((item) => {
+        item.orderItem = { quantity: item.cartItem.quantity };
+        return item;
+      })
+    );
+    // here we can empty the cart
+    await cart.setProducts(null);
+    res.redirect("/orders");
+  } catch (err) {
+    console.log(err);
+    res.redirect("/");
+  }
+};
+
+exports.getOrders = async (req, res, next) => {
+  // providing include option will fetch related table data
+  try {
+    const orders = await req.user.getOrders({ include: ["products"] });
+    console.log(orders);
+    res.render("./shop/orders.ejs", {
+      orders,
+      docTitle: "Orders",
+      path: "/orders",
+    });
+  } catch (err) {
+    console.log(err);
+    res.redirect("/");
+  }
 };
