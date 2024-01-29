@@ -1,7 +1,7 @@
 <%- include("../components/head.ejs") %> <%-
 include("../components/navbar.ejs")%>
 
-<main class="cart-main">
+<main class="flex-grow bg-gray-900 text-slate-400 px-[5rem] py-[3rem]">
   <% if(cart.products.length>0) { %>
   <ul class="cart-ul">
     <li class="li-border-down">
@@ -56,7 +56,9 @@ include("../components/navbar.ejs")%>
     </button>
   </form>
   <%} else { %>
-  <h1>No product available in the cart</h1>
+  <h1 class="flex justify-center items-center text-[3rem] text-red-400">
+    No product available in the cart
+  </h1>
   <% }%>
 </main>
 <%- include("../components/footer.ejs")%>
