@@ -3,29 +3,43 @@ include("../components/navbar.ejs")%>
 
 <main class="flex-grow bg-gray-900 text-slate-400 px-[5rem] py-[3rem]">
   <% if(cart.products.length>0) { %>
-  <ul class="cart-ul">
-    <li class="li-border-down">
+  <ul class="grid gap-2">
+    <li class="grid grid-cols-4 mb-[1rem]">
       <p></p>
-      <p>Products</p>
-      <p>Unit Price($)</p>
-      <p>Quantity</p>
+      <p class="font-bold">Products</p>
+      <p class="font-bold">Unit Price(€)</p>
+      <p class="font-bold">Quantity</p>
     </li>
     <% cart.products.forEach(product =>{%>
-    <li>
-      <img src="<%=product.imgUrl%>" alt="<%=product.title%>" />
+    <li class="grid grid-cols-4 items-center">
+      <img
+        class="h-[3rem] rounded-md"
+        src="<%=product.imgUrl%>"
+        alt="<%=product.title%>"
+      />
       <p><%=product.title%></p>
       <p><%=product.price%></p>
-      <div class="cart-li-btnDiv">
+      <div class="grid grid-cols-4 items-center justify-end">
         <form action="/cart" method="POST">
           <input type="hidden" name="productId" value="<%=product.id%>" />
           <input type="hidden" name="price" value="<%product.price%>" />
-          <button class="btn" type="submit">+</button>
+          <button
+            class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-yellow-300 to-red-400 text-gray-950"
+            type="submit"
+          >
+            +
+          </button>
         </form>
         <p><%=product.cartItem.quantity%></p>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product.id%>" />
           <input type="hidden" name="qty" value="1" />
-          <button class="btn delete" type="submit">-</button>
+          <button
+            class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-red-300 to-red-500 text-gray-950"
+            type="submit"
+          >
+            -
+          </button>
         </form>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product.id%>" />
@@ -34,13 +48,18 @@ include("../components/navbar.ejs")%>
             name="qty"
             value="<%=product.cartItem.quantity%>"
           />
-          <button class="btn delete" type="submit">&#128465;</button>
+          <button
+            class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-red-300 to-red-500 text-gray-950"
+            type="submit"
+          >
+            &#128465;
+          </button>
         </form>
       </div>
     </li>
 
     <%}) %>
-    <li class="li-border-top">
+    <li class="grid grid-cols-4 text-[1.2rem] pt-[2rem]">
       <p>Totals</p>
       <p></p>
       <p><%= cart.totalPrice %></p>
@@ -49,7 +68,7 @@ include("../components/navbar.ejs")%>
   </ul>
   <form class="flex justify-end mt-[2rem]" action="/create-order" method="POST">
     <button
-      class="me-[2rem] broder-1 border-gray-500 bg-gradient-to-tr from-blue-500 to-green-500 py-[0.5rem] px-[2rem] rounded-xl shadow-blue-200 shadow-xl hover:from-yellow-500 hover:to-lime-500 hover:shadow-yellow-200"
+      class="bg-slate-700 px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900"
       type="submit"
     >
       Checkout
