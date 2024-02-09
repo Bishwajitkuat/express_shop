@@ -13,21 +13,17 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const { title, imgUrl, description } = req.body;
   const price = Number(req.body.price);
-  // as user is a sequelize object and it has one to many relatinship with Product model, it will have createProduct() method
-  // which takes product object as argument and creates and store product data with relationship info
-  if (req.user) {
-    req.user
-      .createProduct({
-        title: title,
-        imgUrl: imgUrl,
-        description: description,
-        price: price,
-      })
-      .then((response) => res.redirect("/admin/products"))
-      .catch((err) => console.log(err));
-  } else {
-    res.redirect("/");
-  }
+  const newProduct = new Product(title, price, imgUrl, description);
+  newProduct
+    .save()
+    .then((response) => {
+      console.log(response);
+      res.redirect("/admin/products");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect("/");
+    });
 };
 
 // controllers for editing products
