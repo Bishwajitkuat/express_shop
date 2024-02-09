@@ -16,14 +16,14 @@ adminRoute.get("/add-product", getAddProduct);
 adminRoute.post("/add-product", postAddProduct);
 
 // GET request for editing the product
-adminRoute.get("/edit-product/:productId", getEditProduct);
+// adminRoute.get("/edit-product/:productId", getEditProduct);
 
 // POST request for editing the product
-adminRoute.post("/edit-product/", postEditProduct);
+// adminRoute.post("/edit-product/", postEditProduct);
 
 // POST request for deleting the product
-adminRoute.post("/delete-product/", postDeleteProduct);
+// adminRoute.post("/delete-product/", postDeleteProduct);
 
-adminRoute.get("/products", getProducts);
+// adminRoute.get("/products", getProducts);
 
 module.exports = adminRoute;
