@@ -24,6 +24,6 @@ adminRoute.post("/add-product", postAddProduct);
 // POST request for deleting the product
 // adminRoute.post("/delete-product/", postDeleteProduct);
 
-// adminRoute.get("/products", getProducts);
+adminRoute.get("/products", getProducts);
 
 module.exports = adminRoute;

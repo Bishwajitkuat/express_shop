@@ -73,18 +73,16 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  if (req.user) {
-    req.user
-      .getProducts()
-      .then((products) =>
-        res.render("./admin/products.ejs", {
-          products,
-          docTitle: "Admin Product",
-          path: "/admin/products",
-        })
-      )
-      .catch((err) => console.log(err));
-  } else {
-    res.redirect("/");
-  }
+  Product.getAllProducts()
+    .then((products) =>
+      res.render("./admin/products.ejs", {
+        products,
+        docTitle: "Admin Product",
+        path: "/admin/products",
+      })
+    )
+    .catch((err) => {
+      console.log(err);
+      res.redirect("/");
+    });
 };
