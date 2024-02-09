@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 // importing path module for node
 const path = require("path");
 // importing admin routes
-// const adminRoute = require("./routes/adminRoute");
+const adminRoute = require("./routes/adminRoute");
 // importing shop routes
 // const shopRoute = require("./routes/shopRoute");
 const { get404 } = require("./controllers/error-controller");
@@ -58,7 +58,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // });
 
 // admin route
-// app.use("/admin", adminRoute);
+app.use("/admin", adminRoute);
 // shop route
 // app.use(shopRoute);
 // 404 response
