@@ -1,10 +1,9 @@
 const Product = require("../models/product");
-const Cart = require("../models/cart");
 
 // controllers for shop
 exports.getHomePage = (req, res, next) => {
   // findAll() method will return all products in an array
-  Product.findAll()
+  Product.getAllProducts()
     .then((products) => {
       res.render("./shop/index.ejs", { products, docTitle: "Shop", path: "/" });
     })
@@ -13,7 +12,7 @@ exports.getHomePage = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   // findAll() method will return all products in an array
-  Product.findAll()
+  Product.getAllProducts()
     .then((products) => {
       res.render("./shop/product-list.ejs", {
         products,
