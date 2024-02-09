@@ -7,7 +7,7 @@ const path = require("path");
 // importing admin routes
 const adminRoute = require("./routes/adminRoute");
 // importing shop routes
-// const shopRoute = require("./routes/shopRoute");
+const shopRoute = require("./routes/shopRoute");
 const { get404 } = require("./controllers/error-controller");
 // // livereload
 const liveReload = require("livereload");
@@ -60,7 +60,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // admin route
 app.use("/admin", adminRoute);
 // shop route
-// app.use(shopRoute);
+app.use(shopRoute);
 // 404 response
 app.use(get404);
 
