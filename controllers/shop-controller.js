@@ -25,7 +25,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProductsById = (req, res, next) => {
   const productId = req.params.productId;
-  Product.findByPk(productId)
+  Product.getProductById(productId)
     .then((product) => {
       res.render("./shop/product-detail.ejs", {
         product: product,
@@ -33,7 +33,10 @@ exports.getProductsById = (req, res, next) => {
         path: "/products",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      res.redirect("/products");
+    });
 };
 
 exports.getCart = async (req, res, next) => {
