@@ -23,6 +23,11 @@ class Product {
       .find({ _id: new ObjectId(productId) })
       .next();
   }
+  static async updateProduct(product) {
+    return await db()
+      .collection("products")
+      .updateOne({ _id: new ObjectId(product.id) }, { $set: product });
+  }
 }
 
 module.exports = Product;
