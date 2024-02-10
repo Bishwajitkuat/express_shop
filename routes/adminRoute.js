@@ -16,7 +16,7 @@ adminRoute.get("/add-product", getAddProduct);
 adminRoute.post("/add-product", postAddProduct);
 
 // GET request for editing the product
-// adminRoute.get("/edit-product/:productId", getEditProduct);
+adminRoute.get("/edit-product/:productId", getEditProduct);
 
 // POST request for editing the product
 // adminRoute.post("/edit-product/", postEditProduct);
