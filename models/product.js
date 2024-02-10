@@ -28,6 +28,11 @@ class Product {
       .collection("products")
       .updateOne({ _id: new ObjectId(product.id) }, { $set: product });
   }
+  static async deleteProductById(productId) {
+    return await db()
+      .collection("products")
+      .deleteOne({ _id: new ObjectId(productId) });
+  }
 }
 
 module.exports = Product;
