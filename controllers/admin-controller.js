@@ -50,20 +50,15 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const updatedProduct = req.body;
-  // save() method of entry will save the updated entry
-  // existing product will be updated only if both existing and updated product from POST request belongs to current user.
-  req.user
-    .getProducts({ where: { id: updatedProduct.id } })
-    .then((products) => {
-      const product = products[0];
-      product.title = updatedProduct.title;
-      product.price = Number(updatedProduct.price);
-      product.imgUrl = updatedProduct.imgUrl;
-      product.description = updatedProduct.description;
-      return product.save();
-    })
+  // price from input field comes as string, so converting it into number
+  updatedProduct.price = Number(updatedProduct.price);
+  // using updateProduct static method of Product class to update the product in db
+  Product.updateProduct(updatedProduct)
     .then((response) => res.redirect("/admin/products"))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      res.redirect("/admin/products");
+    });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
