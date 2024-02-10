@@ -1,4 +1,6 @@
 "use strict";
+
+const { ObjectId } = require("mongodb");
 const db = require("../lib/database").getDB;
 
 class Product {
@@ -14,6 +16,12 @@ class Product {
   }
   static async getAllProducts() {
     return await db().collection("products").find().toArray();
+  }
+  static async getProductById(productId) {
+    return await db()
+      .collection("products")
+      .find({ _id: new ObjectId(productId) })
+      .next();
   }
 }
 
