@@ -29,17 +29,23 @@ exports.postAddProduct = (req, res, next) => {
 // controllers for editing products
 exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
-  if (productId && req.user) {
-    // fetching the product and send it view only if it belongs to current user
-    req.user.getProducts({ where: { id: productId } }).then((products) => {
-      res.render("./admin/add-edit-product.ejs", {
-        product: products[0],
-        docTitle: "Edit Product",
-        path: "/admin/edit-product",
-        editing: true,
+  if (productId) {
+    // fetching product object for this productId and sending the object to add-edit-product view
+    Product.getProductById(productId)
+      .then((product) => {
+        res.render("./admin/add-edit-product.ejs", {
+          product,
+          docTitle: "Edit Product",
+          path: "/admin/edit-product",
+          editing: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.redirect("/admin/products");
       });
-    });
-  }
+    // if product id does not exist or could not be found from params, user will be redirected to /admin/products page
+  } else res.redirect("/admin/products");
 };
 
 exports.postEditProduct = (req, res, next) => {
