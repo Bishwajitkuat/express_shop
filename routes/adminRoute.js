@@ -22,7 +22,7 @@ adminRoute.get("/edit-product/:productId", getEditProduct);
 adminRoute.post("/edit-product/", postEditProduct);
 
 // POST request for deleting the product
-// adminRoute.post("/delete-product/", postDeleteProduct);
+adminRoute.post("/delete-product/", postDeleteProduct);
 
 adminRoute.get("/products", getProducts);
 
