@@ -7,14 +7,14 @@ const {
   postRemoveFromCart,
   getCheckout,
   getOrders,
-  getProductsById,
+  getProductById,
   postOrder,
 } = require("../controllers/shop-controller");
 
 const shopRoute = express.Router();
 
 shopRoute.get("/products", getProducts);
-shopRoute.get("/products/:productId", getProductsById);
+shopRoute.get("/products/:productId", getProductById);
 shopRoute.get("/cart", getCart);
 shopRoute.post("/cart", postAddToCart);
 shopRoute.post("/cart-remove", postRemoveFromCart);

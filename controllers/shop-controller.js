@@ -23,7 +23,7 @@ exports.getProducts = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.getProductsById = (req, res, next) => {
+exports.getProductById = (req, res, next) => {
   const productId = req.params.productId;
   Product.getProductById(productId)
     .then((product) => {
