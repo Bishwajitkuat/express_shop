@@ -16,10 +16,7 @@ exports.postAddProduct = (req, res, next) => {
   const newProduct = new Product(title, price, imgUrl, description);
   newProduct
     .save()
-    .then((response) => {
-      console.log(response);
-      res.redirect("/admin/products");
-    })
+    .then((response) => res.redirect("/admin/products"))
     .catch((err) => {
       console.log(err);
       res.redirect("/");
@@ -63,13 +60,13 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const id = req.body.id;
-  if (id && req.user) {
-    // Deletion of the product will only carried out, if the product belongs to current user
-    req.user
-      .getProducts({ where: { id: id } })
-      .then((products) => products[0].destroy())
+  if (id) {
+    Product.deleteProductById(id)
       .then((response) => res.redirect("/admin/products"))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        res.redirect("/admin/products");
+      });
   }
 };
 
