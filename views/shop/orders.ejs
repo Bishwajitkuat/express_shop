@@ -7,7 +7,7 @@ include("../components/navbar.ejs")%>
     <% orders.forEach(order =>{ %>
     <li>
       <div class="mb-[1rem]">
-        <p class="text-[1.2rem] font-semibold">Order ID: <%= order.id%></p>
+        <p class="text-[1.2rem] font-semibold">Order ID: <%= order._id%></p>
         <p>Date: <%= order.createdAt.toISOString() %></p>
       </div>
       <ul class="grid gap-2">

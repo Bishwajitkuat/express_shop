@@ -21,7 +21,7 @@ include("../components/navbar.ejs")%>
       <p><%=product.price%></p>
       <div class="grid grid-cols-4 items-center justify-end">
         <form action="/cart" method="POST">
-          <input type="hidden" name="productId" value="<%=product.id%>" />
+          <input type="hidden" name="productId" value="<%=product._id%>" />
           <input type="hidden" name="price" value="<%product.price%>" />
           <button
             class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-yellow-300 to-red-400 text-gray-950"
@@ -32,7 +32,7 @@ include("../components/navbar.ejs")%>
         </form>
         <p><%=product.cartItem.quantity%></p>
         <form action="/cart-remove" method="POST">
-          <input type="hidden" name="id" value="<%=product.id%>" />
+          <input type="hidden" name="id" value="<%=product._id%>" />
           <input type="hidden" name="qty" value="1" />
           <button
             class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-red-300 to-red-500 text-gray-950"
@@ -42,7 +42,7 @@ include("../components/navbar.ejs")%>
           </button>
         </form>
         <form action="/cart-remove" method="POST">
-          <input type="hidden" name="id" value="<%=product.id%>" />
+          <input type="hidden" name="id" value="<%=product._id%>" />
           <input
             type="hidden"
             name="qty"

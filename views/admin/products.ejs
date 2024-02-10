@@ -33,10 +33,10 @@ include("../components/navbar.ejs")%>
           <button
             class="bg-slate-700 px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900"
           >
-            <a href="/admin/edit-product/<%= product.id %>">Edit</a>
+            <a href="/admin/edit-product/<%= product._id %>">Edit</a>
           </button>
           <form action="/admin/delete-product" method="POST">
-            <input type="hidden" name="id" value="<%=product.id%>" />
+            <input type="hidden" name="id" value="<%=product._id%>" />
             <button
               class="bg-slate-700 px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-red-300 to-red-500 hover:text-gray-900"
             >
