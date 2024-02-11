@@ -97,9 +97,15 @@ exports.postAddToCart = async (req, res, next) => {
       totalPrice,
     };
     // storing updated cart into db
-    User.updateCart(userId, updatedCart).then((response) =>
-      res.redirect("/products")
-    );
+    User.updateCart(userId, updatedCart).then((response) => {
+      // if user add items from cart view it will riderect to cart view
+      if (req.url === "/cart") {
+        res.redirect("/cart");
+      } else {
+        // if user add items from other pages it will be redirected to /products route
+        res.redirect("/products");
+      }
+    });
   } catch (err) {
     console.log(err);
     res.redirect("/products");
