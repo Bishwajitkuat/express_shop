@@ -42,26 +42,13 @@ exports.getProductById = (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   try {
-    // as User has one to one relationship with Cart, instance of User has getCart() method to fetch the cart associated with the user
-    const cart = await req.user.getCart();
-    // as Cart has many to many relationship with Product, instance of Cart has getProducts() method to fetch all Product intances associated with the Cart instance.
-    const products = await cart.getProducts();
-    // calculating total price and total quantity
-    let totalPrice = 0;
-    let totolQty = 0;
-    for (let product of products) {
-      totalPrice += product.price * product.cartItem.quantity;
-      totolQty += product.cartItem.quantity;
-    }
-    // creating cart object for the view
-    const cartForView = {
-      products,
-      totalPrice,
-      totolQty,
-    };
+    // extracting userId
+    const userId = req.user._id;
+    // fetching cart to this user
+    const cart = await User.getCart(userId);
     // rendering view and passing data to it
     res.render("./shop/cart.ejs", {
-      cart: cartForView,
+      cart: cart,
       docTitle: "Cart",
       path: "/cart",
     });
