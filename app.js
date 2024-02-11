@@ -50,11 +50,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // middleware to fetch the user with id 1 and attach to request object
 app.use((req, res, next) => {
-  const newUser = new User("Bisso", "bisso@gmail.com");
-  newUser
-    .save()
-    .then((response) => console.log(response))
-    .catch((err) => console.log(err));
+  // const newUser = new User("Bisso", "bisso@gmail.com");
+  // newUser
+  //   .save()
+  //   .then((response) => console.log(response))
+  //   .catch((err) => console.log(err));
   User.getUserByEmail("bisso@gmail.com")
     .then((user) => {
       req.user = user;
