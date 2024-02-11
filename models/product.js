@@ -3,11 +3,12 @@ const { ObjectId } = require("mongodb");
 const db = require("../lib/database").getDB;
 
 class Product {
-  constructor(title, price, imgUrl, description) {
+  constructor(title, price, imgUrl, description, userId) {
     this.title = title;
     this.price = price;
     this.imgUrl = imgUrl;
     this.description = description;
+    this.userId = userId;
   }
   async save() {
     // saving the new product into the products collection
