@@ -114,22 +114,43 @@ exports.postAddToCart = async (req, res, next) => {
 
 exports.postRemoveFromCart = async (req, res, next) => {
   const { id, qty } = req.body;
+  const userId = req.user._id;
   try {
-    const cart = await req.user.getCart();
-    const products = await cart.getProducts({ where: { id: id } });
-    const product = products[0];
-    const newQty = product.cartItem.quantity - Number(qty);
-    if (newQty < 1) {
-      // removing relationship
-      await product.cartItem.destroy();
+    const cart = await User.getCart(userId);
+    let items = cart.items;
+    // this controller can not be called if the product does not exists in items array in cart
+    // so I am assuming the product already existed
+    const productIndex = items.findIndex((item) => item._id.toString() === id);
+    const product = items[productIndex];
+    // updating new qty
+    product.quantity = product.quantity - Number(qty);
+    if (product.quantity < 1) {
+      // removing the product from items array
+      items.splice(productIndex, 1);
     } else {
-      // updating quantity in cartItem table
-      await cart.addProduct(product, { through: { quantity: newQty } });
+      // updating items array with updated qty
+      items[productIndex] = product;
     }
-    res.redirect("/cart");
+    // calculating updated totalQuantity and totalPrice
+    let totalQuantity = 0;
+    let totalPrice = 0;
+    for (let item of items) {
+      totalQuantity += item.quantity;
+      totalPrice += item.quantity * item.price;
+    }
+    // updating cart with updated totalQuantity and totalPrice
+    const updatedCart = {
+      items,
+      totalQuantity,
+      totalPrice,
+    };
+    // storing updated cart into db
+    User.updateCart(userId, updatedCart).then((response) =>
+      res.redirect("/cart")
+    );
   } catch (err) {
     console.log(err);
-    res.redirect("/");
+    res.redirect("/cart");
   }
 };
 
