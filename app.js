@@ -22,6 +22,7 @@ liverReloadServer.server.once("connection", () => {
 const connectLiveReload = require("connect-livereload");
 // importing db
 const { mongoConnect } = require("./lib/database");
+const User = require("./models/user");
 // importing models created with sequelize to create on to many relationship
 // const Product = require("./models/product");
 // const User = require("./models/user");
@@ -48,14 +49,19 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // middleware to fetch the user with id 1 and attach to request object
-// app.use((req, res, next) => {
-//   User.findByPk(1)
-//     .then((user) => {
-//       req.user = user;
-//       next();
-//     })
-//     .catch((err) => console.log(err));
-// });
+app.use((req, res, next) => {
+  const newUser = new User("Bisso", "bisso@gmail.com");
+  newUser
+    .save()
+    .then((response) => console.log(response))
+    .catch((err) => console.log(err));
+  User.getUserByEmail("bisso@gmail.com")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
 
 // admin route
 app.use("/admin", adminRoute);
