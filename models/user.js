@@ -1,21 +1,16 @@
-const sqzType = require("sequelize");
-const db = require("../lib/database");
+const db = require("../lib/database").getDB;
 
-const User = db.define("user", {
-  id: {
-    type: sqzType.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  name: {
-    type: sqzType.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: sqzType.STRING,
-    allowNull: false,
-  },
-});
+class User {
+  constructor(name, email) {
+    this.name = name;
+    this.email = email;
+  }
+  async save() {
+    return await db().collection("users").insertOne(this);
+  }
+  static async getUserByEmail(email) {
+    return await db().collection("users").find({ email: email }).next();
+  }
+}
 
 module.exports = User;
