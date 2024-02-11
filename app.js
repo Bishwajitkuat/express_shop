@@ -55,7 +55,7 @@ app.use((req, res, next) => {
   //   .save()
   //   .then((response) => console.log(response))
   //   .catch((err) => console.log(err));
-  User.getUserByEmail("bisso@gmail.com")
+  User.getUserById("65c8a53520a9a2cb73bd10a9")
     .then((user) => {
       req.user = user;
       next();

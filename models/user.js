@@ -1,3 +1,5 @@
+const { ObjectId } = require("mongodb");
+
 const db = require("../lib/database").getDB;
 
 class User {
@@ -8,8 +10,10 @@ class User {
   async save() {
     return await db().collection("users").insertOne(this);
   }
-  static async getUserByEmail(email) {
-    return await db().collection("users").find({ email: email }).next();
+  static async getUserById(id) {
+    return await db()
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
   }
 }
 
