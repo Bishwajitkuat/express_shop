@@ -2,7 +2,7 @@
 include("../components/navbar.ejs")%>
 
 <main class="flex-grow bg-gray-900 text-slate-400 px-[5rem] py-[3rem]">
-  <% if(cart.products.length>0) { %>
+  <% if(cart.items.length>0) { %>
   <ul class="grid gap-2">
     <li class="grid grid-cols-4 mb-[1rem]">
       <p></p>
@@ -10,7 +10,7 @@ include("../components/navbar.ejs")%>
       <p class="font-bold">Unit Price(€)</p>
       <p class="font-bold">Quantity</p>
     </li>
-    <% cart.products.forEach(product =>{%>
+    <% cart.items.forEach(product =>{%>
     <li class="grid grid-cols-4 items-center">
       <img
         class="h-[3rem] rounded-md"
@@ -30,7 +30,7 @@ include("../components/navbar.ejs")%>
             +
           </button>
         </form>
-        <p><%=product.cartItem.quantity%></p>
+        <p><%=product.quantity%></p>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product._id%>" />
           <input type="hidden" name="qty" value="1" />
@@ -43,11 +43,7 @@ include("../components/navbar.ejs")%>
         </form>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product._id%>" />
-          <input
-            type="hidden"
-            name="qty"
-            value="<%=product.cartItem.quantity%>"
-          />
+          <input type="hidden" name="qty" value="<%=product.quantity%>" />
           <button
             class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-red-300 to-red-500 text-gray-950"
             type="submit"
@@ -63,7 +59,7 @@ include("../components/navbar.ejs")%>
       <p>Totals</p>
       <p></p>
       <p><%= cart.totalPrice %></p>
-      <p><%= cart.totalQty %></p>
+      <p><%= cart.totalQuantity %></p>
     </li>
   </ul>
   <form class="flex justify-end mt-[2rem]" action="/create-order" method="POST">
