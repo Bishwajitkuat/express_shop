@@ -22,7 +22,6 @@ include("../components/navbar.ejs")%>
       <div class="grid grid-cols-4 items-center justify-end">
         <form action="/cart" method="POST">
           <input type="hidden" name="productId" value="<%=product._id%>" />
-          <input type="hidden" name="price" value="<%product.price%>" />
           <button
             class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-yellow-300 to-red-400 text-gray-950"
             type="submit"
