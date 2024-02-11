@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const User = require("../models/user");
 
 // controllers for shop
 exports.getHomePage = (req, res, next) => {
@@ -72,33 +73,49 @@ exports.getCart = async (req, res, next) => {
 
 exports.postAddToCart = async (req, res, next) => {
   try {
-    const { productId, price } = req.body;
-    const cart = await req.user.getCart();
-    // checking whether the product already in cartItem table, retrun empty array if does not exits
-    const isProductExists = await cart.getProducts({
-      where: { id: productId },
-    });
-    if (isProductExists.length < 1) {
-      // this product does not exists in cartItem (connecting) table for this user and product
-      // we need to fetch the product, to add into cartItem table
-      const product = await Product.findByPk(productId);
-      // as Cart has many to many relationship with Product, it has addProduct().
-      // as the connecting table (cartItem) holds info of quantity, we can update the connecting tables fields by through property
-      await cart.addProduct(product, {
-        through: { quantity: 1 },
-      });
-      res.redirect("/products");
+    const { productId } = req.body;
+    const userId = req.user._id;
+    const cart = await User.getCart(userId);
+    let items = cart.items;
+
+    // checking whether the product already in items array in cart
+    // tow object never be same, so i am converting mongo db id object to string to compare.
+    const indexInItemsArryOfCart = items.findIndex(
+      (item) => item._id.toString() == productId
+    );
+
+    if (indexInItemsArryOfCart === -1) {
+      // this product does not exists in item array of cart
+      // we need to fetch the product, add quantity to the product and push into items array
+      const product = await Product.getProductById(productId);
+      product.quantity = 1;
+      items.push(product);
     } else {
-      const product = isProductExists[0];
-      const newQty = product.cartItem.quantity + 1;
-      // updating the relationship with updated into
-      await cart.addProduct(product, {
-        through: { quantity: newQty },
-      });
-      res.redirect("/cart");
+      // product is already exists we need to adjust the quantity of the product
+      const updatedProduct = items[indexInItemsArryOfCart];
+      updatedProduct.quantity += 1;
+      items[indexInItemsArryOfCart] = updatedProduct;
     }
+    // calculating updated totalQuantity and totalPrice
+    let totalQuantity = 0;
+    let totalPrice = 0;
+    for (let item of items) {
+      totalQuantity += item.quantity;
+      totalPrice += item.quantity * item.price;
+    }
+    // updating cart with updated totalQuantity and totalPrice
+    const updatedCart = {
+      items,
+      totalQuantity,
+      totalPrice,
+    };
+    // storing updated cart into db
+    User.updateCart(userId, updatedCart).then((response) =>
+      res.redirect("/products")
+    );
   } catch (err) {
     console.log(err);
+    res.redirect("/products");
   }
 };
 
