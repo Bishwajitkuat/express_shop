@@ -23,9 +23,19 @@ class User {
   }
   static async updateCart(userId, updatedCart) {
     // update new cart into db.
-    await db()
+    return await db()
       .collection("users")
       .updateOne({ _id: userId }, { $set: { cart: updatedCart } });
+  }
+
+  static async clearCart(userId) {
+    const emptyCart = { items: [], totalQuantity: 0, totalPrice: 0 };
+    return await db()
+      .collection("users")
+      .updateOne({ _id: userId }, { $set: { cart: emptyCart } });
+  }
+  static async createOrder(order) {
+    return await db().collection("orders").insertOne(order);
   }
 }
 
