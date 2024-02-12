@@ -163,19 +163,30 @@ exports.getCheckout = (req, res, next) => {
 
 exports.postOrder = async (req, res, next) => {
   try {
-    const cart = await req.user.getCart();
-    const products = await cart.getProducts();
-    const order = await req.user.createOrder();
-    // we are use addProducts() method to add multiple entries and we pass a arry of product as parameter
-    await order.addProducts(
-      products.map((item) => {
-        item.orderItem = { quantity: item.cartItem.quantity };
-        return item;
-      })
-    );
-    // here we can empty the cart
-    await cart.setProducts(null);
-    res.redirect("/orders");
+    const userId = req.user._id;
+    // get cart associated to userId
+    const cart = await User.getCart(userId);
+    // will not allow if there is no items in cart
+    if (cart.items.length > 0) {
+      // add other info to cart to such as user info, delevery address, time, payment methods etc.
+      const order = {
+        ...cart,
+        userId: userId.toString(),
+        date: new Date().toISOString(),
+      };
+      // adding order entry to orders collection
+      const response = await User.createOrder(order);
+      // when order is successfull add to orders collection
+      if (response.acknowledged === true) {
+        // empty the cart and write back to db
+        const response = await User.clearCart(userId);
+        if (response.acknowledged === true) {
+          res.redirect("/order");
+        }
+      }
+    } else {
+      res.redirect("/cart");
+    }
   } catch (err) {
     console.log(err);
     res.redirect("/");
