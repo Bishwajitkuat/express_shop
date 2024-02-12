@@ -37,6 +37,12 @@ class User {
   static async createOrder(order) {
     return await db().collection("orders").insertOne(order);
   }
+  static async getOrders(userId) {
+    return await db()
+      .collection("orders")
+      .find({ userId: userId.toString() })
+      .toArray();
+  }
 }
 
 module.exports = User;
