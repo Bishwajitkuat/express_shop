@@ -60,7 +60,7 @@ exports.getCart = async (req, res, next) => {
 
 exports.postAddToCart = async (req, res, next) => {
   try {
-    const { productId } = req.body;
+    const { productId, fromCart } = req.body;
     const userId = req.user._id;
     const cart = await User.getCart(userId);
     let items = cart.items;
@@ -99,7 +99,7 @@ exports.postAddToCart = async (req, res, next) => {
     // storing updated cart into db
     User.updateCart(userId, updatedCart).then((response) => {
       // if user add items from cart view it will riderect to cart view
-      if (req.url === "/cart") {
+      if (fromCart === "yes") {
         res.redirect("/cart");
       } else {
         // if user add items from other pages it will be redirected to /products route
