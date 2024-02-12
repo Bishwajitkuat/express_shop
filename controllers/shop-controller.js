@@ -181,7 +181,7 @@ exports.postOrder = async (req, res, next) => {
         // empty the cart and write back to db
         const response = await User.clearCart(userId);
         if (response.acknowledged === true) {
-          res.redirect("/order");
+          res.redirect("/orders");
         }
       }
     } else {
@@ -194,10 +194,9 @@ exports.postOrder = async (req, res, next) => {
 };
 
 exports.getOrders = async (req, res, next) => {
-  // providing include option will fetch related table data
   try {
-    const orders = await req.user.getOrders({ include: ["products"] });
-    console.log(orders);
+    const userId = req.user._id;
+    const orders = await User.getOrders(userId);
     res.render("./shop/orders.ejs", {
       orders,
       docTitle: "Orders",
