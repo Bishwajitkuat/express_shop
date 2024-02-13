@@ -30,7 +30,7 @@ exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
   if (productId) {
     // fetching product object for this productId and sending the object to add-edit-product view
-    Product.getProductById(productId)
+    Product.findById(productId)
       .then((product) => {
         res.render("./admin/add-edit-product.ejs", {
           product,
