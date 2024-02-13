@@ -73,7 +73,7 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.getAllProducts()
+  Product.find()
     .then((products) =>
       res.render("./admin/products.ejs", {
         products,
