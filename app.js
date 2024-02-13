@@ -23,6 +23,7 @@ const connectLiveReload = require("connect-livereload");
 // importing mongoose
 const mongoose = require("mongoose");
 require("dotenv").config();
+const User = require("./models/user");
 
 // creating app
 const app = express();
@@ -40,6 +41,17 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// assigning user to request object
+app.use((req, res, next) => {
+  User.findById("65cbbc1a91b53d07c1babcd4")
+    .then((user) => {
+      req.user = user;
+      // go to next only when user propety is assigned
+      next();
+    })
+    .catch((err) => console.log(err));
+});
+
 // admin route
 app.use("/admin", adminRoute);
 // shop route
@@ -52,6 +64,19 @@ mongoose
     `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@cluster0.ttv2qxt.mongodb.net/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`
   )
   .then((response) => {
+    // creating and saving user in db for test
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: "bisso",
+          email: "bisso@gmail.com",
+          cart: {
+            items: [],
+          },
+        });
+        user.save();
+      }
+    });
     app.listen(3000, () => console.log("listening at port 3000"));
   })
   .catch((err) => console.log(err));
