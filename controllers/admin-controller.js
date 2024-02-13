@@ -13,13 +13,9 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const { title, imgUrl, description, user } = req.body;
   const price = Number(req.body.price);
-  const newProduct = new Product(
-    title,
-    price,
-    imgUrl,
-    description,
-    req.user._id
-  );
+  // creating new product from Product modle
+  const newProduct = new Product({ title, price, imgUrl, description });
+  // using mongoose's model's save mthod to store new instance to db
   newProduct
     .save()
     .then((response) => res.redirect("/admin/products"))
