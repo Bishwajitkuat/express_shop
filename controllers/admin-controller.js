@@ -51,9 +51,21 @@ exports.postEditProduct = (req, res, next) => {
   const updatedProduct = req.body;
   // price from input field comes as string, so converting it into number
   updatedProduct.price = Number(updatedProduct.price);
-  // using updateProduct static method of Product class to update the product in db
-  Product.updateProduct(updatedProduct)
-    .then((response) => res.redirect("/admin/products"))
+  // mongoose does not have any derect method to update an entry hoever we can fethe the entry, modify it and save back agian to update an entry
+  Product.findById(updatedProduct.id)
+    .then((product) => {
+      product.title = updatedProduct.title;
+      product.price = updatedProduct.price;
+      product.description = updatedProduct.description;
+      product.imgUrl = updatedProduct.imgUrl;
+      product
+        .save()
+        .then((response) => res.redirect("/admin/products"))
+        .catch((err) => {
+          console.log(err);
+          res.redirect("/admin/products");
+        });
+    })
     .catch((err) => {
       console.log(err);
       res.redirect("/admin/products");
