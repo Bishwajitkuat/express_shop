@@ -4,7 +4,7 @@ const User = require("../models/user");
 // controllers for shop
 exports.getHomePage = (req, res, next) => {
   // findAll() method will return all products in an array
-  Product.getAllProducts()
+  Product.find()
     .then((products) => {
       res.render("./shop/index.ejs", { products, docTitle: "Shop", path: "/" });
     })
@@ -13,7 +13,7 @@ exports.getHomePage = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   // findAll() method will return all products in an array
-  Product.getAllProducts()
+  Product.find()
     .then((products) => {
       res.render("./shop/product-list.ejs", {
         products,
