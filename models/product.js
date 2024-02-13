@@ -19,6 +19,11 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  userId: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "User",
+    require: true,
+  },
 });
 
 // creating Product model from model method of mongoose
