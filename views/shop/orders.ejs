@@ -7,8 +7,8 @@ include("../components/navbar.ejs")%>
     <% orders.forEach(order =>{ %>
     <li>
       <div class="mb-[1rem]">
-        <p class="text-[1.2rem] font-semibold">Order ID: <%= order.id%></p>
-        <p>Date: <%= order.createdAt.toISOString() %></p>
+        <p class="text-[1.2rem] font-semibold">Order ID: <%= order._id%></p>
+        <p>Date: <%= order.date %></p>
       </div>
       <ul class="grid gap-2">
         <li class="grid grid-cols-4">
@@ -17,22 +17,19 @@ include("../components/navbar.ejs")%>
           <p class="font-bold">Qty</p>
           <p class="font-bold">Total($)</p>
         </li>
-        <% order.products.forEach(product=>{ %>
+        <% order.items.forEach(product=>{ %>
         <li class="grid grid-cols-4">
           <p><%=product.title%></p>
           <p><%=product.price%></p>
-          <p><%=product.orderItem.quantity %></p>
-          <p><%=(product.price * product.orderItem.quantity) %></p>
+          <p><%=product.quantity %></p>
+          <p><%=(product.price * product.quantity) %></p>
         </li>
         <%})%>
         <li
           class="grid grid-cols-4 font-bold tracking-widest pt-[1rem] border-t border-dotted"
         >
           <p class="col-span-3">Total</p>
-          <p>
-            <%= order.products.reduce((acc, product)=>acc +
-            product.price*product.orderItem.quantity,0) %>
-          </p>
+          <p><%= order.totalPrice %></p>
         </li>
       </ul>
     </li>

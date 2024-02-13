@@ -1,21 +1,48 @@
-const sqzType = require("sequelize");
-const db = require("../lib/database");
+const { ObjectId } = require("mongodb");
 
-const User = db.define("user", {
-  id: {
-    type: sqzType.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  name: {
-    type: sqzType.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: sqzType.STRING,
-    allowNull: false,
-  },
-});
+const db = require("../lib/database").getDB;
+
+class User {
+  constructor(name, email) {
+    this.name = name;
+    this.email = email;
+    this.cart = { items: [], totalQuantity: 0, totalPrice: 0 };
+  }
+  async save() {
+    return await db().collection("users").insertOne(this);
+  }
+  static async getUserById(id) {
+    return await db()
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
+  }
+  static async getCart(userId) {
+    // fetch cart object for the userId passed as parameter
+    const user = await db().collection("users").findOne({ _id: userId });
+    return user.cart;
+  }
+  static async updateCart(userId, updatedCart) {
+    // update new cart into db.
+    return await db()
+      .collection("users")
+      .updateOne({ _id: userId }, { $set: { cart: updatedCart } });
+  }
+
+  static async clearCart(userId) {
+    const emptyCart = { items: [], totalQuantity: 0, totalPrice: 0 };
+    return await db()
+      .collection("users")
+      .updateOne({ _id: userId }, { $set: { cart: emptyCart } });
+  }
+  static async createOrder(order) {
+    return await db().collection("orders").insertOne(order);
+  }
+  static async getOrders(userId) {
+    return await db()
+      .collection("orders")
+      .find({ userId: userId.toString() })
+      .toArray();
+  }
+}
 
 module.exports = User;

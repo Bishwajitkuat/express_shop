@@ -9,7 +9,7 @@ const adminRoute = require("./routes/adminRoute");
 // importing shop routes
 const shopRoute = require("./routes/shopRoute");
 const { get404 } = require("./controllers/error-controller");
-// livereload
+// // livereload
 const liveReload = require("livereload");
 const liverReloadServer = liveReload.createServer();
 liverReloadServer.watch(path.join(__dirname));
@@ -21,15 +21,16 @@ liverReloadServer.server.once("connection", () => {
 
 const connectLiveReload = require("connect-livereload");
 // importing db
-const db = require("./lib/database");
-// importing models created with sequelize to create on to many relationship
-const Product = require("./models/product");
+const { mongoConnect } = require("./lib/database");
 const User = require("./models/user");
-const Cart = require("./models/cart");
-const CartItem = require("./models/cartItem");
-const Order = require("./models/order");
-const OderItem = require("./models/orderItem");
-const OrderItem = require("./models/orderItem");
+// importing models created with sequelize to create on to many relationship
+// const Product = require("./models/product");
+// const User = require("./models/user");
+// const Cart = require("./models/cart");
+// const CartItem = require("./models/cartItem");
+// const Order = require("./models/order");
+// const OderItem = require("./models/orderItem");
+// const OrderItem = require("./models/orderItem");
 
 // creating app
 const app = express();
@@ -49,7 +50,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // middleware to fetch the user with id 1 and attach to request object
 app.use((req, res, next) => {
-  User.findByPk(1)
+  // const newUser = new User("Bisso", "bisso@gmail.com");
+  // newUser
+  //   .save()
+  //   .then((response) => console.log(response))
+  //   .catch((err) => console.log(err));
+  User.getUserById("65c8b53599c3c1cb8890b0fd")
     .then((user) => {
       req.user = user;
       next();
@@ -66,33 +72,32 @@ app.use(get404);
 
 // creating one to many relationship User to
 // onDelete: 'CASCADE' => deletion of User will delete User's Product
-User.hasMany(Product);
-Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+// User.hasMany(Product);
+// Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
 // creating one to one relationship between User and Cart
-User.hasOne(Cart);
-Cart.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+// User.hasOne(Cart);
+// Cart.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
 // creating many to many relationships among Cart and Product
 // CartItem will be intermediary to store the relationships along with quantity information
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
+// Cart.belongsToMany(Product, { through: CartItem });
+// Product.belongsToMany(Cart, { through: CartItem });
 
 // creating one to many relationships between Order and User
-Order.belongsTo(User);
-User.hasMany(Order);
+// Order.belongsTo(User);
+// User.hasMany(Order);
 // creating many to many relationships between Order and Product
-Order.belongsToMany(Product, { through: OrderItem });
-Product.belongsToMany(Order, { through: OrderItem });
+// Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsToMany(Order, { through: OrderItem });
 
 // sysnc the data base before starting the app
 // if we want to overwrite old database with new configaration (relationship)
 // NOTE: we have to pass a condition {force: true} into sync() method.
 // AFTER sync in , we have to remove the condition, otherwise it will erase db and rewrite
-db.sync()
-  .then((response) => {
+
+mongoConnect()
+  .then(() => {
     app.listen(3000, () => console.log("listening at port 3000"));
   })
   .catch((err) => console.log(err));
-
-// app.listen(3000, () => console.log("listening at port 3000"));
