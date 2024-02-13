@@ -1,48 +1,28 @@
-const { ObjectId } = require("mongodb");
+const mongoose = require("mongoose");
 
-const db = require("../lib/database").getDB;
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    require: true,
+  },
+  email: {
+    type: String,
+    require: true,
+  },
+  cart: {
+    items: [
+      {
+        productId: {
+          type: mongoose.SchemaTypes.ObjectId,
+          require: true,
+        },
+        quantity: {
+          type: Number,
+          require: true,
+        },
+      },
+    ],
+  },
+});
 
-class User {
-  constructor(name, email) {
-    this.name = name;
-    this.email = email;
-    this.cart = { items: [], totalQuantity: 0, totalPrice: 0 };
-  }
-  async save() {
-    return await db().collection("users").insertOne(this);
-  }
-  static async getUserById(id) {
-    return await db()
-      .collection("users")
-      .findOne({ _id: new ObjectId(id) });
-  }
-  static async getCart(userId) {
-    // fetch cart object for the userId passed as parameter
-    const user = await db().collection("users").findOne({ _id: userId });
-    return user.cart;
-  }
-  static async updateCart(userId, updatedCart) {
-    // update new cart into db.
-    return await db()
-      .collection("users")
-      .updateOne({ _id: userId }, { $set: { cart: updatedCart } });
-  }
-
-  static async clearCart(userId) {
-    const emptyCart = { items: [], totalQuantity: 0, totalPrice: 0 };
-    return await db()
-      .collection("users")
-      .updateOne({ _id: userId }, { $set: { cart: emptyCart } });
-  }
-  static async createOrder(order) {
-    return await db().collection("orders").insertOne(order);
-  }
-  static async getOrders(userId) {
-    return await db()
-      .collection("orders")
-      .find({ userId: userId.toString() })
-      .toArray();
-  }
-}
-
-module.exports = User;
+module.exports = mongoose.model("User", UserSchema);
