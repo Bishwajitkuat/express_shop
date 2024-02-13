@@ -11,10 +11,17 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imgUrl, description, user } = req.body;
+  const { title, imgUrl, description } = req.body;
+  const user = req.user;
   const price = Number(req.body.price);
   // creating new product from Product modle
-  const newProduct = new Product({ title, price, imgUrl, description });
+  const newProduct = new Product({
+    title,
+    price,
+    imgUrl,
+    description,
+    userId: user._id,
+  });
   // using mongoose's model's save mthod to store new instance to db
   newProduct
     .save()
