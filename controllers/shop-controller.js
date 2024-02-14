@@ -134,7 +134,7 @@ exports.postOrder = async (req, res, next) => {
         userId: userWithCartData._id,
       });
       const response = await order.save();
-          res.redirect("/orders");
+      res.redirect("/orders");
     } else {
       res.redirect("/cart");
     }
@@ -147,7 +147,7 @@ exports.postOrder = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const orders = await User.getOrders(userId);
+    const orders = await Order.find({ userId: userId });
     res.render("./shop/orders.ejs", {
       orders,
       docTitle: "Orders",
