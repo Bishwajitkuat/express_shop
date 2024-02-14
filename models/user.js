@@ -1,48 +1,80 @@
-const { ObjectId } = require("mongodb");
+const mongoose = require("mongoose");
 
-const db = require("../lib/database").getDB;
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    require: true,
+  },
+  email: {
+    type: String,
+    require: true,
+  },
+  cart: {
+    items: [
+      {
+        productId: {
+          type: mongoose.SchemaTypes.ObjectId,
+          ref: "Product",
+          require: true,
+        },
+        quantity: {
+          type: Number,
+          require: true,
+        },
+      },
+    ],
+  },
+});
 
-class User {
-  constructor(name, email) {
-    this.name = name;
-    this.email = email;
-    this.cart = { items: [], totalQuantity: 0, totalPrice: 0 };
+// adding utility method to instances created from User model, arrow function does not work here
+UserSchema.methods.addToCart = function (productId) {
+  // whether the product already existed in the items array, if does not exist productIndex value will be -1
+  const productIndex = this.cart.items.findIndex(
+    (item) => item.productId.toString() === productId.toString()
+  );
+  let updatedItem = {};
+  if (productIndex === -1) {
+    // this product does not exist in the items array, so adding productId and quantity values
+    updatedItem.productId = productId;
+    updatedItem.quantity = 1;
+    this.cart.items.push(updatedItem);
+  } else {
+    // the product already existed in the items array so only updating the quantity
+    updatedItem = this.cart.items[productIndex];
+    updatedItem.quantity += 1;
+    // replacing the old itme with updated item
+    this.cart.items.splice(productIndex, updatedItem);
   }
-  async save() {
-    return await db().collection("users").insertOne(this);
-  }
-  static async getUserById(id) {
-    return await db()
-      .collection("users")
-      .findOne({ _id: new ObjectId(id) });
-  }
-  static async getCart(userId) {
-    // fetch cart object for the userId passed as parameter
-    const user = await db().collection("users").findOne({ _id: userId });
-    return user.cart;
-  }
-  static async updateCart(userId, updatedCart) {
-    // update new cart into db.
-    return await db()
-      .collection("users")
-      .updateOne({ _id: userId }, { $set: { cart: updatedCart } });
-  }
+  // saving back to the db.
+  return this.save();
+};
 
-  static async clearCart(userId) {
-    const emptyCart = { items: [], totalQuantity: 0, totalPrice: 0 };
-    return await db()
-      .collection("users")
-      .updateOne({ _id: userId }, { $set: { cart: emptyCart } });
-  }
-  static async createOrder(order) {
-    return await db().collection("orders").insertOne(order);
-  }
-  static async getOrders(userId) {
-    return await db()
-      .collection("orders")
-      .find({ userId: userId.toString() })
-      .toArray();
-  }
-}
+UserSchema.methods.removeFromCart = function (productId, qty) {
+  // whether the product already existed in the items array, if does not exist productIndex value will be -1
+  const productIndex = this.cart.items.findIndex(
+    (item) => item.productId.toString() === productId.toString()
+  );
+  // if the product id does not exist in the items array, removing will not continue
+  if (productIndex === -1) throw new Error("Product does not exist in cart!");
+  const updatedProduct = this.cart.items[productIndex];
+  // qty comes from input field so, needed to be converted to number
+  updatedProduct.quantity = updatedProduct.quantity - Number(qty);
 
-module.exports = User;
+  if (updatedProduct.quantity < 1) {
+    // remove from items array if new quantity is less than 1
+    this.cart.items.splice(productIndex, 1);
+  } else {
+    // replacing object having old qty with updated object having updated qty
+    this.cart.items.splice(productIndex, updatedProduct);
+  }
+  // saving back to the db.
+  return this.save();
+};
+
+// utinity method to clear cart object of a user.
+UserSchema.methods.clearCart = function () {
+  this.cart = { items: [] };
+  return this.save();
+};
+
+module.exports = mongoose.model("User", UserSchema);

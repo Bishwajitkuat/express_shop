@@ -14,14 +14,18 @@ include("../components/navbar.ejs")%>
     <li class="grid grid-cols-4 items-center">
       <img
         class="h-[3rem] rounded-md"
-        src="<%=product.imgUrl%>"
-        alt="<%=product.title%>"
+        src="<%=product.productId.imgUrl%>"
+        alt="<%=product.productId.title%>"
       />
-      <p><%=product.title%></p>
-      <p><%=product.price%></p>
+      <p><%=product.productId.title%></p>
+      <p><%=product.productId.price%></p>
       <div class="grid grid-cols-4 items-center justify-end">
         <form action="/cart" method="POST">
-          <input type="hidden" name="productId" value="<%=product._id%>" />
+          <input
+            type="hidden"
+            name="productId"
+            value="<%=product.productId._id%>"
+          />
           <input type="hidden" name="fromCart" value="yes" />
           <button
             class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-yellow-300 to-red-400 text-gray-950"
@@ -32,7 +36,7 @@ include("../components/navbar.ejs")%>
         </form>
         <p><%=product.quantity%></p>
         <form action="/cart-remove" method="POST">
-          <input type="hidden" name="id" value="<%=product._id%>" />
+          <input type="hidden" name="id" value="<%=product.productId._id%>" />
           <input type="hidden" name="qty" value="1" />
           <button
             class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-red-300 to-red-500 text-gray-950"
@@ -42,7 +46,7 @@ include("../components/navbar.ejs")%>
           </button>
         </form>
         <form action="/cart-remove" method="POST">
-          <input type="hidden" name="id" value="<%=product._id%>" />
+          <input type="hidden" name="id" value="<%=product.productId._id%>" />
           <input type="hidden" name="qty" value="<%=product.quantity%>" />
           <button
             class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-red-300 to-red-500 text-gray-950"

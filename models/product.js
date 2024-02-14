@@ -1,43 +1,31 @@
 "use strict";
-const { ObjectId } = require("mongodb");
-const db = require("../lib/database").getDB;
+const mongoose = require("mongoose");
 
-class Product {
-  constructor(title, price, imgUrl, description, userId) {
-    this.title = title;
-    this.price = price;
-    this.imgUrl = imgUrl;
-    this.description = description;
-    this.userId = userId;
-  }
-  async save() {
-    // saving the new product into the products collection
-    const response = await db().collection("products").insertOne(this);
-    return response;
-  }
-  // featching all products from products collection by find method
-  static async getAllProducts() {
-    return await db().collection("products").find().toArray();
-  }
-  static async getProductById(productId) {
-    // featching a single product by productId
-    return await db()
-      .collection("products")
-      .find({ _id: new ObjectId(productId) })
-      .next();
-  }
-  static async updateProduct(product) {
-    // updating product
-    return await db()
-      .collection("products")
-      .updateOne({ _id: new ObjectId(product.id) }, { $set: product });
-  }
-  static async deleteProductById(productId) {
-    // deleting product from products collection
-    return await db()
-      .collection("products")
-      .deleteOne({ _id: new ObjectId(productId) });
-  }
-}
+// creating schema from Schema method of mongoose
+const ProductSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    require: true,
+  },
+  price: {
+    type: Number,
+    require: true,
+  },
+  description: {
+    type: String,
+    require: true,
+  },
+  imgUrl: {
+    type: String,
+    require: true,
+  },
+  userId: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "User",
+    require: true,
+  },
+});
 
+// creating Product model from model method of mongoose
+const Product = mongoose.model("Product", ProductSchema);
 module.exports = Product;

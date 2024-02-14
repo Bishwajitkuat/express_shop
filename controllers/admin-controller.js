@@ -11,15 +11,18 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imgUrl, description, user } = req.body;
+  const { title, imgUrl, description } = req.body;
+  const user = req.user;
   const price = Number(req.body.price);
-  const newProduct = new Product(
+  // creating new product from Product modle
+  const newProduct = new Product({
     title,
     price,
     imgUrl,
     description,
-    req.user._id
-  );
+    userId: user._id,
+  });
+  // using mongoose's model's save mthod to store new instance to db
   newProduct
     .save()
     .then((response) => res.redirect("/admin/products"))
@@ -34,7 +37,7 @@ exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
   if (productId) {
     // fetching product object for this productId and sending the object to add-edit-product view
-    Product.getProductById(productId)
+    Product.findById(productId)
       .then((product) => {
         res.render("./admin/add-edit-product.ejs", {
           product,
@@ -55,9 +58,21 @@ exports.postEditProduct = (req, res, next) => {
   const updatedProduct = req.body;
   // price from input field comes as string, so converting it into number
   updatedProduct.price = Number(updatedProduct.price);
-  // using updateProduct static method of Product class to update the product in db
-  Product.updateProduct(updatedProduct)
-    .then((response) => res.redirect("/admin/products"))
+  // mongoose does not have any derect method to update an entry hoever we can fethe the entry, modify it and save back agian to update an entry
+  Product.findById(updatedProduct.id)
+    .then((product) => {
+      product.title = updatedProduct.title;
+      product.price = updatedProduct.price;
+      product.description = updatedProduct.description;
+      product.imgUrl = updatedProduct.imgUrl;
+      product
+        .save()
+        .then((response) => res.redirect("/admin/products"))
+        .catch((err) => {
+          console.log(err);
+          res.redirect("/admin/products");
+        });
+    })
     .catch((err) => {
       console.log(err);
       res.redirect("/admin/products");
@@ -67,7 +82,7 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const id = req.body.id;
   if (id) {
-    Product.deleteProductById(id)
+    Product.findByIdAndDelete(id)
       .then((response) => res.redirect("/admin/products"))
       .catch((err) => {
         console.log(err);
@@ -77,7 +92,7 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.getAllProducts()
+  Product.find()
     .then((products) =>
       res.render("./admin/products.ejs", {
         products,
