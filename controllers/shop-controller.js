@@ -75,10 +75,16 @@ exports.getCart = async (req, res, next) => {
 
 exports.postAddToCart = async (req, res, next) => {
   try {
-    const { productId } = req.body;
+    const { productId, fromCart } = req.body;
     const user = req.user;
     // utility method of User model is used to add or increase the quanity of a product
-    user.addToCart(productId).then((response) => res.redirect("/products"));
+    user.addToCart(productId).then((response) => {
+      if (fromCart === "yes") {
+        res.redirect("/cart");
+      } else {
+        res.redirect("/products");
+      }
+    });
   } catch (err) {
     console.log(err);
     res.redirect("/products");
