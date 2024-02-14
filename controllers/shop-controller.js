@@ -42,10 +42,24 @@ exports.getProductById = (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   try {
-    // extracting userId
-    const userId = req.user._id;
-    // fetching cart to this user
-    const cart = await User.getCart(userId);
+    // fetching products in ref to current user
+    const userWithCartItems = await req.user.populate("cart.items.productId");
+    // taking only items array to calculate totalPrice and totalQuantity
+    const items = userWithCartItems.cart.items;
+    // calculating totalPrice and totalQuantity
+    let totalQuantity = 0;
+    let totalPrice = 0;
+    for (let item of items) {
+      totalQuantity += item.quantity;
+      totalPrice += item.quantity * item.productId.price;
+    }
+    // structuring cart object as expected in view
+    const cart = {
+      items,
+      totalQuantity,
+      totalPrice,
+    };
+
     // rendering view and passing data to it
     res.render("./shop/cart.ejs", {
       cart: cart,
