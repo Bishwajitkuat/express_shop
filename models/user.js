@@ -49,4 +49,26 @@ UserSchema.methods.addToCart = function (productId) {
   return this.save();
 };
 
+UserSchema.methods.removeFromCart = function (productId, qty) {
+  // whether the product already existed in the items array, if does not exist productIndex value will be -1
+  const productIndex = this.cart.items.findIndex(
+    (item) => item.productId.toString() === productId.toString()
+  );
+  // if the product id does not exist in the items array, removing will not continue
+  if (productIndex === -1) throw new Error("Product does not exist in cart!");
+  const updatedProduct = this.cart.items[productIndex];
+  // qty comes from input field so, needed to be converted to number
+  updatedProduct.quantity = updatedProduct.quantity - Number(qty);
+
+  if (updatedProduct.quantity < 1) {
+    // remove from items array if new quantity is less than 1
+    this.cart.items.splice(productIndex, 1);
+  } else {
+    // replacing object having old qty with updated object having updated qty
+    this.cart.items.splice(productIndex, updatedProduct);
+  }
+  // saving back to the db.
+  return this.save();
+};
+
 module.exports = mongoose.model("User", UserSchema);
