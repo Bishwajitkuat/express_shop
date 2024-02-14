@@ -71,4 +71,10 @@ UserSchema.methods.removeFromCart = function (productId, qty) {
   return this.save();
 };
 
+// utinity method to clear cart object of a user.
+UserSchema.methods.clearCart = function () {
+  this.cart = { items: [] };
+  return this.save();
+};
+
 module.exports = mongoose.model("User", UserSchema);
