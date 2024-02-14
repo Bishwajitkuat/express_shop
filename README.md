@@ -7,7 +7,8 @@ A CRUD app where user can list their products and buy products from other users.
 - Nodejs
 - Express
 - Ejs
-- Mongodb
+- MongoDB
+- Mongoose ODM
 
 ## Author
 
