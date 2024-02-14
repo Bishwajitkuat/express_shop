@@ -1,3 +1,4 @@
+const Order = require("../models/order");
 const Product = require("../models/product");
 const User = require("../models/user");
 
@@ -105,27 +106,35 @@ exports.getCheckout = (req, res, next) => {
 
 exports.postOrder = async (req, res, next) => {
   try {
-    const userId = req.user._id;
-    // get cart associated to userId
-    const cart = await User.getCart(userId);
+    const userWithCartData = await req.user.populate("cart.items.productId");
+    const cart = userWithCartData.cart;
     // will not allow if there is no items in cart
     if (cart.items.length > 0) {
-      // add other info to cart to such as user info, delevery address, time, payment methods etc.
-      const order = {
-        ...cart,
-        userId: userId.toString(),
-        date: new Date().toISOString(),
-      };
-      // adding order entry to orders collection
-      const response = await User.createOrder(order);
-      // when order is successfull add to orders collection
-      if (response.acknowledged === true) {
-        // empty the cart and write back to db
-        const response = await User.clearCart(userId);
-        if (response.acknowledged === true) {
-          res.redirect("/orders");
-        }
+      // restructuring product objects as expected in itmes array in Order model
+      const items = [];
+      for (let item of cart.items) {
+        items.push({
+          title: item.productId.title,
+          price: item.productId.price,
+          quantity: item.quantity,
+        });
       }
+      // calculating totalQuantity and totalPrice
+      const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
+      const totalPrice = items.reduce(
+        (acc, item) => acc + item.quantity * item.price,
+        0
+      );
+      // creating order object as expected in Order model
+      const order = new Order({
+        items,
+        totalQuantity,
+        totalPrice,
+        date: new Date().toISOString(),
+        userId: userWithCartData._id,
+      });
+      const response = await order.save();
+          res.redirect("/orders");
     } else {
       res.redirect("/cart");
     }
