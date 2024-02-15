@@ -2,8 +2,8 @@ const { getIsLoggedInFromCooke } = require("../lib/cookie-extractor");
 
 // controller for handling GET request to /login route
 exports.getLogin = (req, res, next) => {
-  // using helper function to extract isLoggedIn cookie value
-  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   // passing isLoggedIn value for conditional rendering in navbar.
   res.render("./auth/login.ejs", {
     docTitle: "Login",

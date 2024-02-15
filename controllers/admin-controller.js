@@ -3,8 +3,8 @@ const Product = require("../models/product");
 
 // controllers for adding new product
 exports.getAddProduct = (req, res, next) => {
-  // using helper function to extract isLoggedIn cookie value
-  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   // sending response form ejs templeting engine
   if (isLoggedIn) {
     res.render("./admin/add-edit-product.ejs", {
@@ -43,8 +43,8 @@ exports.postAddProduct = (req, res, next) => {
 // controllers for editing products
 exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
-  // using helper function to extract isLoggedIn cookie value
-  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   if (productId) {
     // fetching product object for this productId and sending the object to add-edit-product view
     Product.findById(productId)
@@ -107,7 +107,8 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   Product.find()
     .then((products) => {
       if (isLoggedIn) {

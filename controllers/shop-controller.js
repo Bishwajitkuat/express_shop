@@ -5,8 +5,8 @@ const User = require("../models/user");
 
 // controllers for shop
 exports.getHomePage = (req, res, next) => {
-  // using helper function to extract isLoggedIn cookie value
-  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   // findAll() method will return all products in an array
   Product.find()
     .then((products) => {
@@ -22,8 +22,8 @@ exports.getHomePage = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  // using helper function to extract isLoggedIn cookie value
-  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
 
   // findAll() method will return all products in an array
   Product.find()
@@ -40,7 +40,8 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getProductById = (req, res, next) => {
-  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   const productId = req.params.productId;
   Product.findById(productId)
     .then((product) => {
@@ -59,7 +60,8 @@ exports.getProductById = (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   try {
-    const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+    // extracting isLoggedIn value from session
+    const isLoggedIn = req.session.isLoggedIn;
     // fetching products in ref to current user
     const userWithCartItems = await req.user.populate("cart.items.productId");
     // taking only items array to calculate totalPrice and totalQuantity
@@ -122,7 +124,8 @@ exports.postRemoveFromCart = async (req, res, next) => {
 };
 
 exports.getCheckout = (req, res, next) => {
-  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   res.render("./shop/checkout.ejs", {
     docTitle: "Checkout",
     path: "/checkout",
@@ -174,7 +177,8 @@ exports.postOrder = async (req, res, next) => {
 
 exports.getOrders = async (req, res, next) => {
   try {
-    const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+    // extracting isLoggedIn value from session
+    const isLoggedIn = req.session.isLoggedIn;
     const userId = req.user._id;
     const orders = await Order.find({ userId: userId });
     res.render("./shop/orders.ejs", {
