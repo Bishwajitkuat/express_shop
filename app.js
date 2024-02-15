@@ -4,7 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 // importing path module for node
 const path = require("path");
-// importing admin routes
+// importing admin routesmajority
 const adminRoute = require("./routes/adminRoute");
 // importing shop routes
 const shopRoute = require("./routes/shopRoute");
@@ -13,6 +13,9 @@ const authRoute = require("./routes/authRoute");
 const { get404 } = require("./controllers/error-controller");
 // importing session
 const session = require("express-session");
+// importing MongoDBStore class
+const MongoDBStore = require("connect-mongodb-session")(session);
+
 // livereload
 const liveReload = require("livereload");
 const liverReloadServer = liveReload.createServer();
@@ -38,9 +41,20 @@ app.use(connectLiveReload());
 app.set("view engine", "ejs");
 // registering default view dir
 app.set("views", path.join(__dirname, "views"));
+// creating an instance of MongoDBStore class which will store session, fetch and compare
+const sessionStore = new MongoDBStore({
+  uri: `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@cluster0.ttv2qxt.mongodb.net/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`,
+  // collection name will be adjuctly what  we will pass, mongodb will not make it plural
+  collection: "sessions",
+});
 // middleware to configure session
 app.use(
-  session({ secret: "my secret", resave: false, saveUninitialized: false })
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+  })
 );
 
 // middleware
