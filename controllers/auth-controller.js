@@ -22,3 +22,11 @@ exports.postLogin = (req, res, next) => {
   }
   res.redirect("/");
 };
+
+// handles POST request to /logout route, user session will be destored, thus user will be logged out and redirected to home page.
+exports.postLogOut = (req, res, next) => {
+  // calling destroy method on session will removed the session from db.
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
+};
