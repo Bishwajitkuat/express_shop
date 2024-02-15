@@ -1,5 +1,3 @@
-const { getIsLoggedInFromCooke } = require("../lib/cookie-extractor");
-
 // controller for handling GET request to /login route
 exports.getLogin = (req, res, next) => {
   // extracting isLoggedIn value from session

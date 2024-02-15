@@ -1,5 +1,3 @@
-const { getIsLoggedInFromCooke } = require("../lib/cookie-extractor");
-
 exports.get404 = (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;

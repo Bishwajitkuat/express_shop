@@ -1,4 +1,3 @@
-const { getIsLoggedInFromCooke } = require("../lib/cookie-extractor");
 const Product = require("../models/product");
 
 // controllers for adding new product
