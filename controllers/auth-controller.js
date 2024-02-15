@@ -11,7 +11,14 @@ exports.getLogin = (req, res, next) => {
 };
 // controller for handling POST request to /login route
 exports.postLogin = (req, res, next) => {
-  // setting session
-  req.session.isLoggedIn = true;
+  try {
+    const userId = "65cbbc1a91b53d07c1babcd4";
+    // setting session's isLoggedIn key
+    req.session.isLoggedIn = true;
+    // setting session's userId
+    req.session.userId = userId;
+  } catch {
+    (err) => console.log(err);
+  }
   res.redirect("/");
 };
