@@ -1,31 +1,46 @@
+const { getIsLoggedInFromCooke } = require("../lib/cookie-extractor");
 const Order = require("../models/order");
 const Product = require("../models/product");
 const User = require("../models/user");
 
 // controllers for shop
 exports.getHomePage = (req, res, next) => {
+  // using helper function to extract isLoggedIn cookie value
+  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
   // findAll() method will return all products in an array
   Product.find()
     .then((products) => {
-      res.render("./shop/index.ejs", { products, docTitle: "Shop", path: "/" });
+      // passing isLoggedIn value for conditional rendering in navbar.
+      res.render("./shop/index.ejs", {
+        products,
+        docTitle: "Shop",
+        path: "/",
+        isLoggedIn,
+      });
     })
     .catch((err) => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
+  // using helper function to extract isLoggedIn cookie value
+  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
+
   // findAll() method will return all products in an array
   Product.find()
     .then((products) => {
+      // passing isLoggedIn value for conditional rendering in navbar.
       res.render("./shop/product-list.ejs", {
         products,
         docTitle: "Products",
         path: "/products",
+        isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
 };
 
 exports.getProductById = (req, res, next) => {
+  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
   const productId = req.params.productId;
   Product.findById(productId)
     .then((product) => {
@@ -33,6 +48,7 @@ exports.getProductById = (req, res, next) => {
         product: product,
         docTitle: product.title,
         path: "/products",
+        isLoggedIn,
       });
     })
     .catch((err) => {
@@ -43,6 +59,7 @@ exports.getProductById = (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   try {
+    const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
     // fetching products in ref to current user
     const userWithCartItems = await req.user.populate("cart.items.productId");
     // taking only items array to calculate totalPrice and totalQuantity
@@ -66,6 +83,7 @@ exports.getCart = async (req, res, next) => {
       cart: cart,
       docTitle: "Cart",
       path: "/cart",
+      isLoggedIn,
     });
   } catch (err) {
     console.log(err);
@@ -104,9 +122,11 @@ exports.postRemoveFromCart = async (req, res, next) => {
 };
 
 exports.getCheckout = (req, res, next) => {
+  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
   res.render("./shop/checkout.ejs", {
     docTitle: "Checkout",
     path: "/checkout",
+    isLoggedIn,
   });
 };
 
@@ -154,12 +174,14 @@ exports.postOrder = async (req, res, next) => {
 
 exports.getOrders = async (req, res, next) => {
   try {
+    const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
     const userId = req.user._id;
     const orders = await Order.find({ userId: userId });
     res.render("./shop/orders.ejs", {
       orders,
       docTitle: "Orders",
       path: "/orders",
+      isLoggedIn,
     });
   } catch (err) {
     console.log(err);

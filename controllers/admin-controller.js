@@ -1,12 +1,16 @@
+const { getIsLoggedInFromCooke } = require("../lib/cookie-extractor");
 const Product = require("../models/product");
 
 // controllers for adding new product
 exports.getAddProduct = (req, res, next) => {
+  // using helper function to extract isLoggedIn cookie value
+  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
   // sending response form ejs templeting engine
   res.render("./admin/add-edit-product.ejs", {
     docTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
+    isLoggedIn,
   });
 };
 
@@ -35,6 +39,8 @@ exports.postAddProduct = (req, res, next) => {
 // controllers for editing products
 exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
+  // using helper function to extract isLoggedIn cookie value
+  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
   if (productId) {
     // fetching product object for this productId and sending the object to add-edit-product view
     Product.findById(productId)
@@ -44,6 +50,7 @@ exports.getEditProduct = (req, res, next) => {
           docTitle: "Edit Product",
           path: "/admin/edit-product",
           editing: true,
+          isLoggedIn,
         });
       })
       .catch((err) => {
@@ -92,12 +99,14 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
+  const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
   Product.find()
     .then((products) =>
       res.render("./admin/products.ejs", {
         products,
         docTitle: "Admin Product",
         path: "/admin/products",
+        isLoggedIn,
       })
     )
     .catch((err) => {
