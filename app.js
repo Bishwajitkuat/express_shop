@@ -63,17 +63,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// assigning user to request object
-app.use((req, res, next) => {
-  User.findById("65cbbc1a91b53d07c1babcd4")
-    .then((user) => {
-      req.user = user;
-      // go to next only when user propety is assigned
-      next();
-    })
-    .catch((err) => console.log(err));
-});
-
 // admin route
 app.use("/admin", adminRoute);
 // shop route
