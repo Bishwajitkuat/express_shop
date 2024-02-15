@@ -1,18 +1,27 @@
 const Product = require("../models/product");
+const User = require("../models/user");
 
 // controllers for adding new product
 exports.getAddProduct = (req, res, next) => {
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   // sending response form ejs templeting engine
-  res.render("./admin/add-edit-product.ejs", {
-    docTitle: "Add Product",
-    path: "/admin/add-product",
-    editing: false,
-  });
+  if (isLoggedIn) {
+    res.render("./admin/add-edit-product.ejs", {
+      docTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      isLoggedIn,
+    });
+  } else {
+    res.redirect("/login");
+  }
 };
 
-exports.postAddProduct = (req, res, next) => {
+exports.postAddProduct = async (req, res, next) => {
   const { title, imgUrl, description } = req.body;
-  const user = req.user;
+  // fetching the user, userId is extracted from session.userId
+  const user = await User.findById(req.session.userId);
   const price = Number(req.body.price);
   // creating new product from Product modle
   const newProduct = new Product({
@@ -35,16 +44,23 @@ exports.postAddProduct = (req, res, next) => {
 // controllers for editing products
 exports.getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   if (productId) {
     // fetching product object for this productId and sending the object to add-edit-product view
     Product.findById(productId)
       .then((product) => {
-        res.render("./admin/add-edit-product.ejs", {
-          product,
-          docTitle: "Edit Product",
-          path: "/admin/edit-product",
-          editing: true,
-        });
+        if (isLoggedIn) {
+          res.render("./admin/add-edit-product.ejs", {
+            product,
+            docTitle: "Edit Product",
+            path: "/admin/edit-product",
+            editing: true,
+            isLoggedIn,
+          });
+        } else {
+          res.redirect("/login");
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -92,14 +108,21 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   Product.find()
-    .then((products) =>
-      res.render("./admin/products.ejs", {
-        products,
-        docTitle: "Admin Product",
-        path: "/admin/products",
-      })
-    )
+    .then((products) => {
+      if (isLoggedIn) {
+        res.render("./admin/products.ejs", {
+          products,
+          docTitle: "Admin Product",
+          path: "/admin/products",
+          isLoggedIn,
+        });
+      } else {
+        res.redirect("/login");
+      }
+    })
     .catch((err) => {
       console.log(err);
       res.redirect("/");

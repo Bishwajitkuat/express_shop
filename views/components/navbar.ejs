@@ -38,13 +38,14 @@
           >Orders</a
         >
       </li>
+      <% if(isLoggedIn) { %>
       <li
         class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
       >
         <a
           class="<%= path === '/admin/add-product'? 'text-yellow-300': ''%>"
           href="/admin/add-product"
-          >Add Product</a
+          >List Product</a
         >
       </li>
       <li
@@ -53,9 +54,25 @@
         <a
           class="<%= path === '/admin/products'? 'text-yellow-300': ''%>"
           href="/admin/products"
-          >Admin Product</a
+          >My Listing</a
         >
       </li>
+      <li
+        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
+      >
+        <form action="/logout" method="POST">
+          <button type="submit">Logout</button>
+        </form>
+      </li>
+      <% } %> <% if(!isLoggedIn) { %>
+      <li
+        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
+      >
+        <a class="<%= path === '/login'? 'text-yellow-300': ''%>" href="/login"
+          >Login</a
+        >
+      </li>
+      <% } %>
     </ul>
   </nav>
 </header>
