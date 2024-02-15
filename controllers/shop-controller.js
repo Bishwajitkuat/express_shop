@@ -61,33 +61,37 @@ exports.getCart = async (req, res, next) => {
   try {
     // extracting isLoggedIn value from session
     const isLoggedIn = req.session.isLoggedIn;
-    // fetching the user, userId is extracted from session.userId
-    const user = await User.findById(req.session.userId);
-    // fetching products in ref to current user
-    const userWithCartItems = await user.populate("cart.items.productId");
-    // taking only items array to calculate totalPrice and totalQuantity
-    const items = userWithCartItems.cart.items;
-    // calculating totalPrice and totalQuantity
-    let totalQuantity = 0;
-    let totalPrice = 0;
-    for (let item of items) {
-      totalQuantity += item.quantity;
-      totalPrice += item.quantity * item.productId.price;
-    }
-    // structuring cart object as expected in view
-    const cart = {
-      items,
-      totalQuantity,
-      totalPrice,
-    };
+    if (isLoggedIn && req.session.userId) {
+      // fetching the user, userId is extracted from session.userId
+      const user = await User.findById(req.session.userId);
+      // fetching products in ref to current user
+      const userWithCartItems = await user.populate("cart.items.productId");
+      // taking only items array to calculate totalPrice and totalQuantity
+      const items = userWithCartItems.cart.items;
+      // calculating totalPrice and totalQuantity
+      let totalQuantity = 0;
+      let totalPrice = 0;
+      for (let item of items) {
+        totalQuantity += item.quantity;
+        totalPrice += item.quantity * item.productId.price;
+      }
+      // structuring cart object as expected in view
+      const cart = {
+        items,
+        totalQuantity,
+        totalPrice,
+      };
 
-    // rendering view and passing data to it
-    res.render("./shop/cart.ejs", {
-      cart: cart,
-      docTitle: "Cart",
-      path: "/cart",
-      isLoggedIn,
-    });
+      // rendering view and passing data to it
+      res.render("./shop/cart.ejs", {
+        cart: cart,
+        docTitle: "Cart",
+        path: "/cart",
+        isLoggedIn,
+      });
+    } else {
+      res.redirect("/login");
+    }
   } catch (err) {
     console.log(err);
     res.redirect("/");
@@ -190,13 +194,17 @@ exports.getOrders = async (req, res, next) => {
     // extracting isLoggedIn value from session
     const isLoggedIn = req.session.isLoggedIn;
     const userId = req.session.userId;
-    const orders = await Order.find({ userId: userId });
-    res.render("./shop/orders.ejs", {
-      orders,
-      docTitle: "Orders",
-      path: "/orders",
-      isLoggedIn,
-    });
+    if (isLoggedIn && userId) {
+      const orders = await Order.find({ userId: userId });
+      res.render("./shop/orders.ejs", {
+        orders,
+        docTitle: "Orders",
+        path: "/orders",
+        isLoggedIn,
+      });
+    } else {
+      res.redirect("/login");
+    }
   } catch (err) {
     console.log(err);
     res.redirect("/");
