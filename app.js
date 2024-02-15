@@ -11,7 +11,9 @@ const shopRoute = require("./routes/shopRoute");
 // importing auth routes
 const authRoute = require("./routes/authRoute");
 const { get404 } = require("./controllers/error-controller");
-// // livereload
+// importing session
+const session = require("express-session");
+// livereload
 const liveReload = require("livereload");
 const liverReloadServer = liveReload.createServer();
 liverReloadServer.watch(path.join(__dirname));
@@ -36,6 +38,10 @@ app.use(connectLiveReload());
 app.set("view engine", "ejs");
 // registering default view dir
 app.set("views", path.join(__dirname, "views"));
+// middleware to configure session
+app.use(
+  session({ secret: "my secret", resave: false, saveUninitialized: false })
+);
 
 // middleware
 // by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.
