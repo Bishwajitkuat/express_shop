@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const User = require("../models/user");
 
 // controllers for adding new product
 exports.getAddProduct = (req, res, next) => {
