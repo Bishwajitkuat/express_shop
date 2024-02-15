@@ -62,7 +62,7 @@ exports.getCart = async (req, res, next) => {
     // extracting isLoggedIn value from session
     const isLoggedIn = req.session.isLoggedIn;
     // fetching the user, userId is extracted from session.userId
-    const user = User.findById(req.session.userId);
+    const user = await User.findById(req.session.userId);
     // fetching products in ref to current user
     const userWithCartItems = await user.populate("cart.items.productId");
     // taking only items array to calculate totalPrice and totalQuantity
@@ -100,7 +100,7 @@ exports.postAddToCart = async (req, res, next) => {
     // users needed to be logged in inorder to add item to cart
     if (req.session.isLoggedIn && req.session.userId) {
       // fetching the user, userId is extracted from session.userId
-      const user = User.findById(req.session.userId);
+      const user = await User.findById(req.session.userId);
       // utility method of User model is used to add or increase the quanity of a product
       user.addToCart(productId).then((response) => {
         if (fromCart === "yes") {
@@ -122,7 +122,7 @@ exports.postRemoveFromCart = async (req, res, next) => {
   const { id, qty } = req.body;
   try {
     // fetching the user, userId is extracted from session.userId
-    const user = User.findById(req.session.userId);
+    const user = await User.findById(req.session.userId);
     // utility method "removeFromCart" of User model is used to delete or decrease the quanity of a product in cart
     await user.removeFromCart(id, qty);
     res.redirect("/cart");
@@ -144,7 +144,8 @@ exports.getCheckout = (req, res, next) => {
 
 exports.postOrder = async (req, res, next) => {
   try {
-    const userWithCartData = await req.user.populate("cart.items.productId");
+    const user = await User.findById(req.session.userId);
+    const userWithCartData = await user.populate("cart.items.productId");
     const cart = userWithCartData.cart;
     // will not allow if there is no items in cart
     if (cart.items.length > 0) {
@@ -188,7 +189,7 @@ exports.getOrders = async (req, res, next) => {
   try {
     // extracting isLoggedIn value from session
     const isLoggedIn = req.session.isLoggedIn;
-    const userId = req.user._id;
+    const userId = req.session.userId;
     const orders = await Order.find({ userId: userId });
     res.render("./shop/orders.ejs", {
       orders,

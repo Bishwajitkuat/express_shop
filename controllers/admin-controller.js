@@ -17,10 +17,10 @@ exports.getAddProduct = (req, res, next) => {
   }
 };
 
-exports.postAddProduct = (req, res, next) => {
+exports.postAddProduct = async (req, res, next) => {
   const { title, imgUrl, description } = req.body;
   // fetching the user, userId is extracted from session.userId
-  const user = User.findById(req.session.userId);
+  const user = await User.findById(req.session.userId);
   const price = Number(req.body.price);
   // creating new product from Product modle
   const newProduct = new Product({
