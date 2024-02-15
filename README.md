@@ -1,6 +1,6 @@
 # Express shop
 
-A CRUD app where user can list their products and buy products from other users. It is a ongoing project authentication and loging features yet to implement.
+A CRUD app where user can list their products and buy products from other users. It is a ongoing project authentication and loging features yet to complete.
 
 ## Technologies
 
@@ -9,6 +9,7 @@ A CRUD app where user can list their products and buy products from other users.
 - Ejs
 - MongoDB
 - Mongoose ODM
+- Session & Cookie
 
 ## Author
 
