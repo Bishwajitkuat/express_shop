@@ -97,16 +97,21 @@ exports.getCart = async (req, res, next) => {
 exports.postAddToCart = async (req, res, next) => {
   try {
     const { productId, fromCart } = req.body;
-    // fetching the user, userId is extracted from session.userId
-    const user = User.findById(req.session.userId);
-    // utility method of User model is used to add or increase the quanity of a product
-    user.addToCart(productId).then((response) => {
-      if (fromCart === "yes") {
-        res.redirect("/cart");
-      } else {
-        res.redirect("/products");
-      }
-    });
+    // users needed to be logged in inorder to add item to cart
+    if (req.session.isLoggedIn && req.session.userId) {
+      // fetching the user, userId is extracted from session.userId
+      const user = User.findById(req.session.userId);
+      // utility method of User model is used to add or increase the quanity of a product
+      user.addToCart(productId).then((response) => {
+        if (fromCart === "yes") {
+          res.redirect("/cart");
+        } else {
+          res.redirect("/products");
+        }
+      });
+    } else {
+      res.redirect("/login");
+    }
   } catch (err) {
     console.log(err);
     res.redirect("/products");
