@@ -8,6 +8,8 @@ const path = require("path");
 const adminRoute = require("./routes/adminRoute");
 // importing shop routes
 const shopRoute = require("./routes/shopRoute");
+// importing auth routes
+const authRoute = require("./routes/authRoute");
 const { get404 } = require("./controllers/error-controller");
 // // livereload
 const liveReload = require("livereload");
@@ -56,6 +58,8 @@ app.use((req, res, next) => {
 app.use("/admin", adminRoute);
 // shop route
 app.use(shopRoute);
+// registering auth route
+app.use(authRoute);
 // 404 response
 app.use(get404);
 
