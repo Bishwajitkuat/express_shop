@@ -6,12 +6,16 @@ exports.getAddProduct = (req, res, next) => {
   // using helper function to extract isLoggedIn cookie value
   const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
   // sending response form ejs templeting engine
-  res.render("./admin/add-edit-product.ejs", {
-    docTitle: "Add Product",
-    path: "/admin/add-product",
-    editing: false,
-    isLoggedIn,
-  });
+  if (isLoggedIn) {
+    res.render("./admin/add-edit-product.ejs", {
+      docTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      isLoggedIn,
+    });
+  } else {
+    res.redirect("/login");
+  }
 };
 
 exports.postAddProduct = (req, res, next) => {
@@ -45,13 +49,17 @@ exports.getEditProduct = (req, res, next) => {
     // fetching product object for this productId and sending the object to add-edit-product view
     Product.findById(productId)
       .then((product) => {
-        res.render("./admin/add-edit-product.ejs", {
-          product,
-          docTitle: "Edit Product",
-          path: "/admin/edit-product",
-          editing: true,
-          isLoggedIn,
-        });
+        if (isLoggedIn) {
+          res.render("./admin/add-edit-product.ejs", {
+            product,
+            docTitle: "Edit Product",
+            path: "/admin/edit-product",
+            editing: true,
+            isLoggedIn,
+          });
+        } else {
+          res.redirect("/login");
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -101,14 +109,18 @@ exports.postDeleteProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   const isLoggedIn = getIsLoggedInFromCooke(req.get("Cookie"));
   Product.find()
-    .then((products) =>
-      res.render("./admin/products.ejs", {
-        products,
-        docTitle: "Admin Product",
-        path: "/admin/products",
-        isLoggedIn,
-      })
-    )
+    .then((products) => {
+      if (isLoggedIn) {
+        res.render("./admin/products.ejs", {
+          products,
+          docTitle: "Admin Product",
+          path: "/admin/products",
+          isLoggedIn,
+        });
+      } else {
+        res.redirect("/login");
+      }
+    })
     .catch((err) => {
       console.log(err);
       res.redirect("/");
