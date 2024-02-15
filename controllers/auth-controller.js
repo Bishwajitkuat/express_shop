@@ -13,7 +13,7 @@ exports.getLogin = (req, res, next) => {
 };
 // controller for handling POST request to /login route
 exports.postLogin = (req, res, next) => {
-  // setting cookie with setHeader
-  res.setHeader("Set-Cookie", "isLoggedIn=true");
+  // setting session
+  req.session.isLoggedIn = true;
   res.redirect("/");
 };
