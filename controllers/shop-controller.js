@@ -61,8 +61,10 @@ exports.getCart = async (req, res, next) => {
   try {
     // extracting isLoggedIn value from session
     const isLoggedIn = req.session.isLoggedIn;
+    // fetching the user, userId is extracted from session.userId
+    const user = User.findById(req.session.userId);
     // fetching products in ref to current user
-    const userWithCartItems = await req.user.populate("cart.items.productId");
+    const userWithCartItems = await user.populate("cart.items.productId");
     // taking only items array to calculate totalPrice and totalQuantity
     const items = userWithCartItems.cart.items;
     // calculating totalPrice and totalQuantity
@@ -95,7 +97,8 @@ exports.getCart = async (req, res, next) => {
 exports.postAddToCart = async (req, res, next) => {
   try {
     const { productId, fromCart } = req.body;
-    const user = req.user;
+    // fetching the user, userId is extracted from session.userId
+    const user = User.findById(req.session.userId);
     // utility method of User model is used to add or increase the quanity of a product
     user.addToCart(productId).then((response) => {
       if (fromCart === "yes") {
@@ -113,8 +116,10 @@ exports.postAddToCart = async (req, res, next) => {
 exports.postRemoveFromCart = async (req, res, next) => {
   const { id, qty } = req.body;
   try {
+    // fetching the user, userId is extracted from session.userId
+    const user = User.findById(req.session.userId);
     // utility method "removeFromCart" of User model is used to delete or decrease the quanity of a product in cart
-    await req.user.removeFromCart(id, qty);
+    await user.removeFromCart(id, qty);
     res.redirect("/cart");
   } catch (err) {
     console.log(err);
