@@ -110,7 +110,8 @@ exports.postDeleteProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
-  Product.find()
+  const userId = req.session.userId;
+  Product.find({ userId: userId })
     .then((products) => {
       if (isLoggedIn) {
         res.render("./admin/products.ejs", {
