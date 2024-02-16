@@ -6,16 +6,12 @@ exports.getAddProduct = (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
   // sending response form ejs templeting engine
-  if (isLoggedIn) {
-    res.render("./admin/add-edit-product.ejs", {
-      docTitle: "Add Product",
-      path: "/admin/add-product",
-      editing: false,
-      isLoggedIn,
-    });
-  } else {
-    res.redirect("/login");
-  }
+  res.render("./admin/add-edit-product.ejs", {
+    docTitle: "Add Product",
+    path: "/admin/add-product",
+    editing: false,
+    isLoggedIn,
+  });
 };
 
 exports.postAddProduct = async (req, res, next) => {
@@ -50,17 +46,13 @@ exports.getEditProduct = (req, res, next) => {
     // fetching product object for this productId and sending the object to add-edit-product view
     Product.findById(productId)
       .then((product) => {
-        if (isLoggedIn) {
-          res.render("./admin/add-edit-product.ejs", {
-            product,
-            docTitle: "Edit Product",
-            path: "/admin/edit-product",
-            editing: true,
-            isLoggedIn,
-          });
-        } else {
-          res.redirect("/login");
-        }
+        res.render("./admin/add-edit-product.ejs", {
+          product,
+          docTitle: "Edit Product",
+          path: "/admin/edit-product",
+          editing: true,
+          isLoggedIn,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -113,16 +105,12 @@ exports.getProducts = (req, res, next) => {
   const userId = req.session.userId;
   Product.find({ userId: userId })
     .then((products) => {
-      if (isLoggedIn) {
-        res.render("./admin/products.ejs", {
-          products,
-          docTitle: "Admin Product",
-          path: "/admin/products",
-          isLoggedIn,
-        });
-      } else {
-        res.redirect("/login");
-      }
+      res.render("./admin/products.ejs", {
+        products,
+        docTitle: "Admin Product",
+        path: "/admin/products",
+        isLoggedIn,
+      });
     })
     .catch((err) => {
       console.log(err);
