@@ -12,17 +12,28 @@ exports.getLogin = (req, res, next) => {
   });
 };
 // controller for handling POST request to /login route
-exports.postLogin = (req, res, next) => {
+exports.postLogin = async (req, res, next) => {
   try {
-    const userId = "65cbbc1a91b53d07c1babcd4";
-    // setting session's isLoggedIn key
-    req.session.isLoggedIn = true;
-    // setting session's userId
-    req.session.userId = userId;
+    const { email, password } = req.body;
+    // find the user by email
+    const user = await User.findOne({ email: email });
+    // if no user is found with the email addres user will be redirected to login page
+    if (!user) return res.redirect("/login");
+    // comparing passwords
+    const isPasswordMatch = bcrypt.compare(password, user.password);
+    if (isPasswordMatch) {
+      // password is match, session is created for this user
+      // setting session's isLoggedIn key
+      req.session.isLoggedIn = true;
+      // setting session's userId
+      req.session.userId = user._id.toString();
+      return res.redirect("/");
+    }
+    return res.redirect("/login");
   } catch {
     (err) => console.log(err);
+    res.redirect("/login");
   }
-  res.redirect("/");
 };
 
 // handles POST request to /logout route, user session will be destored, thus user will be logged out and redirected to home page.
