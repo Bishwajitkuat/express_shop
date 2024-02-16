@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+const User = require("../models/user");
 // controller for handling GET request to /login route
 exports.getLogin = (req, res, next) => {
   // extracting isLoggedIn value from session
@@ -38,4 +40,32 @@ exports.getSignup = (req, res, next) => {
     path: "/signup",
     isLoggedIn,
   });
+};
+
+exports.postSignup = async (req, res, next) => {
+  try {
+    const { name, email, password, confirmPassword } = req.body;
+    // better validation and feedback will be implemented later.
+    if (name && email && password && confirmPassword) {
+      // checking if the email already exist, if so, will not make new user
+      const isAlreadyExists = await User.findOne({ email: email });
+      if (isAlreadyExists) return res.redirect("/signup");
+      // creating hash password and it's asyn
+      const hasPassword = await bcrypt.hash(password, 10);
+      // creating new instance of User model
+      const newUser = new User({
+        name,
+        email,
+        password: hasPassword,
+        cart: { items: [] },
+      });
+      // saving into db
+      await newUser.save();
+      return res.redirect("/login");
+    }
+    return res.redirect("/signup");
+  } catch (err) {
+    console.log(err);
+    res.redirect("signup");
+  }
 };
