@@ -30,6 +30,10 @@ const connectLiveReload = require("connect-livereload");
 // importing mongoose
 const mongoose = require("mongoose");
 require("dotenv").config();
+// importing csurf
+const csrf = require("csurf");
+// configuring csrfProtection middleware
+const csrfProtection = csrf();
 const User = require("./models/user");
 
 // creating app
@@ -56,12 +60,8 @@ app.use(
     }),
   })
 );
-
-// middleware
-// by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use(bodyParser.urlencoded({ extended: false }));
+// csrfProtection middleware
+app.use(csrfProtection);
 
 // admin route
 app.use("/admin", adminRoute);
