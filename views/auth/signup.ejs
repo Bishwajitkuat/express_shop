@@ -53,6 +53,7 @@ include("../components/navbar.ejs")%>
     >
       Signup
     </button>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
   </form>
 </main>
 <%- include("../components/footer.ejs")%>
