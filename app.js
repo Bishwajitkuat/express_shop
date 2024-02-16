@@ -62,6 +62,12 @@ app.use(
 );
 // csrfProtection middleware
 app.use(csrfProtection);
+// middleware to send data to all view bypassing the controllers
+app.use((req, res, next) => {
+  // csrfToken value will be accessible from all views.
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 // admin route
 app.use("/admin", adminRoute);
