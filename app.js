@@ -46,6 +46,11 @@ app.set("view engine", "ejs");
 // registering default view dir
 app.set("views", path.join(__dirname, "views"));
 
+// by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use(bodyParser.urlencoded({ extended: false }));
+// middleware
 // middleware to configure session
 app.use(
   session({
