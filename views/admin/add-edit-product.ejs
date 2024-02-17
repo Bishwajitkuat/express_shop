@@ -30,7 +30,7 @@ include("../components/navbar.ejs")%>
     <% if(editing){ %> 
       <input class=" rounded bg-slate-300 px-[1rem] py-[0.5rem] text-gray-950" type="hidden" name="id" value="<%=product._id%>">
       <%} %>
-    <button class="bg-slate-700 px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900 " type="submit"><%= editing ? "Update Product": "Add Product"; %></button>
+    <button class="btn" type="submit"><%= editing ? "Update Product": "Add Product"; %></button>
     <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
   </form>
 </main>

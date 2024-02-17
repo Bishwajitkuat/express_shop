@@ -28,9 +28,7 @@ include("../components/navbar.ejs")%>
 
         <div class="flex justify-center items-center gap-2 my-[2rem]">
           <%- include("../components/add-to-cart.ejs", {product}) %>
-          <button
-            class="bg-slate-700 px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900"
-          >
+          <button class="btn">
             <a href="/products/<%= product._id %>">Details</a>
           </button>
         </div>

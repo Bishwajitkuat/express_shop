@@ -30,18 +30,12 @@ include("../components/navbar.ejs")%>
         <p class="text-justify"><%= product.description%></p>
 
         <div class="flex justify-center items-center gap-2 my-[2rem]">
-          <button
-            class="bg-slate-700 px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900"
-          >
+          <button class="btn">
             <a href="/admin/edit-product/<%= product._id %>">Edit</a>
           </button>
           <form action="/admin/delete-product" method="POST">
             <input type="hidden" name="id" value="<%=product._id%>" />
-            <button
-              class="bg-slate-700 px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-red-300 to-red-500 hover:text-gray-900"
-            >
-              Delete
-            </button>
+            <button class="btn">Delete</button>
             <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
           </form>
         </div>

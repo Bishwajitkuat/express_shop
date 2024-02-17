@@ -27,35 +27,20 @@ include("../components/navbar.ejs")%>
             value="<%=product.productId._id%>"
           />
           <input type="hidden" name="fromCart" value="yes" />
-          <button
-            class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-yellow-300 to-red-400 text-gray-950"
-            type="submit"
-          >
-            +
-          </button>
+          <button class="btn" type="submit">+</button>
           <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
         </form>
         <p><%=product.quantity%></p>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product.productId._id%>" />
           <input type="hidden" name="qty" value="1" />
-          <button
-            class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-red-300 to-red-500 text-gray-950"
-            type="submit"
-          >
-            -
-          </button>
+          <button class="btn" type="submit">-</button>
           <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
         </form>
         <form action="/cart-remove" method="POST">
           <input type="hidden" name="id" value="<%=product.productId._id%>" />
           <input type="hidden" name="qty" value="<%=product.quantity%>" />
-          <button
-            class="px-[1rem] py-[0.5rem] rounded shadow-sm bg-slate-600 hover:bg-gradient-to-br from-red-300 to-red-500 text-gray-950"
-            type="submit"
-          >
-            &#128465;
-          </button>
+          <button class="btn" type="submit">&#128465;</button>
           <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
         </form>
       </div>
@@ -70,12 +55,7 @@ include("../components/navbar.ejs")%>
     </li>
   </ul>
   <form class="flex justify-end mt-[2rem]" action="/create-order" method="POST">
-    <button
-      class="bg-slate-700 px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900"
-      type="submit"
-    >
-      Order
-    </button>
+    <button class="btn" type="submit">Order</button>
     <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
   </form>
   <%} else { %>
