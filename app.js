@@ -65,7 +65,7 @@ app.use(
     }),
   })
 );
-// csrfProtection middleware
+// csrfProtection middleware, NOTE csrfProtection middleware should be after bodyParser and session middleware
 app.use(csrfProtection);
 // middleware to send data to all view bypassing the controllers
 app.use((req, res, next) => {
