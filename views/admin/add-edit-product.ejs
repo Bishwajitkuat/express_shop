@@ -7,28 +7,28 @@ include("../components/navbar.ejs")%>
   <form class="w-[65%] md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST">
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="title">Title</label>
-      <input class=" rounded bg-slate-300 px-[1rem] py-[0.5rem] text-gray-950" type="text" name="title" id="title" <% if(editing){ %>
+      <input class="text_input_base" type="text" name="title" id="title" <% if(editing){ %>
         value="<%= product.title %>"
       <%}else{''}%>/>
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="price">Price (€)</label>
-      <input class=" rounded bg-slate-300 px-[1rem] py-[0.5rem] text-gray-950" type="number" name="price" id="price" <% if(editing){ %>
+      <input class=" text_input_base" type="number" name="price" id="price" <% if(editing){ %>
         value="<%= product.price %>"
       <%}else{''}%> />
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="description">Description</label>
-      <textarea class="rounded bg-slate-300 px-[1rem] py-[0.5rem] text-gray-950" name="description" id="description" rows="10"><%if(editing){%><%=product.description%><%}else{''}%></textarea>
+      <textarea class="text_input_base" name="description" id="description" rows="10"><%if(editing){%><%=product.description%><%}else{''}%></textarea>
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="imgUrl">Image URL</label>
-      <input class=" rounded bg-slate-300 px-[1rem] py-[0.5rem] text-gray-950" type="imgUrl" name="imgUrl" id="imgUrl" <% if(editing){ %>
+      <input class="text_input_base" type="imgUrl" name="imgUrl" id="imgUrl" <% if(editing){ %>
         value="<%= product.imgUrl %>"
       <%}else{''}%> />
     </div>
     <% if(editing){ %> 
-      <input class=" rounded bg-slate-300 px-[1rem] py-[0.5rem] text-gray-950" type="hidden" name="id" value="<%=product._id%>">
+      <input  type="hidden" name="id" value="<%=product._id%>">
       <%} %>
     <button class="btn" type="submit"><%= editing ? "Update Product": "Add Product"; %></button>
     <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
