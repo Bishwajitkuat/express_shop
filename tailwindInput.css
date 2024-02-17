@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply bg-[#334155] px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900;
+  }
+}
