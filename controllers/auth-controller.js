@@ -1,6 +1,11 @@
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const User = require("../models/user");
-const { transporter, signupMailOptions } = require("../lib/nodemailer");
+const {
+  transporter,
+  signupMailOptions,
+  resetPasswordMailOptions,
+} = require("../lib/nodemailer");
 // controller for handling GET request to /login route
 exports.getLogin = (req, res, next) => {
   // extracting isLoggedIn value from session
@@ -9,11 +14,14 @@ exports.getLogin = (req, res, next) => {
   // req.flash() returns of array of strings, and only comsumed
   const error = req.flash("error");
   const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   res.render("./auth/login.ejs", {
     docTitle: "Login",
     path: "/login",
     isLoggedIn,
-    errorMessage: errorMessage,
+    errorMessage,
+    successMessage,
   });
 };
 // controller for handling POST request to /login route
@@ -92,5 +100,159 @@ exports.postSignup = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     res.redirect("signup");
+  }
+};
+
+// handles get requests to /reset-password
+exports.getResetPassword = (req, res, next) => {
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
+  // req.flash() returns of array of strings, and only comsumed
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
+  res.render("./auth/reset-password.ejs", {
+    docTitle: "Reset password",
+    path: "/reset-password",
+    isLoggedIn,
+    errorMessage: errorMessage,
+    successMessage: successMessage,
+  });
+};
+// handles post request to /reset-password
+exports.postResetPassword = async (req, res, next) => {
+  try {
+    const token = crypto.randomBytes(32).toString("hex");
+    const user = await User.findOne({ email: req.body.email });
+    // if ther is no user with this email, sends an error message.
+    if (!user) {
+      req.flash("error", "There is no user with this email! Please signup!");
+      return res.redirect("/reset-password");
+    }
+    // assigning token and expiration date to the user
+    user.passwordResetToken = token;
+    user.resetTokenExpiration = Date.now() + 300000;
+    await user.save();
+    const url = `${process.env.BASE_URL}/set-new-password`;
+    // sending password resetting email
+    transporter.sendMail(
+      resetPasswordMailOptions(user.name, user.email, token, url),
+      (err, info) => {
+        if (err) console.log(err);
+      }
+    );
+    req.flash(
+      "success",
+      "An email has been sent. Please follow the insctructions in the email!"
+    );
+    res.redirect("/reset-password");
+  } catch (err) {
+    console.log(err);
+    req.flash(
+      "error",
+      "There are some technical error, please try again later!"
+    );
+    res.redirect("/reset-password");
+  }
+};
+
+exports.getSetNewPassword = async (req, res, next) => {
+  try {
+    const error = req.flash("error");
+    const errorMessage = error.length < 1 ? null : error;
+    const allow = req.flash("allowResetting");
+    // this will be used for conditional rendering of passwor and confirm password fields in view
+    const allowResetting = allow.length < 1 ? true : allow[0];
+    const token = req.params.token;
+    const user = await User.findOne({
+      passwordResetToken: token,
+      resetTokenExpiration: {
+        $gt: Date.now(),
+      },
+    });
+    // if no users are available, error feebcack will be given instead of password reset form
+    if (!user) {
+      console.log(user);
+      return res.render("./auth/set-new-password.ejs", {
+        docTitle: "Set new passowrd",
+        path: "/set-new-password",
+        isLoggedIn: false,
+        errorMessage: "Invalid operation or token",
+        allowResetting: false,
+        token,
+      });
+    }
+    // user will be given be given to input form for resetting password.
+    const isLoggedIn = req.session.isLoggedIn;
+    return res.render("./auth/set-new-password", {
+      docTitle: "Set new passowrd",
+      path: "/set-new-password",
+      isLoggedIn,
+      errorMessage: errorMessage,
+      allowResetting: allowResetting,
+      token,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.render("./auth/set-new-password.ejs", {
+      docTitle: "Set new passowrd",
+      path: "/set-new-password",
+      isLoggedIn: false,
+      errorMessage: "Invalid operation or token",
+      allowResetting: false,
+      token,
+    });
+  }
+};
+
+exports.postSetNewPassword = async (req, res, next) => {
+  try {
+    const { password, confirmPassword, token } = req.body;
+    // user will be given feedback and password resetting form
+    if (!password || !confirmPassword || !token) {
+      req.flash("error", "One or more fields are missing!");
+      req.flash("allowResetting", true);
+      return res.redirect(`/set-new-password/${token}`);
+    }
+    // user will be given feedback and password resetting form
+    if (password !== confirmPassword) {
+      req.flash("error", "Password and Confirm password does not match!");
+      req.flash("allowResetting", true);
+      return res.redirect(`/set-new-password/${token}`);
+    }
+    // fetching the user, checki tokenExpirary time, hash password, save new password, deleter token and
+    const user = await User.findOne({
+      passwordResetToken: token,
+      resetTokenExpiration: {
+        $gt: Date.now(),
+      },
+    });
+    // if user does not exists or token has already expired.
+    // user will be given feedback and but password resetting form will not be rendered
+    if (!user) {
+      req.flash("error", "Invalid operation or token!");
+      req.flash("allowResetting", false);
+      return res.redirect("/set-new-password/error");
+    }
+    // hasing the new password
+    const newHashPassword = await bcrypt.hash(password, 10);
+    user.password = newHashPassword;
+    // resetting properties, so that same token can not be used again.
+    user.passwordResetToken = undefined;
+    user.resetTokenExpiration = undefined;
+    // saving back into db.
+    await user.save();
+    // redirected to /login route with success feedback
+    req.flash(
+      "success",
+      "Congratulations! You have successfully changed your password!"
+    );
+    return res.redirect("/login");
+  } catch (err) {
+    console.log(err);
+    req.flash("error", "Invalid operation or token!");
+    req.flash("allowResetting", false);
+    return res.redirect("/set-new-password/error");
   }
 };

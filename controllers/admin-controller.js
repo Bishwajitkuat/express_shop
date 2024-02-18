@@ -18,6 +18,7 @@ exports.postAddProduct = async (req, res, next) => {
   const { title, imgUrl, description } = req.body;
   // fetching the user, userId is extracted from session.userId
   const user = await User.findById(req.session.userId);
+  // shoud check userId exist in db, only then creates new product
   const price = Number(req.body.price);
   // creating new product from Product modle
   const newProduct = new Product({
@@ -44,6 +45,7 @@ exports.getEditProduct = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   if (productId) {
     // fetching product object for this productId and sending the object to add-edit-product view
+    // shoud check if the product belongs to the current user
     Product.findById(productId)
       .then((product) => {
         res.render("./admin/add-edit-product.ejs", {
@@ -67,6 +69,7 @@ exports.postEditProduct = (req, res, next) => {
   // price from input field comes as string, so converting it into number
   updatedProduct.price = Number(updatedProduct.price);
   // mongoose does not have any derect method to update an entry hoever we can fethe the entry, modify it and save back agian to update an entry
+  // shoud check if the product belongs to the current user
   Product.findById(updatedProduct.id)
     .then((product) => {
       product.title = updatedProduct.title;
@@ -90,6 +93,7 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const id = req.body.id;
   if (id) {
+    // shoud check if the product belongs to the current user
     Product.findByIdAndDelete(id)
       .then((response) => res.redirect("/admin/products"))
       .catch((err) => {
