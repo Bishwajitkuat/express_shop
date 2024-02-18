@@ -153,3 +153,53 @@ exports.postResetPassword = async (req, res, next) => {
     res.redirect("/reset-password");
   }
 };
+
+exports.getSetNewPassword = async (req, res, next) => {
+  try {
+    const error = req.flash("error");
+    const errorMessage = error.length < 1 ? null : error;
+    const allow = req.flash("allowResetting");
+    // this will be used for conditional rendering of passwor and confirm password fields in view
+    const allowResetting = allow.length < 1 ? true : allow[0];
+    const token = req.params.token;
+    const user = await User.findOne({
+      passwordResetToken: token,
+      resetTokenExpiration: {
+        $gt: Date.now(),
+      },
+    });
+    // if no users are available, error feebcack will be given instead of password reset form
+    if (!user) {
+      console.log(user);
+      return res.render("./auth/set-new-password.ejs", {
+        docTitle: "Set new passowrd",
+        path: "/set-new-password",
+        isLoggedIn: false,
+        errorMessage: "Invalid operation or token",
+        allowResetting: false,
+        token,
+      });
+    }
+    // user will be given be given to input form for resetting password.
+    const isLoggedIn = req.session.isLoggedIn;
+    return res.render("./auth/set-new-password", {
+      docTitle: "Set new passowrd",
+      path: "/set-new-password",
+      isLoggedIn,
+      errorMessage: errorMessage,
+      allowResetting: allowResetting,
+      token,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.render("./auth/set-new-password.ejs", {
+      docTitle: "Set new passowrd",
+      path: "/set-new-password",
+      isLoggedIn: false,
+      errorMessage: "Invalid operation or token",
+      allowResetting: false,
+      token,
+    });
+  }
+};
+
