@@ -5,11 +5,14 @@ exports.getLogin = (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
   // passing isLoggedIn value for conditional rendering in navbar.
+  // req.flash() returns of array of strings, and only comsumed
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
   res.render("./auth/login.ejs", {
     docTitle: "Login",
     path: "/login",
     isLoggedIn,
-    errorMessage: req.flash("error"),
+    errorMessage: errorMessage,
   });
 };
 // controller for handling POST request to /login route
