@@ -18,10 +18,10 @@ exports.postLogin = async (req, res, next) => {
     // find the user by email
     const user = await User.findOne({ email: email });
     // if no user is found with the email addres user will be redirected to login page
-    if (!user) return res.redirect("/login");
-    // comparing passwords
-    const isPasswordMatch = bcrypt.compare(password, user.password);
-    if (isPasswordMatch) {
+    if (!user) {
+      req.flash("error", "Invalid email or password!");
+      return res.redirect("/login");
+    }
       // password is match, session is created for this user
       // setting session's isLoggedIn key
       req.session.isLoggedIn = true;
@@ -29,9 +29,11 @@ exports.postLogin = async (req, res, next) => {
       req.session.userId = user._id.toString();
       return res.redirect("/");
     }
+    req.flash("error", "Invalid email or password!");
     return res.redirect("/login");
   } catch {
     (err) => console.log(err);
+    req.flash("error", "There is some technical problem. Please try later!");
     res.redirect("/login");
   }
 };
