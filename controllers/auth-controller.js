@@ -9,6 +9,7 @@ exports.getLogin = (req, res, next) => {
     docTitle: "Login",
     path: "/login",
     isLoggedIn,
+    errorMessage: req.flash("error"),
   });
 };
 // controller for handling POST request to /login route
