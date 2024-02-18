@@ -94,3 +94,18 @@ exports.postSignup = async (req, res, next) => {
     res.redirect("signup");
   }
 };
+
+// handles get requests to /reset-password
+exports.getResetPassword = (req, res, next) => {
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
+  // req.flash() returns of array of strings, and only comsumed
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  res.render("./auth/reset-password.ejs", {
+    docTitle: "Reset password",
+    path: "/reset-password",
+    isLoggedIn,
+    errorMessage: errorMessage,
+  });
+};
