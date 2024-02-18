@@ -107,11 +107,14 @@ exports.getResetPassword = (req, res, next) => {
   // req.flash() returns of array of strings, and only comsumed
   const error = req.flash("error");
   const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   res.render("./auth/reset-password.ejs", {
     docTitle: "Reset password",
     path: "/reset-password",
     isLoggedIn,
     errorMessage: errorMessage,
+    successMessage: successMessage,
   });
 };
 // handles post request to /reset-password
