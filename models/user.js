@@ -28,6 +28,9 @@ const UserSchema = new mongoose.Schema({
       },
     ],
   },
+  passwordResetToken: String,
+
+  resetTokenExpiration: Date,
 });
 
 // adding utility method to instances created from User model, arrow function does not work here
