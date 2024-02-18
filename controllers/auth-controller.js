@@ -203,3 +203,53 @@ exports.getSetNewPassword = async (req, res, next) => {
   }
 };
 
+exports.postSetNewPassword = async (req, res, next) => {
+  try {
+    const { password, confirmPassword, token } = req.body;
+    // user will be given feedback and password resetting form
+    if (!password || !confirmPassword || !token) {
+      req.flash("error", "One or more fields are missing!");
+      req.flash("allowResetting", true);
+      return res.redirect(`/set-new-password/${token}`);
+    }
+    // user will be given feedback and password resetting form
+    if (password !== confirmPassword) {
+      req.flash("error", "Password and Confirm password does not match!");
+      req.flash("allowResetting", true);
+      return res.redirect(`/set-new-password/${token}`);
+    }
+    // fetching the user, checki tokenExpirary time, hash password, save new password, deleter token and
+    const user = await User.findOne({
+      passwordResetToken: token,
+      resetTokenExpiration: {
+        $gt: Date.now(),
+      },
+    });
+    // if user does not exists or token has already expired.
+    // user will be given feedback and but password resetting form will not be rendered
+    if (!user) {
+      req.flash("error", "Invalid operation or token!");
+      req.flash("allowResetting", false);
+      return res.redirect("/set-new-password/error");
+    }
+    // hasing the new password
+    const newHashPassword = await bcrypt.hash(password, 10);
+    user.password = newHashPassword;
+    // resetting properties, so that same token can not be used again.
+    user.passwordResetToken = undefined;
+    user.resetTokenExpiration = undefined;
+    // saving back into db.
+    await user.save();
+    // redirected to /login route with success feedback
+    req.flash(
+      "success",
+      "Congratulations! You have successfully changed your password!"
+    );
+    return res.redirect("/login");
+  } catch (err) {
+    console.log(err);
+    req.flash("error", "Invalid operation or token!");
+    req.flash("allowResetting", false);
+    return res.redirect("/set-new-password/error");
+  }
+};
