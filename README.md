@@ -2,7 +2,7 @@
 
 A CRUD app where user can list their products and buy products from other users. It is a ongoing project authentication and loging features yet to complete.
 
-## Technologies
+## Technologies and features
 
 - Nodejs
 - Express
@@ -10,6 +10,7 @@ A CRUD app where user can list their products and buy products from other users.
 - MongoDB
 - Mongoose ODM
 - Session & Cookie
+- Authentication
 
 ## Author
 
