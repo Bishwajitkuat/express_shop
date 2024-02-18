@@ -891,6 +891,21 @@ video {
   margin-bottom: 2rem;
 }
 
+.mx-\[2rem\] {
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.mx-\[3rem\] {
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+.my-\[3rem\] {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
 .mb-\[1rem\] {
   margin-bottom: 1rem;
 }
@@ -901,6 +916,10 @@ video {
 
 .mt-\[2rem\] {
   margin-top: 2rem;
+}
+
+.mb-\[2rem\] {
+  margin-bottom: 2rem;
 }
 
 .box-border {
@@ -1589,6 +1608,10 @@ video {
 }
 
 .gap-8 {
+  gap: 2rem;
+}
+
+.gap-\[2rem\] {
   gap: 2rem;
 }
 
