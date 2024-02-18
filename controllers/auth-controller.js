@@ -23,6 +23,10 @@ exports.postLogin = async (req, res, next) => {
       req.flash("error", "Invalid email or password!");
       return res.redirect("/login");
     }
+    // comparing passwords, NOTE: eventhough it suggeds there is not effect of await, but it does
+    // without await it will return promised, and used will never be able to login.
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (isPasswordMatch === true) {
       // password is match, session is created for this user
       // setting session's isLoggedIn key
       req.session.isLoggedIn = true;
