@@ -6,6 +6,7 @@ const {
   getSignup,
   postSignup,
   getResetPassword,
+  postResetPassword,
 } = require("../controllers/auth-controller");
 
 const router = express.Router();
@@ -21,4 +22,6 @@ router.get("/signup", getSignup);
 router.post("/signup", postSignup);
 // get /reset-password
 router.get("/reset-password", getResetPassword);
+// post /reset-password
+router.post("/reset-password", postResetPassword);
 module.exports = router;
