@@ -14,11 +14,14 @@ exports.getLogin = (req, res, next) => {
   // req.flash() returns of array of strings, and only comsumed
   const error = req.flash("error");
   const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   res.render("./auth/login.ejs", {
     docTitle: "Login",
     path: "/login",
     isLoggedIn,
-    errorMessage: errorMessage,
+    errorMessage,
+    successMessage,
   });
 };
 // controller for handling POST request to /login route
@@ -141,7 +144,7 @@ exports.postResetPassword = async (req, res, next) => {
     );
     req.flash(
       "success",
-      "An email has been sent. Please follow the insctructions in your email."
+      "An email has been sent. Please follow the insctructions in the email!"
     );
     res.redirect("/reset-password");
   } catch (err) {
