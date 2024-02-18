@@ -33,4 +33,7 @@
   .product_cart_btn_div {
     @apply flex justify-center items-center gap-2 my-[2rem];
   }
+  .error_message {
+    @apply text-center text-red-400;
+  }
 }
