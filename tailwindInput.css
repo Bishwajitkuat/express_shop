@@ -36,4 +36,7 @@
   .error_message {
     @apply text-center text-red-400;
   }
+  .success_message {
+    @apply text-center text-green-400;
+  }
 }
