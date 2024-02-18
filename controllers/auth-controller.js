@@ -1,6 +1,11 @@
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const User = require("../models/user");
-const { transporter, signupMailOptions } = require("../lib/nodemailer");
+const {
+  transporter,
+  signupMailOptions,
+  resetPasswordMailOptions,
+} = require("../lib/nodemailer");
 // controller for handling GET request to /login route
 exports.getLogin = (req, res, next) => {
   // extracting isLoggedIn value from session
@@ -108,4 +113,40 @@ exports.getResetPassword = (req, res, next) => {
     isLoggedIn,
     errorMessage: errorMessage,
   });
+};
+// handles post request to /reset-password
+exports.postResetPassword = async (req, res, next) => {
+  try {
+    const token = crypto.randomBytes(32).toString("hex");
+    const user = await User.findOne({ email: req.body.email });
+    // if ther is no user with this email, sends an error message.
+    if (!user) {
+      req.flash("error", "There is no user with this email! Please signup!");
+      return res.redirect("/reset-password");
+    }
+    // assigning token and expiration date to the user
+    user.passwordResetToken = token;
+    user.resetTokenExpiration = Date.now() + 300000;
+    await user.save();
+    const url = `${process.env.BASE_URL}/set-new-password`;
+    // sending password resetting email
+    transporter.sendMail(
+      resetPasswordMailOptions(user.name, user.email, token, url),
+      (err, info) => {
+        if (err) console.log(err);
+      }
+    );
+    req.flash(
+      "success",
+      "An email has been sent. Please follow the insctructions in your email."
+    );
+    res.redirect("/reset-password");
+  } catch (err) {
+    console.log(err);
+    req.flash(
+      "error",
+      "There are some technical error, please try again later!"
+    );
+    res.redirect("/reset-password");
+  }
 };
