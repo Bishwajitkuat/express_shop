@@ -15,6 +15,8 @@ const { get404 } = require("./controllers/error-controller");
 const session = require("express-session");
 // importing MongoDBStore class
 const MongoDBStore = require("connect-mongo");
+// importing connect-flash package
+const flash = require("connect-flash");
 
 // livereload
 const liveReload = require("livereload");
@@ -73,7 +75,8 @@ app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
 });
-
+// adding flash middleware
+app.use(flash());
 // admin route
 app.use("/admin", adminRoute);
 // shop route
