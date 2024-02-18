@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
+const { transporter, signupMailOptions } = require("../lib/nodemailer");
 // controller for handling GET request to /login route
 exports.getLogin = (req, res, next) => {
   // extracting isLoggedIn value from session
@@ -82,6 +83,9 @@ exports.postSignup = async (req, res, next) => {
       });
       // saving into db
       await newUser.save();
+      transporter.sendMail(signupMailOptions(name, email), (err, info) => {
+        if (err) console.log(err);
+      });
       return res.redirect("/login");
     }
     return res.redirect("/signup");
