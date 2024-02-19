@@ -5,7 +5,7 @@ const {
   SignupInputSchema,
   resetPasswordInputSchema,
   SetNewPasswordInputSchema,
-} = require("../lib/zod-validation/validation-schemas");
+} = require("../lib/zod-validation/auth-validation-schemas");
 const crypto = require("crypto");
 const User = require("../models/user");
 const {
