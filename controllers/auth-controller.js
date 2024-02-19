@@ -10,6 +10,7 @@ const {
   signupMailOptions,
   resetPasswordMailOptions,
 } = require("../lib/nodemailer");
+
 // controller for handling GET request to /login route
 exports.getLogin = (req, res, next) => {
   // extracting isLoggedIn value from session
@@ -26,8 +27,11 @@ exports.getLogin = (req, res, next) => {
     isLoggedIn,
     errorMessage,
     successMessage,
+    errors: null,
+    oldValues: null,
   });
 };
+
 // controller for handling POST request to /login route
 exports.postLogin = async (req, res, next) => {
   try {
