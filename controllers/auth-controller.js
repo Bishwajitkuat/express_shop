@@ -364,6 +364,10 @@ exports.postSetNewPassword = async (req, res, next) => {
     // if validation fails, set-new-password view will be rendered with prefilled input fields and feedback.
     if (validation.success === false) {
       const error = validation.error.flatten().fieldErrors;
+      // if token validation fails, throwing error and do want to continue any further.
+      // token comes from hidden input field from frontend, if it changed, then something is wrong.
+      // people can sent post request other than my front end.
+      if (error?.token) throw new Error("Validation failed!");
       // error object will be used to show feedback in view
       const errors = {
         password: error?.password ? error?.password[0] : false,
@@ -372,10 +376,6 @@ exports.postSetNewPassword = async (req, res, next) => {
           : false,
         token: error?.token ? error?.token[0] : false,
       };
-      // will not allow resetting form to be rendered if token validation fails
-      const allowResetting = errors?.token ? false : true;
-      // if resetting form is not rendered, generalized error message needs to be sent
-      const errorMessage = errors?.token ? "Invalid operation or token" : null;
       // view's input fields will be prefield with the old values
       const oldValues = {
         password: req.body.password,
@@ -387,10 +387,10 @@ exports.postSetNewPassword = async (req, res, next) => {
         docTitle: "Reset password",
         path: "/reset-password",
         isLoggedIn: false,
-        errorMessage: errorMessage,
+        errorMessage: null,
         successMessage: null,
-        allowResetting: allowResetting,
-        token: req.body.token,
+        allowResetting: true,
+        token: oldValues.token,
         errors,
         oldValues,
       });
@@ -405,13 +405,9 @@ exports.postSetNewPassword = async (req, res, next) => {
       },
     });
     // if user does not exists or token has already expired.
-    // if the user is not fetched due to wrong token or expired token, user will be redirected to /set-new-password/error with generalized error feedback.
-    if (!user) {
-      req.flash("success", false);
-      req.flash("error", "Invalid operation or token!");
-      req.flash("allowResetting", false);
-      return res.redirect("/set-new-password/error");
-    }
+    // if the user is not fetched due to wrong token or expired token, user will be redirected to /set-new-password/error with generalized error feedback from catch block.
+    if (!user)
+      throw new Error("Validation failed due to invalid or expire token!");
     // hasing the new password
     const newHashPassword = await bcrypt.hash(password, 10);
     user.password = newHashPassword;
@@ -430,8 +426,11 @@ exports.postSetNewPassword = async (req, res, next) => {
     return res.redirect("/login");
   } catch (err) {
     console.log(err);
+    const errorMessage = err?.message
+      ? err.message
+      : "Invalid operation or token!";
     req.flash("success", false);
-    req.flash("error", "Invalid operation or token!");
+    req.flash("error", errorMessage);
     req.flash("allowResetting", false);
     return res.redirect("/set-new-password/error");
   }
