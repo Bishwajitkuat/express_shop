@@ -223,12 +223,14 @@ exports.getResetPassword = (req, res, next) => {
   const errorMessage = error.length < 1 ? null : error;
   const success = req.flash("success");
   const successMessage = success.length < 1 ? null : success;
-  res.render("./auth/reset-password.ejs", {
+  return res.render("./auth/reset-password.ejs", {
     docTitle: "Reset password",
     path: "/reset-password",
     isLoggedIn,
     errorMessage: errorMessage,
     successMessage: successMessage,
+    errors: null,
+    oldValues: null,
   });
 };
 // handles post request to /reset-password
