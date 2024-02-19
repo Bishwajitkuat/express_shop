@@ -5,13 +5,36 @@ include("../components/navbar.ejs")%>
     <h1 class="text-[3rem] text-center pb-[3rem] tracking-wide">
       Wellcom to express shop
     </h1>
+    <% if(errorMessage){ %>
+    <p class="error_message"><%= errorMessage %></p>
+    <%}%> <% if(successMessage){ %>
+    <p class="success_message"><%= successMessage %></p>
+    <%}%>
     <div class="w-full flex gap-2 flex-col">
       <label class="text-[1.2rem] tracking-widest" for="email">Name</label>
-      <input class="text_input_base" type="text" name="name" id="name" />
+      <input
+        class="text_input_base"
+        type="text"
+        name="name"
+        id="name"
+        value="<%=oldValues?.name%>"
+      />
+      <% if(errors?.name){ %>
+      <p class="error_message text-left"><%= errors?.name %></p>
+      <%}%>
     </div>
     <div class="w-full flex gap-2 flex-col">
       <label class="text-[1.2rem] tracking-widest" for="email">Email</label>
-      <input class="text_input_base" type="text" name="email" id="email" />
+      <input
+        class="text_input_base"
+        type="text"
+        name="email"
+        id="email"
+        value="<%=oldValues?.email%>"
+      />
+      <% if(errors?.email){ %>
+      <p class="error_message text-left"><%= errors?.email %></p>
+      <%}%>
     </div>
     <div class="w-full flex gap-2 flex-col">
       <label class="text-[1.2rem] tracking-widest" for="password"
@@ -22,7 +45,11 @@ include("../components/navbar.ejs")%>
         type="text"
         name="password"
         id="password"
+        value="<%=oldValues?.password%>"
       />
+      <% if(errors?.password){ %>
+      <p class="error_message text-left"><%= errors?.password %></p>
+      <%}%>
     </div>
     <div class="w-full flex gap-2 flex-col">
       <label class="text-[1.2rem] tracking-widest" for="password"
@@ -33,7 +60,11 @@ include("../components/navbar.ejs")%>
         type="text"
         name="confirmPassword"
         id="confirmPassword"
+        value="<%=oldValues?.confirmPassword%>"
       />
+      <% if(errors?.confirmPassword){ %>
+      <p class="error_message text-left"><%= errors?.confirmPassword %></p>
+      <%}%>
     </div>
     <button class="btn" type="submit">Signup</button>
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
