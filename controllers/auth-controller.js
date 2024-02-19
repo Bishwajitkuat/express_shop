@@ -4,6 +4,7 @@ const {
   LoginInputSchema,
   SignupInputSchema,
   resetPasswordInputSchema,
+  SetNewPasswordInputSchema,
 } = require("../lib/zod-validation/validation-schemas");
 const crypto = require("crypto");
 const User = require("../models/user");
@@ -355,22 +356,48 @@ exports.getSetNewPassword = async (req, res, next) => {
   }
 };
 
+// handles post request to /set-new-password route
 exports.postSetNewPassword = async (req, res, next) => {
   try {
-    const { password, confirmPassword, token } = req.body;
-    // user will be given feedback and password resetting form
-    if (!password || !confirmPassword || !token) {
-      req.flash("error", "One or more fields are missing!");
-      req.flash("allowResetting", true);
-      return res.redirect(`/set-new-password/${token}`);
+    // zod validation
+    const validation = SetNewPasswordInputSchema.safeParse(req.body);
+    // if validation fails, set-new-password view will be rendered with prefilled input fields and feedback.
+    if (validation.success === false) {
+      const error = validation.error.flatten().fieldErrors;
+      // error object will be used to show feedback in view
+      const errors = {
+        password: error?.password ? error?.password[0] : false,
+        confirmPassword: error?.confirmPassword
+          ? error?.confirmPassword[0]
+          : false,
+        token: error?.token ? error?.token[0] : false,
+      };
+      // will not allow resetting form to be rendered if token validation fails
+      const allowResetting = errors?.token ? false : true;
+      // if resetting form is not rendered, generalized error message needs to be sent
+      const errorMessage = errors?.token ? "Invalid operation or token" : null;
+      // view's input fields will be prefield with the old values
+      const oldValues = {
+        password: req.body.password,
+        confirmPassword: req.body.confirmPassword,
+        token: req.body.token,
+      };
+      // rendering login view with feedbacks
+      return res.render("./auth/set-new-password.ejs", {
+        docTitle: "Reset password",
+        path: "/reset-password",
+        isLoggedIn: false,
+        errorMessage: errorMessage,
+        successMessage: null,
+        allowResetting: allowResetting,
+        token: req.body.token,
+        errors,
+        oldValues,
+      });
     }
-    // user will be given feedback and password resetting form
-    if (password !== confirmPassword) {
-      req.flash("error", "Password and Confirm password does not match!");
-      req.flash("allowResetting", true);
-      return res.redirect(`/set-new-password/${token}`);
-    }
-    // fetching the user, checki tokenExpirary time, hash password, save new password, deleter token and
+    // validation successfull
+    const { password, token } = validation.data;
+    // fetching the user, checki tokenExpirary time, hash password, save new password, delete token
     const user = await User.findOne({
       passwordResetToken: token,
       resetTokenExpiration: {
@@ -378,8 +405,9 @@ exports.postSetNewPassword = async (req, res, next) => {
       },
     });
     // if user does not exists or token has already expired.
-    // user will be given feedback and but password resetting form will not be rendered
+    // if is not fetched due to wrong token or expired token, user will be redirected to /set-new-password/error with generalized error feedback.
     if (!user) {
+      req.flash("success", false);
       req.flash("error", "Invalid operation or token!");
       req.flash("allowResetting", false);
       return res.redirect("/set-new-password/error");
@@ -392,14 +420,17 @@ exports.postSetNewPassword = async (req, res, next) => {
     user.resetTokenExpiration = undefined;
     // saving back into db.
     await user.save();
-    // redirected to /login route with success feedback
+    // if password resetting operation is successful, user will be redirected to /login route with generalized success message.
     req.flash(
       "success",
       "Congratulations! You have successfully changed your password!"
     );
+    req.flash("error", false);
+    req.flash("allowResetting", false);
     return res.redirect("/login");
   } catch (err) {
     console.log(err);
+    req.flash("success", false);
     req.flash("error", "Invalid operation or token!");
     req.flash("allowResetting", false);
     return res.redirect("/set-new-password/error");
