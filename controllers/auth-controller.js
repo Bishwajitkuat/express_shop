@@ -315,7 +315,12 @@ exports.getSetNewPassword = async (req, res, next) => {
     // this will be used for conditional rendering of passwor and confirm password fields in view
     const allowResetting = allow.length < 1 ? true : allow[0];
     // must validate or sanitize befor db qurary.
-    const token = req.params.token;
+    // validating the params with zod
+    const validation = z.string().min(5).safeParse({ token: req.params.token });
+    if (validation.success === false)
+      throw new Error("Token validation failed");
+    // validation is successfull, token is now string.
+    const token = validation.data.token;
     const user = await User.findOne({
       passwordResetToken: token,
       resetTokenExpiration: {
