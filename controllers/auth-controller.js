@@ -314,6 +314,7 @@ exports.getSetNewPassword = async (req, res, next) => {
     const allow = req.flash("allowResetting");
     // this will be used for conditional rendering of passwor and confirm password fields in view
     const allowResetting = allow.length < 1 ? true : allow[0];
+    // must validate or sanitize befor db qurary.
     const token = req.params.token;
     const user = await User.findOne({
       passwordResetToken: token,
@@ -323,14 +324,15 @@ exports.getSetNewPassword = async (req, res, next) => {
     });
     // if no users are available, error feebcack will be given instead of password reset form
     if (!user) {
-      console.log(user);
       return res.render("./auth/set-new-password.ejs", {
         docTitle: "Set new passowrd",
         path: "/set-new-password",
         isLoggedIn: false,
         errorMessage: "Invalid operation or token",
         allowResetting: false,
-        token,
+        token: null,
+        errors: null,
+        oldValues: null,
       });
     }
     // user will be given be given to input form for resetting password.
@@ -342,6 +344,8 @@ exports.getSetNewPassword = async (req, res, next) => {
       errorMessage: errorMessage,
       allowResetting: allowResetting,
       token,
+      errors: null,
+      oldValues: null,
     });
   } catch (err) {
     console.log(err);
@@ -351,7 +355,9 @@ exports.getSetNewPassword = async (req, res, next) => {
       isLoggedIn: false,
       errorMessage: "Invalid operation or token",
       allowResetting: false,
-      token,
+      errors: null,
+      oldValues: null,
+      token: null,
     });
   }
 };
@@ -405,7 +411,7 @@ exports.postSetNewPassword = async (req, res, next) => {
       },
     });
     // if user does not exists or token has already expired.
-    // if is not fetched due to wrong token or expired token, user will be redirected to /set-new-password/error with generalized error feedback.
+    // if the user is not fetched due to wrong token or expired token, user will be redirected to /set-new-password/error with generalized error feedback.
     if (!user) {
       req.flash("success", false);
       req.flash("error", "Invalid operation or token!");
