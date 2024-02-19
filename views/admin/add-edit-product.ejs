@@ -7,25 +7,24 @@ include("../components/navbar.ejs")%>
   <form class="w-[65%] md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST">
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="title">Title</label>
-      <input class="text_input_base" type="text" name="title" id="title" <% if(editing){ %>
-        value="<%= product.title %>"
-      <%}else{''}%>/>
+      <input class="text_input_base" type="text" name="title" id="title" 
+        value="<%= product?.title %>" />
+    
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="price">Price (€)</label>
-      <input class=" text_input_base" type="number" name="price" id="price" <% if(editing){ %>
-        value="<%= product.price %>"
-      <%}else{''}%> />
+      <input class=" text_input_base" type="text" name="price" id="price" 
+        value="<%= product?.price %>"
+       />
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="description">Description</label>
-      <textarea class="text_input_base" name="description" id="description" rows="10"><%if(editing){%><%=product.description%><%}else{''}%></textarea>
+      <textarea class="text_input_base" name="description" id="description" rows="10"><%=product?.description%></textarea>
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="imgUrl">Image URL</label>
-      <input class="text_input_base" type="imgUrl" name="imgUrl" id="imgUrl" <% if(editing){ %>
-        value="<%= product.imgUrl %>"
-      <%}else{''}%> />
+      <input class="text_input_base" type="text" name="imgUrl" id="imgUrl" 
+        value="<%= product?.imgUrl %>" />
     </div>
     <% if(editing){ %> 
       <input  type="hidden" name="id" value="<%=product._id%>">
