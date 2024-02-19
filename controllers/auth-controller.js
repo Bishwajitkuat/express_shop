@@ -317,6 +317,7 @@ exports.getSetNewPassword = async (req, res, next) => {
     // must validate or sanitize befor db qurary.
     // validating the params with zod
     const validation = z.string().min(5).safeParse(req.params.token);
+    if (validation.success === false) throw new Error("Validation failed");
     // validation is successfull, token is now string.
     const token = validation.data;
     const user = await User.findOne({
@@ -325,20 +326,10 @@ exports.getSetNewPassword = async (req, res, next) => {
         $gt: Date.now(),
       },
     });
-    // if no users are available, error feebcack will be given instead of password reset form
-    if (!user) {
-      return res.render("./auth/set-new-password.ejs", {
-        docTitle: "Set new passowrd",
-        path: "/set-new-password",
-        isLoggedIn: false,
-        errorMessage: "Invalid operation or token",
-        allowResetting: false,
-        token: null,
-        errors: null,
-        oldValues: null,
-      });
-    }
-    // user will be given be given to input form for resetting password.
+    // if no users are available, error feebcack will be given instead from catch block
+    if (!user)
+      throw new Error("Validation failed due to invalid or expired token!");
+    // user will be given be input form for resetting password.
     const isLoggedIn = req.session.isLoggedIn;
     return res.render("./auth/set-new-password", {
       docTitle: "Set new passowrd",
@@ -356,7 +347,7 @@ exports.getSetNewPassword = async (req, res, next) => {
       docTitle: "Set new passowrd",
       path: "/set-new-password",
       isLoggedIn: false,
-      errorMessage: "Invalid operation or token",
+      errorMessage: err?.message ? err.message : "Invalid operation or token",
       allowResetting: false,
       errors: null,
       oldValues: null,
