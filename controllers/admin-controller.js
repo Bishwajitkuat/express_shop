@@ -10,6 +10,7 @@ exports.getAddProduct = (req, res, next) => {
     docTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
+    product: null,
     isLoggedIn,
   });
 };
