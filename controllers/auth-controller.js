@@ -3,6 +3,7 @@ const { z } = require("zod");
 const {
   LoginInputSchema,
   SignupInputSchema,
+  resetPasswordInputSchema,
 } = require("../lib/zod-validation/validation-schemas");
 const crypto = require("crypto");
 const User = require("../models/user");
@@ -233,29 +234,65 @@ exports.getResetPassword = (req, res, next) => {
 // handles post request to /reset-password
 exports.postResetPassword = async (req, res, next) => {
   try {
+    // zod validation
+    const validation = resetPasswordInputSchema.safeParse(req.body);
+    // if validation fails, reset-password view will be rendered with prefilled input fields and feedback.
+    if (validation.success === false) {
+      const error = validation.error.flatten().fieldErrors;
+      // error object will be used to show feedback in view
+      const errors = {
+        email: error?.email ? error?.email[0] : false,
+      };
+      // view's input fields will be prefield with the old values
+      const oldValues = { email: req.body.email };
+      // rendering login view with feedbacks
+      return res.render("./auth/reset-password.ejs", {
+        docTitle: "Reset password",
+        path: "/reset-password",
+        isLoggedIn: false,
+        errorMessage: null,
+        successMessage: null,
+        errors,
+        oldValues,
+      });
+    }
+    // validation is a success
+    // creating a token
     const token = crypto.randomBytes(32).toString("hex");
-    const user = await User.findOne({ email: req.body.email });
-    // if ther is no user with this email, sends an error message.
+    // fetching the user with email address
+    const user = await User.findOne({ email: validation.data.email });
+    // if ther is no user with this email, reset-password view will be rendered with prefilled input fields and generalized feedback.
     if (!user) {
       req.flash("error", "There is no user with this email! Please signup!");
-      return res.redirect("/reset-password");
+      return res.render("./auth/reset-password.ejs", {
+        docTitle: "Reset password",
+        path: "/reset-password",
+        isLoggedIn: false,
+        errorMessage: "There is no user with this email! Please signup!",
+        successMessage: null,
+        errors: null,
+        oldValues: validation.data,
+      });
     }
     // assigning token and expiration date to the user
     user.passwordResetToken = token;
     user.resetTokenExpiration = Date.now() + 300000;
     await user.save();
     const url = `${process.env.BASE_URL}/set-new-password`;
-    // sending password resetting email
+    // sending password resetting email with instraction
     transporter.sendMail(
       resetPasswordMailOptions(user.name, user.email, token, url),
       (err, info) => {
         if (err) console.log(err);
       }
     );
+    // redirected to reset-password view with generalized success message
     req.flash(
       "success",
       "An email has been sent. Please follow the insctructions in the email!"
     );
+    // if i do not set null in here, previous unused error will be show in view.
+    req.flash("error", null);
     res.redirect("/reset-password");
   } catch (err) {
     console.log(err);
