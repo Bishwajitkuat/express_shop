@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const { z } = require("zod");
 const {
   LoginInputSchema,
+  SignupInputSchema,
 } = require("../lib/zod-validation/validation-schemas");
 const crypto = require("crypto");
 const User = require("../models/user");
@@ -124,32 +125,83 @@ exports.getSignup = (req, res, next) => {
 
 exports.postSignup = async (req, res, next) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
-    // better validation and feedback will be implemented later.
-    if (name && email && password && confirmPassword) {
-      // checking if the email already exist, if so, will not make new user
+    // zod validation
+    const validation = SignupInputSchema.safeParse(req.body);
+    // if validation fails
+    if (validation.success === false) {
+      const error = validation.error.flatten().fieldErrors;
+      // error object will be used to show feedback in view
+      const errors = {
+        name: error?.name ? error?.name[0] : false,
+        email: error?.email ? error?.email[0] : false,
+        password: error?.password ? error?.password[0] : false,
+        confirmPassword: error?.confirmPassword
+          ? error?.confirmPassword[0]
+          : false,
+      };
+      // view's input fields will be prefield with the old values
+      const oldValues = {
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+        confirmPassword: req.body.confirmPassword,
+      };
+      // rendering login view with feedbacks
+      return res.render("./auth/signup", {
+        docTitle: "Signup",
+        path: "/signup",
+        isLoggedIn: false,
+        errorMessage: null,
+        successMessage: null,
+        errors,
+        oldValues,
+      });
+    }
+    // validation is successfull, extracting data
+    const { name, email, password, confirmPassword } = validation.data;
+    // checking whether there is user with the email address
       const isAlreadyExists = await User.findOne({ email: email });
-      if (isAlreadyExists) return res.redirect("/signup");
+    // if user already exist with the email, render signup view with feedback and prefilled input fields
+    if (isAlreadyExists) {
+      return res.render("./auth/signup", {
+        docTitle: "Signup",
+        path: "/signup",
+        isLoggedIn: false,
+        errorMessage: `There is already a user with this email address!`,
+        successMessage: null,
+        errors: null,
+        oldValues: validation.data,
+      });
+    }
       // creating hash password and it's asyn
-      const hasPassword = await bcrypt.hash(password, 10);
+    const hashPassword = await bcrypt.hash(password, 10);
       // creating new instance of User model
       const newUser = new User({
         name,
         email,
-        password: hasPassword,
+      password: hashPassword,
         cart: { items: [] },
       });
       // saving into db
       await newUser.save();
-      transporter.sendMail(signupMailOptions(name, email), (err, info) => {
+    await transporter.sendMail(signupMailOptions(name, email), (err, info) => {
         if (err) console.log(err);
       });
+    // sending feedback for successful account creation
+    req.flash("success", "You have successfully created your account!");
       return res.redirect("/login");
-    }
-    return res.redirect("/signup");
   } catch (err) {
     console.log(err);
-    res.redirect("signup");
+    // rendering signup view with generalized error message and prefilled input fields
+    return res.render("./auth/signup", {
+      docTitle: "Signup",
+      path: "/signup",
+      isLoggedIn: false,
+      errorMessage: `There is some technical problem creating your account, please try again later!`,
+      successMessage: null,
+      errors: null,
+      oldValues: req.body,
+    });
   }
 };
 
