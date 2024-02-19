@@ -115,11 +115,19 @@ exports.postLogOut = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   const isLoggedIn = req.session.isLoggedIn;
   res.render("./auth/signup.ejs", {
     docTitle: "Signup",
     path: "/signup",
-    isLoggedIn,
+    isLoggedIn: false,
+    errorMessage: null,
+    successMessage: null,
+    errors: null,
+    oldValues: null,
   });
 };
 
@@ -160,7 +168,7 @@ exports.postSignup = async (req, res, next) => {
     // validation is successfull, extracting data
     const { name, email, password, confirmPassword } = validation.data;
     // checking whether there is user with the email address
-      const isAlreadyExists = await User.findOne({ email: email });
+    const isAlreadyExists = await User.findOne({ email: email });
     // if user already exist with the email, render signup view with feedback and prefilled input fields
     if (isAlreadyExists) {
       return res.render("./auth/signup", {
@@ -173,23 +181,23 @@ exports.postSignup = async (req, res, next) => {
         oldValues: validation.data,
       });
     }
-      // creating hash password and it's asyn
+    // creating hash password and it's asyn
     const hashPassword = await bcrypt.hash(password, 10);
-      // creating new instance of User model
-      const newUser = new User({
-        name,
-        email,
+    // creating new instance of User model
+    const newUser = new User({
+      name,
+      email,
       password: hashPassword,
-        cart: { items: [] },
-      });
-      // saving into db
-      await newUser.save();
+      cart: { items: [] },
+    });
+    // saving into db
+    await newUser.save();
     await transporter.sendMail(signupMailOptions(name, email), (err, info) => {
-        if (err) console.log(err);
-      });
+      if (err) console.log(err);
+    });
     // sending feedback for successful account creation
     req.flash("success", "You have successfully created your account!");
-      return res.redirect("/login");
+    return res.redirect("/login");
   } catch (err) {
     console.log(err);
     // rendering signup view with generalized error message and prefilled input fields
