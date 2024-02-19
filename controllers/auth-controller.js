@@ -1,4 +1,8 @@
 const bcrypt = require("bcryptjs");
+const { z } = require("zod");
+const {
+  LoginInputSchema,
+} = require("../lib/zod-validation/validation-schemas");
 const crypto = require("crypto");
 const User = require("../models/user");
 const {
@@ -27,13 +31,47 @@ exports.getLogin = (req, res, next) => {
 // controller for handling POST request to /login route
 exports.postLogin = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    // validatio with zod
+    const validation = LoginInputSchema.safeParse(req.body);
+    // if validation fails
+    if (validation.success === false) {
+      const error = validation.error.flatten().fieldErrors;
+      // error object will be used to show feedback in view
+      const errors = {
+        email: error?.email ? error?.email[0] : false,
+        password: error?.password ? error?.password[0] : false,
+      };
+      // view's input fields will be prefield with the old values
+      const oldValues = {
+        email: req.body.email,
+        password: req.body.password,
+      };
+      // rendering login view with feedbacks
+      return res.render("./auth/login", {
+        docTitle: "Login",
+        path: "/login",
+        isLoggedIn: false,
+        errorMessage: null,
+        successMessage: null,
+        errors,
+        oldValues,
+      });
+    }
+    // validation is successfull, extracting data
+    const { email, password } = validation.data;
     // find the user by email
     const user = await User.findOne({ email: email });
-    // if no user is found with the email addres user will be redirected to login page
+    // if no user is found with the email addres user will be taken to login page with feedbacks
     if (!user) {
-      req.flash("error", "Invalid email or password!");
-      return res.redirect("/login");
+      return res.render("./auth/login", {
+        docTitle: "Login",
+        path: "/login",
+        isLoggedIn: false,
+        errorMessage: "Invalid email or password!",
+        successMessage: null,
+        errors: null,
+        oldValues: validation.data,
+      });
     }
     // comparing passwords, NOTE: eventhough it suggeds there is not effect of await, but it does
     // without await it will return promised, and used will never be able to login.
@@ -46,8 +84,16 @@ exports.postLogin = async (req, res, next) => {
       req.session.userId = user._id.toString();
       return res.redirect("/");
     }
-    req.flash("error", "Invalid email or password!");
-    return res.redirect("/login");
+    // password did not match, user will taken to login page with feedback
+    return res.render("./auth/login", {
+      docTitle: "Login",
+      path: "/login",
+      isLoggedIn: false,
+      errorMessage: "Invalid email or password!",
+      successMessage: null,
+      errors: null,
+      oldValues: validation.data,
+    });
   } catch {
     (err) => console.log(err);
     req.flash("error", "There is some technical problem. Please try later!");
