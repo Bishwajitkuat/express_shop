@@ -5,26 +5,40 @@ include("../components/navbar.ejs")%>
     <%= editing ? "Edit product":"Add new product"; %>
   </h1>
   <form class="w-[65%] md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST">
+    <% if(errorMessage){ %>
+      <p class="error_message"><%= errorMessage %></p>
+      <%}%>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="title">Title</label>
       <input class="text_input_base" type="text" name="title" id="title" 
         value="<%= product?.title %>" />
+        <% if(errors?.title){ %>
+          <p class="error_message text-left"><%= errors?.title %></p>
+          <%}%>
     
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="price">Price (€)</label>
       <input class=" text_input_base" type="text" name="price" id="price" 
-        value="<%= product?.price %>"
-       />
+        value="<%= product?.price %>" />
+        <% if(errors?.price){ %>
+          <p class="error_message text-left"><%= errors?.price %></p>
+          <%}%>
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="description">Description</label>
       <textarea class="text_input_base" name="description" id="description" rows="10"><%=product?.description%></textarea>
+      <% if(errors?.description){ %>
+        <p class="error_message text-left"><%= errors?.description %></p>
+        <%}%>
     </div>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="imgUrl">Image URL</label>
       <input class="text_input_base" type="text" name="imgUrl" id="imgUrl" 
         value="<%= product?.imgUrl %>" />
+        <% if(errors?.imgUrl){ %>
+          <p class="error_message text-left"><%= errors?.imgUrl %></p>
+          <%}%>
     </div>
     <% if(editing){ %> 
       <input  type="hidden" name="id" value="<%=product._id%>">
