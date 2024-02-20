@@ -33,23 +33,34 @@ exports.getHomePage = async (req, res, next) => {
   }
 };
 
-exports.getProducts = (req, res, next) => {
+exports.getProducts = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
-
-  // findAll() method will return all products in an array
-  Product.find()
-    .populate("userId", "name")
-    .then((products) => {
+  try {
+    // findAll() method will return all products in an array
+    const products = await Product.find().populate("userId", "name");
+    return res.render("./shop/product-list.ejs", {
+      products,
+      docTitle: "Products",
+      path: "/products",
       // passing isLoggedIn value for conditional rendering in navbar.
-      res.render("./shop/product-list.ejs", {
-        products,
-        docTitle: "Products",
-        path: "/products",
-        isLoggedIn,
-      });
-    })
-    .catch((err) => console.log(err));
+      isLoggedIn,
+      errorMessage: null,
+      successMessage: null,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.render("./shop/product-list.ejs", {
+      products: null,
+      docTitle: "Products",
+      path: "/products",
+      isLoggedIn,
+      errorMessage: err?.message
+        ? err.message
+        : "Sorry! an error occured during data fetching. Please try again later!",
+      successMessage: null,
+    });
+  }
 };
 
 exports.getProductById = (req, res, next) => {
