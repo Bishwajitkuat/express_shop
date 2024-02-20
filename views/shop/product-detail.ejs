@@ -2,6 +2,11 @@
 include("../components/navbar.ejs")%>
 
 <main class="main">
+  <% if(errorMessage){ %>
+  <p class="error_message">Error: <%= errorMessage %></p>
+  <%}%> <% if(successMessage){ %>
+  <p class="success_message"><%= successMessage %></p>
+  <%}%> <%if(product) {%>
   <h1 class="text-[3rem] text-center pb-[1rem] tracking-wide">
     <%= product.title%>
   </h1>
@@ -16,9 +21,11 @@ include("../components/navbar.ejs")%>
       <h2 class="text-[1.5rem] text-slate-200 tracking-tighter text-left">
         $<%= product.price%>
       </h2>
+      <p>Seller: <%= product.userId.name%></p>
       <p><%= product.description%></p>
       <%- include("../components/add-to-cart.ejs", {product}) %>
     </div>
   </div>
+  <%}%>
 </main>
 <%- include("../components/footer.ejs")%>

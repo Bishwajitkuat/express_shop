@@ -1,3 +1,6 @@
+const {
+  IsStringCanBeObjectIdSchema,
+} = require("../lib/zod-validation/product-validation-schemas");
 const Order = require("../models/order");
 const Product = require("../models/product");
 const User = require("../models/user");
@@ -63,23 +66,51 @@ exports.getProducts = async (req, res, next) => {
   }
 };
 
-exports.getProductById = (req, res, next) => {
+exports.getProductById = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
-  const productId = req.params.productId;
-  Product.findById(productId)
-    .then((product) => {
-      res.render("./shop/product-detail.ejs", {
-        product: product,
-        docTitle: product.title,
-        path: "/products",
-        isLoggedIn,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.redirect("/products");
+  try {
+    // params data validation with zod.
+    const validation = IsStringCanBeObjectIdSchema.safeParse(
+      req.params.productId
+    );
+    // throw error, if params data fails to validate
+    if (validation.success === false)
+      throw new Error(
+        "Invalid product id! No product can be found with this id!"
+      );
+    const product = await Product.findById(validation.data).populate(
+      "userId",
+      "name"
+    );
+    // if no product found with the id, throw error
+    if (!product)
+      throw new Error(
+        "Sorry! The product your are looking for, no longer exists!"
+      );
+    // all checks are passed, passing the data into view
+    return res.render("./shop/product-detail.ejs", {
+      product: product,
+      docTitle: product.title,
+      path: "/products",
+      isLoggedIn,
+      errorMessage: null,
+      successMessage: null,
     });
+  } catch (err) {
+    console.log(err);
+    // if any error is catched, product-detail.ejs view will be rendered with error message
+    return res.render("./shop/product-detail.ejs", {
+      product: null,
+      docTitle: "Error",
+      path: "/products",
+      isLoggedIn,
+      errorMessage: err?.message
+        ? err.message
+        : "Sorry! an error occured during data fetching the product you are looking for. Please try again later!",
+      successMessage: null,
+    });
+  }
 };
 
 exports.getCart = async (req, res, next) => {
