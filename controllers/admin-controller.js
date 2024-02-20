@@ -1,3 +1,6 @@
+const {
+  ProductAddInputSchema,
+} = require("../lib/zod-validation/product-validation-schemas");
 const Product = require("../models/product");
 const User = require("../models/user");
 
@@ -16,11 +19,44 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = async (req, res, next) => {
-  const { title, imgUrl, description } = req.body;
+  try {
+    const isLoggedIn = req.session.isLoggedIn;
+    // zod validation for user inputs
+    const validation = ProductAddInputSchema.safeParse(req.body);
+    // if validation fails, add-edit-product view will be rendered with prefilled value and feedback.
+    if (validation.success === false) {
+      const error = validation.error.flatten().fieldErrors;
+      // creating errors and oldValue object to send into view
+      const errors = {
+        title: error?.title ? error?.title[0] : false,
+        price: error?.price ? error?.price[0] : false,
+        description: error?.description ? error?.description[0] : false,
+        imgUrl: error?.imgUrl ? error?.imgUrl[0] : false,
+      };
+      // view's input fields will be prefield with the old values
+      const product = {
+        title: req.body.title,
+        price: req.body.price,
+        description: req.body.description,
+        imgUrl: req.body.imgUrl,
+      };
+      // rendering add-edit-product view with prefilled input fields and feedback.
+      return res.render("./admin/add-edit-product.ejs", {
+        docTitle: "Add Product",
+        path: "/admin/add-product",
+        editing: false,
+        isLoggedIn,
+        errorMessage: null,
+        errors,
+        product,
+      });
+    }
+    // validation is successfull
+    const { title, price, imgUrl, description } = validation.data;
   // fetching the user, userId is extracted from session.userId
   const user = await User.findById(req.session.userId);
-  // shoud check userId exist in db, only then creates new product
-  const price = Number(req.body.price);
+    // if user can not be fetched, a error will be thrown, with a feedback
+    if (!user) throw new Error("User can not be found!");
   // creating new product from Product modle
   const newProduct = new Product({
     title,
@@ -30,13 +66,21 @@ exports.postAddProduct = async (req, res, next) => {
     userId: user._id,
   });
   // using mongoose's model's save mthod to store new instance to db
-  newProduct
-    .save()
-    .then((response) => res.redirect("/admin/products"))
-    .catch((err) => {
+    await newProduct.save();
+    return res.redirect("/admin/products");
+  } catch (err) {
       console.log(err);
-      res.redirect("/");
+    return res.render("./admin/add-edit-product.ejs", {
+      docTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      product: req.body,
+      isLoggedIn: req.session.isLoggedIn,
+      errorMessage:
+        "Product can not be created due to some technical problem, please try again leter!",
+      errors: null,
     });
+  }
 };
 
 // controllers for editing products
