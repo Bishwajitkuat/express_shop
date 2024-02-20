@@ -236,6 +236,10 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
   const userId = req.session.userId;
@@ -246,6 +250,8 @@ exports.getProducts = (req, res, next) => {
         docTitle: "Admin Product",
         path: "/admin/products",
         isLoggedIn,
+        errorMessage,
+        successMessage,
       });
     })
     .catch((err) => {
