@@ -6,16 +6,23 @@ const User = require("../models/user");
 
 // controllers for adding new product
 exports.getAddProduct = (req, res, next) => {
-  // extracting isLoggedIn value from session
-  const isLoggedIn = req.session.isLoggedIn;
-  // sending response form ejs templeting engine
-  res.render("./admin/add-edit-product.ejs", {
-    docTitle: "Add Product",
-    path: "/admin/add-product",
-    editing: false,
-    product: null,
-    isLoggedIn,
-  });
+  try {
+    // extracting isLoggedIn value from session
+    const isLoggedIn = req.session.isLoggedIn;
+    // sending response form ejs templeting engine
+    res.render("./admin/add-edit-product.ejs", {
+      docTitle: "Add Product",
+      path: "/admin/add-product",
+      isLoggedIn,
+      editing: false,
+      errorMessage: null,
+      product: null,
+      errors: null,
+    });
+  } catch (err) {
+    console.log(err);
+    res.redirect("/admin/products");
+  }
 };
 
 exports.postAddProduct = async (req, res, next) => {
@@ -53,23 +60,23 @@ exports.postAddProduct = async (req, res, next) => {
     }
     // validation is successfull
     const { title, price, imgUrl, description } = validation.data;
-  // fetching the user, userId is extracted from session.userId
-  const user = await User.findById(req.session.userId);
+    // fetching the user, userId is extracted from session.userId
+    const user = await User.findById(req.session.userId);
     // if user can not be fetched, a error will be thrown, with a feedback
     if (!user) throw new Error("User can not be found!");
-  // creating new product from Product modle
-  const newProduct = new Product({
-    title,
-    price,
-    imgUrl,
-    description,
-    userId: user._id,
-  });
-  // using mongoose's model's save mthod to store new instance to db
+    // creating new product from Product modle
+    const newProduct = new Product({
+      title,
+      price,
+      imgUrl,
+      description,
+      userId: user._id,
+    });
+    // using mongoose's model's save mthod to store new instance to db
     await newProduct.save();
     return res.redirect("/admin/products");
   } catch (err) {
-      console.log(err);
+    console.log(err);
     return res.render("./admin/add-edit-product.ejs", {
       docTitle: "Add Product",
       path: "/admin/add-product",
