@@ -1,3 +1,4 @@
+const { z } = require("zod");
 const {
   ProductAddInputSchema,
 } = require("../lib/zod-validation/product-validation-schemas");
@@ -91,29 +92,56 @@ exports.postAddProduct = async (req, res, next) => {
 };
 
 // controllers for editing products
-exports.getEditProduct = (req, res, next) => {
-  const productId = req.params.productId;
+// it renders add-edit-product view for GET request in /admin/edit-product route.
+exports.getEditProduct = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
-  if (productId) {
-    // fetching product object for this productId and sending the object to add-edit-product view
+  try {
+    // validating and converting params for productId with zod
+    const validation = z.string().min(1).safeParse(req.params.productId);
+    // if productId params fails the validation , add-edit-product view will be rendered with error feedback from catch block
+    if (validation.success === false)
+      throw new Error(
+        "Wrong type for product id. Please click edit button in product cart to edit your product!"
+      );
+    // validation is successfull, so extracting the validated and cleaned up productId data
+    const productId = validation.data;
+    const product = await Product.findById(productId);
+    // if no product can not be found with the productId, add-edit-product view will be rendered with error feedback from catch block
+    if (!product)
+      throw new Error("No product is found with the given product Id!");
     // shoud check if the product belongs to the current user
-    Product.findById(productId)
-      .then((product) => {
-        res.render("./admin/add-edit-product.ejs", {
-          product,
-          docTitle: "Edit Product",
-          path: "/admin/edit-product",
-          editing: true,
-          isLoggedIn,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.redirect("/admin/products");
-      });
-    // if product id does not exist or could not be found from params, user will be redirected to /admin/products page
-  } else res.redirect("/admin/products");
+    // if product does not belong to current user, add-edit-product view will be rendered with error feedbcack from catch block
+    if (product.userId.toString() !== req.session.userId.toString())
+      throw new Error(
+        "One user is not allowed to edit products of other user!"
+      );
+    // fetching product object for this productId and sending the object to add-edit-product view
+    return res.render("./admin/add-edit-product.ejs", {
+      docTitle: "Edit Product",
+      path: "/admin/edit-product",
+      isLoggedIn,
+      product,
+      editing: true,
+      errorMessage: null,
+      errors: null,
+    });
+  } catch (err) {
+    // if any error is catched, add-edit-product view will be rendered with error message extracted from error message.
+    console.log(err);
+    const errorMessage = err?.message
+      ? err.message
+      : "Due to some technical problem, product update operation can not be performed now. Please try again later!";
+    return res.render("./admin/add-edit-product.ejs", {
+      docTitle: "Edit Product",
+      path: "/admin/edit-product",
+      isLoggedIn,
+      product: null,
+      editing: false,
+      errorMessage: errorMessage,
+      errors: null,
+    });
+  }
 };
 
 exports.postEditProduct = (req, res, next) => {
