@@ -1,6 +1,8 @@
 const { z } = require("zod");
 const {
   ProductAddInputSchema,
+  ProductEditInputSchema,
+  IsStringCanBeObjectIdSchema,
 } = require("../lib/zod-validation/product-validation-schemas");
 const Product = require("../models/product");
 const User = require("../models/user");
@@ -98,7 +100,9 @@ exports.getEditProduct = async (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   try {
     // validating and converting params for productId with zod
-    const validation = z.string().min(1).safeParse(req.params.productId);
+    const validation = IsStringCanBeObjectIdSchema.safeParse(
+      req.params.productId
+    );
     // if productId params fails the validation , add-edit-product view will be rendered with error feedback from catch block
     if (validation.success === false)
       throw new Error(
