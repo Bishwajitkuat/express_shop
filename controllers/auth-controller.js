@@ -42,17 +42,8 @@ exports.postLogin = async (req, res, next) => {
     const validation = LoginInputSchema.safeParse(req.body);
     // if validation fails
     if (validation.success === false) {
-      const error = validation.error.flatten().fieldErrors;
       // error object will be used to show feedback in view
-      const errors = {
-        email: error?.email ? error?.email[0] : false,
-        password: error?.password ? error?.password[0] : false,
-      };
-      // view's input fields will be prefield with the old values
-      const oldValues = {
-        email: req.body.email,
-        password: req.body.password,
-      };
+      const errors = validation.error.flatten().fieldErrors;
       // rendering login view with feedbacks
       return res.render("./auth/login", {
         docTitle: "Login",
@@ -61,7 +52,8 @@ exports.postLogin = async (req, res, next) => {
         errorMessage: null,
         successMessage: null,
         errors,
-        oldValues,
+        // view's input fields will be prefield with the old values
+        oldValues: req.body,
       });
     }
     // validation is successfull, extracting data
@@ -139,23 +131,8 @@ exports.postSignup = async (req, res, next) => {
     const validation = SignupInputSchema.safeParse(req.body);
     // if validation fails
     if (validation.success === false) {
-      const error = validation.error.flatten().fieldErrors;
-      // error object will be used to show feedback in view
-      const errors = {
-        name: error?.name ? error?.name[0] : false,
-        email: error?.email ? error?.email[0] : false,
-        password: error?.password ? error?.password[0] : false,
-        confirmPassword: error?.confirmPassword
-          ? error?.confirmPassword[0]
-          : false,
-      };
-      // view's input fields will be prefield with the old values
-      const oldValues = {
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        confirmPassword: req.body.confirmPassword,
-      };
+      // error objects will be used to show feedback in view
+      const errors = validation.error.flatten().fieldErrors;
       // rendering login view with feedbacks
       return res.render("./auth/signup", {
         docTitle: "Signup",
@@ -164,7 +141,8 @@ exports.postSignup = async (req, res, next) => {
         errorMessage: null,
         successMessage: null,
         errors,
-        oldValues,
+        // view's input fields will be prefield with the old values
+        oldValues: req.body,
       });
     }
     // validation is successfull, extracting data
@@ -241,13 +219,8 @@ exports.postResetPassword = async (req, res, next) => {
     const validation = resetPasswordInputSchema.safeParse(req.body);
     // if validation fails, reset-password view will be rendered with prefilled input fields and feedback.
     if (validation.success === false) {
-      const error = validation.error.flatten().fieldErrors;
-      // error object will be used to show feedback in view
-      const errors = {
-        email: error?.email ? error?.email[0] : false,
-      };
-      // view's input fields will be prefield with the old values
-      const oldValues = { email: req.body.email };
+      // error objects will be used to show feedback in view
+      const errors = validation.error.flatten().fieldErrors;
       // rendering login view with feedbacks
       return res.render("./auth/reset-password.ejs", {
         docTitle: "Reset password",
@@ -256,7 +229,8 @@ exports.postResetPassword = async (req, res, next) => {
         errorMessage: null,
         successMessage: null,
         errors,
-        oldValues,
+        // view's input fields will be prefield with the old values
+        oldValues: req.body,
       });
     }
     // validation is a success
@@ -363,25 +337,12 @@ exports.postSetNewPassword = async (req, res, next) => {
     const validation = SetNewPasswordInputSchema.safeParse(req.body);
     // if validation fails, set-new-password view will be rendered with prefilled input fields and feedback.
     if (validation.success === false) {
-      const error = validation.error.flatten().fieldErrors;
+      // error objects will be used to show feedback in view
+      const errors = validation.error.flatten().fieldErrors;
       // if token validation fails, throwing error and do want to continue any further.
       // token comes from hidden input field from frontend, if it changed, then something is wrong.
       // people can sent post request other than my front end.
-      if (error?.token) throw new Error("Validation failed!");
-      // error object will be used to show feedback in view
-      const errors = {
-        password: error?.password ? error?.password[0] : false,
-        confirmPassword: error?.confirmPassword
-          ? error?.confirmPassword[0]
-          : false,
-        token: error?.token ? error?.token[0] : false,
-      };
-      // view's input fields will be prefield with the old values
-      const oldValues = {
-        password: req.body.password,
-        confirmPassword: req.body.confirmPassword,
-        token: req.body.token,
-      };
+      if (errors?.token) throw new Error("Validation failed!");
       // rendering login view with feedbacks
       return res.render("./auth/set-new-password.ejs", {
         docTitle: "Reset password",
@@ -390,9 +351,10 @@ exports.postSetNewPassword = async (req, res, next) => {
         errorMessage: null,
         successMessage: null,
         allowResetting: true,
-        token: oldValues.token,
+        token: req.body.token,
         errors,
-        oldValues,
+        // view's input fields will be prefield with the old values
+        oldValues: req.body,
       });
     }
     // validation successfull
