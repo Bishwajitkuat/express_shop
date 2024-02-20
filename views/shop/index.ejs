@@ -19,6 +19,9 @@ include("../components/navbar.ejs")%>
           alt="<%= product.title%>"
         />
         <h2 class="product_cart_subheading">€<%=product.price%></h2>
+        <h2 class="product_cart_description">
+          Seller: <%=product.userId.name%>
+        </h2>
         <p class="product_cart_description"><%= product.description%></p>
 
         <div class="product_cart_btn_div">

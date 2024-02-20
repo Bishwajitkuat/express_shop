@@ -2194,6 +2194,11 @@ video {
   padding-bottom: 1rem;
 }
 
+.py-\[2rem\] {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .pb-\[1rem\] {
   padding-bottom: 1rem;
 }

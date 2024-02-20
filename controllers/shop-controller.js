@@ -3,21 +3,19 @@ const Product = require("../models/product");
 const User = require("../models/user");
 
 // controllers for shop
-exports.getHomePage = (req, res, next) => {
+exports.getHomePage = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
   // findAll() method will return all products in an array
-  Product.find()
-    .then((products) => {
-      // passing isLoggedIn value for conditional rendering in navbar.
-      res.render("./shop/index.ejs", {
-        products,
-        docTitle: "Shop",
-        path: "/",
-        isLoggedIn,
-      });
-    })
-    .catch((err) => console.log(err));
+  const products = await Product.find().populate("userId", "name");
+
+  // passing isLoggedIn value for conditional rendering in navbar.
+  return res.render("./shop/index.ejs", {
+    products,
+    docTitle: "Shop",
+    path: "/",
+    isLoggedIn,
+  });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -26,6 +24,7 @@ exports.getProducts = (req, res, next) => {
 
   // findAll() method will return all products in an array
   Product.find()
+    .populate("userId", "name")
     .then((products) => {
       // passing isLoggedIn value for conditional rendering in navbar.
       res.render("./shop/product-list.ejs", {
