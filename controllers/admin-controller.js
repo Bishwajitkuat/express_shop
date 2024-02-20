@@ -7,6 +7,41 @@ const {
 const Product = require("../models/product");
 const User = require("../models/user");
 
+// controller to handles GET request to /admin/products route
+exports.getProducts = async (req, res, next) => {
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
+  try {
+    const error = req.flash("error");
+    const errorMessage = error.length < 1 ? null : error;
+    const success = req.flash("success");
+    const successMessage = success.length < 1 ? null : success;
+    const userId = req.session.userId;
+    const products = await Product.find({ userId: userId });
+    return res.render("./admin/products.ejs", {
+      products,
+      docTitle: "Admin Product",
+      path: "/admin/products",
+      isLoggedIn,
+      errorMessage,
+      successMessage,
+    });
+  } catch (err) {
+    console.log(err);
+    // if any error occures, /admin/products.ejs view will be rendered with error message
+    return res.render("./admin/products.ejs", {
+      products: null,
+      docTitle: "Admin Product",
+      path: "/admin/products",
+      isLoggedIn,
+      errorMessage: err?.message
+        ? err.message
+        : "Sorry! Error occured during data fetching from database. Please try again later!",
+      successMessage: null,
+    });
+  }
+};
+
 // controllers for adding new product
 exports.getAddProduct = (req, res, next) => {
   try {
@@ -256,29 +291,4 @@ exports.postDeleteProduct = async (req, res, next) => {
     req.flash("error", errorMessage);
     res.redirect("/admin/products");
   }
-};
-
-exports.getProducts = (req, res, next) => {
-  const error = req.flash("error");
-  const errorMessage = error.length < 1 ? null : error;
-  const success = req.flash("success");
-  const successMessage = success.length < 1 ? null : success;
-  // extracting isLoggedIn value from session
-  const isLoggedIn = req.session.isLoggedIn;
-  const userId = req.session.userId;
-  Product.find({ userId: userId })
-    .then((products) => {
-      res.render("./admin/products.ejs", {
-        products,
-        docTitle: "Admin Product",
-        path: "/admin/products",
-        isLoggedIn,
-        errorMessage,
-        successMessage,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.redirect("/");
-    });
 };
