@@ -6,7 +6,7 @@ include("../components/navbar.ejs")%>
   </h1>
   <form class="w-[65%] md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST">
     <% if(errorMessage){ %>
-      <p class="error_message"><%= errorMessage %></p>
+      <p class="error_message py-[2rem]"><%= errorMessage %></p>
       <%}%>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="title">Title</label>

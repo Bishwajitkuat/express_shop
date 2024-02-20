@@ -34,9 +34,9 @@
     @apply flex justify-center items-center gap-2 my-[2rem];
   }
   .error_message {
-    @apply text-center text-red-400 py-[2rem];
+    @apply text-center text-red-400;
   }
   .success_message {
-    @apply text-center text-green-400 py-[2rem];
+    @apply text-center text-green-400;
   }
 }
