@@ -19,7 +19,7 @@ exports.getLogin = (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
   // passing isLoggedIn value for conditional rendering in navbar.
-  // req.flash() returns of array of strings, and only comsumed
+  // req.flash() returns of array of strings, and it can be comsumed once.
   const error = req.flash("error");
   const errorMessage = error.length < 1 ? null : error;
   const success = req.flash("success");

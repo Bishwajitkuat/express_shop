@@ -77,6 +77,11 @@ exports.postAddProduct = async (req, res, next) => {
     });
     // using mongoose's model's save mthod to store new instance to db
     await newProduct.save();
+    req.flash("error", null);
+    req.flash(
+      "success",
+      "Congratulations! You have successfully listed the product!"
+    );
     return res.redirect("/admin/products");
   } catch (err) {
     console.log(err);
@@ -193,6 +198,11 @@ exports.postEditProduct = async (req, res, next) => {
     product.description = updatedProduct.description;
     product.imgUrl = updatedProduct.imgUrl;
     await product.save();
+    req.flash("error", null);
+    req.flash(
+      "success",
+      "Congratulations! You have successfully updated the product!"
+    );
     return res.redirect("/admin/products");
   } catch (err) {
     console.log(err);
