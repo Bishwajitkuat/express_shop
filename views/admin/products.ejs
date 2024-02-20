@@ -2,10 +2,11 @@
 include("../components/navbar.ejs")%>
 <main class="main">
   <h1 class="text-[3rem] text-center pb-[3rem] tracking-wide">My Products</h1>
-  <p class="text-[1.5rem] text-center pb-[3rem]">
-    You can edit or delete your listings...
-  </p>
-  <% if (products.length > 0) { %>
+  <% if(errorMessage){ %>
+  <p class="error_message"><%= errorMessage %></p>
+  <%}%> <% if(successMessage){ %>
+  <p class="success_message"><%= successMessage %></p>
+  <%}%> <% if (products.length > 0) { %>
   <div class="grid md:grid-cols-3 gap-8">
     <% for (let product of products){ %>
     <article class="product_cart_parent">
@@ -35,7 +36,10 @@ include("../components/navbar.ejs")%>
   </div>
   <% } else { %>
   <div class="h-full flex justify-center items-center">
-    <h3 class="error_message text-[3rem]">No product is available</h3>
+    <h3 class="error_message">
+      You do not have any listed product! Please create new product from Add
+      product menu!
+    </h3>
   </div>
   <% } %>
 </main>
