@@ -222,16 +222,39 @@ exports.postEditProduct = async (req, res, next) => {
   }
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const id = req.body.id;
-  if (id) {
-    // shoud check if the product belongs to the current user
-    Product.findByIdAndDelete(id)
-      .then((response) => res.redirect("/admin/products"))
-      .catch((err) => {
-        console.log(err);
-        res.redirect("/admin/products");
-      });
+// handles POST request to /delete-product/ route
+exports.postDeleteProduct = async (req, res, next) => {
+  try {
+    // validation with zod schema
+    const validation = IsStringCanBeObjectIdSchema.safeParse(req.body.id);
+    // if validation fails, throw error
+    if (validation.success === false) throw new Error("Invalid product Id");
+    // validation successfull
+    const id = validation.data;
+    const product = await Product.findById({ _id: id });
+    // if product can not found with the id, throw error
+    if (!product)
+      throw new Error("The product, you are trying to delete, does not exist!");
+    // if the product does not belong to current user, throw error
+    if (product.userId.toString() !== req.session.userId.toString())
+      throw new Error(
+        "Sorry!, you can not delete a product which did not created by you!"
+      );
+    // if all checks are passed, deletes the product from db.
+    await Product.findByIdAndDelete(id);
+    // user will be redirected with success feedback messsage
+    req.flash("error", null);
+    req.flash("success", "The product has been successfully deleted!");
+    res.redirect("/admin/products");
+  } catch (err) {
+    console.log(err);
+    // if any error is caught, user is redired to /admin/products route with feedback comes from error message.
+    const errorMessage = err?.message
+      ? err.message
+      : "Sorry! due to some technical problem, the product cannot be deleted now. Please try again later!";
+    req.flash("success", null);
+    req.flash("error", errorMessage);
+    res.redirect("/admin/products");
   }
 };
 
