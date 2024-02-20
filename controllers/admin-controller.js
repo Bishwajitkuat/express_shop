@@ -148,30 +148,68 @@ exports.getEditProduct = async (req, res, next) => {
   }
 };
 
-exports.postEditProduct = (req, res, next) => {
-  const updatedProduct = req.body;
-  // price from input field comes as string, so converting it into number
-  updatedProduct.price = Number(updatedProduct.price);
-  // mongoose does not have any derect method to update an entry hoever we can fethe the entry, modify it and save back agian to update an entry
-  // shoud check if the product belongs to the current user
-  Product.findById(updatedProduct.id)
-    .then((product) => {
-      product.title = updatedProduct.title;
-      product.price = updatedProduct.price;
-      product.description = updatedProduct.description;
-      product.imgUrl = updatedProduct.imgUrl;
-      product
-        .save()
-        .then((response) => res.redirect("/admin/products"))
-        .catch((err) => {
-          console.log(err);
-          res.redirect("/admin/products");
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.redirect("/admin/products");
+exports.postEditProduct = async (req, res, next) => {
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
+  try {
+    // validating user input with zod schema
+    const validation = ProductEditInputSchema.safeParse(req.body);
+    // if validation fails, add-edit-product view will be rendered with feedbacks and prefilled input fields.
+    if (validation.success === false) {
+      const errors = validation.error.flatten().fieldErrors;
+      // if validation fails for productId, will not continue, throw error, because productId comes from hidden fields, if it is change, then somethig is wrong.
+      if (errors?._id)
+        throw new Error(
+          "Wrong product Id, this product can not be updated now. Please try again later!"
+        );
+      // rendering add-edit-product with error feedbacks
+      return res.render("./admin/add-edit-product.ejs", {
+        docTitle: "Edit Product",
+        path: "/admin/edit-product",
+        isLoggedIn,
+        product: req.body,
+        editing: true,
+        errorMessage: null,
+        errors,
+      });
+    }
+    // validation is successfull, extracting validated data
+    const updatedProduct = validation.data;
+    //we can feth the entry, modify it and save back agian to update an entry
+    const product = await Product.findById(updatedProduct._id);
+    // if no product can not be fetched, error will thrown, and renders feedback from catch block
+    if (!product)
+      throw new Error(
+        "Sorry! there is problem updating the product. Please try again later!"
+      );
+    // if product does not belong to current user, error will be thrown, and renders feedback from catch block
+    if (product.userId.toString() !== req.session.userId.toString())
+      throw new Error(
+        "Sorry! you can not edit product which does not belong to you!"
+      );
+    // all check has been passed, so updating and saving back the product in db.
+    product.title = updatedProduct.title;
+    product.price = updatedProduct.price;
+    product.description = updatedProduct.description;
+    product.imgUrl = updatedProduct.imgUrl;
+    await product.save();
+    return res.redirect("/admin/products");
+  } catch (err) {
+    console.log(err);
+    // if any error is catched, add-edit-product view will be rendered with feedback comes from error message.
+    const errorMessage = err?.message
+      ? err.message
+      : "Sorry! this product can not be updated due to technical issues. Please try again later!";
+    return res.render("./admin/add-edit-product.ejs", {
+      docTitle: "Edit Product",
+      path: "/admin/edit-product",
+      isLoggedIn,
+      product: req.body,
+      editing: true,
+      errorMessage,
+      errors: null,
     });
+  }
 };
 
 exports.postDeleteProduct = (req, res, next) => {
