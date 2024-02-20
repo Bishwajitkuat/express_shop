@@ -2,7 +2,11 @@
 include("../components/navbar.ejs")%>
 
 <main class="main">
-  <% if(cart.items.length>0) { %>
+  <% if(errorMessage){ %>
+  <p class="error_message">Error: <%= errorMessage %></p>
+  <%}%> <% if(successMessage){ %>
+  <p class="success_message"><%= successMessage %></p>
+  <%}%> <% if(cart && cart.items.length>0) { %>
   <ul class="grid gap-2">
     <li class="grid grid-cols-4 mb-[1rem]">
       <p></p>
@@ -60,7 +64,9 @@ include("../components/navbar.ejs")%>
   </form>
   <%} else { %>
   <div class="h-full flex justify-center items-center">
-    <h1 class="text-[3rem] text-red-400">No product available in the cart</h1>
+    <h1 class="text-[1.2rem] text-red-400">
+      No product available in the cart!
+    </h1>
   </div>
   <% }%>
 </main>

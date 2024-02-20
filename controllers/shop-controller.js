@@ -114,43 +114,50 @@ exports.getProductById = async (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
+  // extracting isLoggedIn value from session
+  const isLoggedIn = req.session.isLoggedIn;
   try {
-    // extracting isLoggedIn value from session
-    const isLoggedIn = req.session.isLoggedIn;
-    if (isLoggedIn && req.session.userId) {
-      // fetching the user, userId is extracted from session.userId
-      const user = await User.findById(req.session.userId);
-      // fetching products in ref to current user
-      const userWithCartItems = await user.populate("cart.items.productId");
-      // taking only items array to calculate totalPrice and totalQuantity
-      const items = userWithCartItems.cart.items;
-      // calculating totalPrice and totalQuantity
-      let totalQuantity = 0;
-      let totalPrice = 0;
-      for (let item of items) {
-        totalQuantity += item.quantity;
-        totalPrice += item.quantity * item.productId.price;
-      }
-      // structuring cart object as expected in view
-      const cart = {
-        items,
-        totalQuantity,
-        totalPrice,
-      };
-
-      // rendering view and passing data to it
-      res.render("./shop/cart.ejs", {
-        cart: cart,
-        docTitle: "Cart",
-        path: "/cart",
-        isLoggedIn,
-      });
-    } else {
-      res.redirect("/login");
+    // fetching the user, userId is extracted from session.userId
+    const user = await User.findById(req.session.userId);
+    // fetching products in ref to current user
+    const userWithCartItems = await user.populate("cart.items.productId");
+    // taking only items array to calculate totalPrice and totalQuantity
+    const items = userWithCartItems.cart.items;
+    // calculating totalPrice and totalQuantity
+    let totalQuantity = 0;
+    let totalPrice = 0;
+    for (let item of items) {
+      totalQuantity += item.quantity;
+      totalPrice += item.quantity * item.productId.price;
     }
+    // structuring cart object as expected in view
+    const cart = {
+      items,
+      totalQuantity,
+      totalPrice,
+    };
+    // rendering view and passing data to it
+    return res.render("./shop/cart.ejs", {
+      cart,
+      docTitle: "Cart",
+      path: "/cart",
+      isLoggedIn,
+      successMessage: null,
+      errorMessage: null,
+    });
   } catch (err) {
     console.log(err);
-    res.redirect("/");
+    // if any error is cought, cart view will be rendered with error messsage.
+    return res.render("./shop/cart.ejs", {
+      cart: null,
+      docTitle: "Cart",
+      path: "/cart",
+      isLoggedIn,
+      successMessage: null,
+      errorMessage: err?.message
+        ? err.message
+        : "Sorry! an error occured during data fetching items in the cart. Please try again later!",
+    });
   }
 };
 
