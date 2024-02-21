@@ -1,5 +1,6 @@
 const {
   IsStringCanBeObjectIdSchema,
+  PostAddToCartInputSchema,
 } = require("../lib/zod-validation/product-validation-schemas");
 const Order = require("../models/order");
 const Product = require("../models/product");
@@ -175,24 +176,34 @@ exports.getCart = async (req, res, next) => {
 
 exports.postAddToCart = async (req, res, next) => {
   try {
-    const { productId, fromCart } = req.body;
-    // users needed to be logged in inorder to add item to cart
-    if (req.session.isLoggedIn && req.session.userId) {
-      // fetching the user, userId is extracted from session.userId
-      const user = await User.findById(req.session.userId);
-      // utility method of User model is used to add or increase the quanity of a product
-      user.addToCart(productId).then((response) => {
-        if (fromCart === "yes") {
-          res.redirect("/cart");
-        } else {
-          res.redirect("/products");
-        }
-      });
+    // validation for incoming data from post request with zod
+    const validation = PostAddToCartInputSchema.safeParse(req.body);
+    // if validation fails, throw error, input data comes hidden input fields
+    if (validation.success === false)
+      throw new Error(
+        "Opps! an error occured during adding this product to cart. Please try again later!"
+      );
+    const { productId, fromCart } = validation.data;
+    // fetching the user, userId is extracted from session.userId
+    const user = await User.findById(req.session.userId);
+    // utility method of User model is used to add or increase the quanity of a product
+    await user.addToCart(productId);
+    // if product adding to cart is successful, user will be redirected to same page with success message.
+    req.flash("error", null);
+    req.flash("success", "The product is successfully added to the cart!");
+    if (fromCart === "yes") {
+      return res.redirect("/cart");
     } else {
-      res.redirect("/login");
+      return res.redirect("/products");
     }
   } catch (err) {
     console.log(err);
+    // if any error occured, user will be redirected to /products route with error message.
+    const errorMessage = err?.message
+      ? err.message
+      : "Opps! an error occured during adding this product to cart. Please try again later!";
+    req.flash("error", errorMessage);
+    req.flash("success", null);
     res.redirect("/products");
   }
 };
