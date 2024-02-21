@@ -231,6 +231,7 @@ exports.postRemoveFromCart = async (req, res, next) => {
     res.redirect("/cart");
   } catch (err) {
     console.log(err);
+    // if any error occured, user will be redirected to /cart route with error message.
     const errorMessage = err?.message
       ? err.message
       : "Opps! an error occured during removing this product from cart. Please try again later!";
