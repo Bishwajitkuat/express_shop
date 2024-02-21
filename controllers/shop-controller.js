@@ -1,6 +1,7 @@
 const {
   IsStringCanBeObjectIdSchema,
   PostAddToCartInputSchema,
+  PostRemoveFromCartInputSchema,
 } = require("../lib/zod-validation/product-validation-schemas");
 const Order = require("../models/order");
 const Product = require("../models/product");
@@ -174,6 +175,7 @@ exports.getCart = async (req, res, next) => {
   }
 };
 
+// handles POST request to /cart route
 exports.postAddToCart = async (req, res, next) => {
   try {
     // validation for incoming data from post request with zod
@@ -208,16 +210,32 @@ exports.postAddToCart = async (req, res, next) => {
   }
 };
 
+// handles POST request to /cart-remove route
 exports.postRemoveFromCart = async (req, res, next) => {
-  const { id, qty } = req.body;
   try {
+    // input data validation with zod schema
+    const validation = PostRemoveFromCartInputSchema.safeParse(req.body);
+    // if validation fails, throw error, input data comes hidden input fields
+    if (validation.success === false)
+      throw new Error(
+        "Opps! an error occured during removing this product from cart. Please try again later!"
+      );
     // fetching the user, userId is extracted from session.userId
     const user = await User.findById(req.session.userId);
     // utility method "removeFromCart" of User model is used to delete or decrease the quanity of a product in cart
-    await user.removeFromCart(id, qty);
+    const { productId, quantity } = validation.data;
+    await user.removeFromCart(productId, quantity);
+    // if product removal is successfull, user will be redirected to /cart with status message.
+    req.flash("error", null);
+    req.flash("success", "The product is removed from cart!");
     res.redirect("/cart");
   } catch (err) {
     console.log(err);
+    const errorMessage = err?.message
+      ? err.message
+      : "Opps! an error occured during removing this product from cart. Please try again later!";
+    req.flash("success", null);
+    req.flash("error", errorMessage);
     res.redirect("/cart");
   }
 };
