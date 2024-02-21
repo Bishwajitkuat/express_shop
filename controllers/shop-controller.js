@@ -294,24 +294,38 @@ exports.postOrder = async (req, res, next) => {
   }
 };
 
+// handles GET request to /order route
 exports.getOrders = async (req, res, next) => {
-  try {
-    // extracting isLoggedIn value from session
+  // extracting isLoggedIn value from session
     const isLoggedIn = req.session.isLoggedIn;
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
+  try {
     const userId = req.session.userId;
-    if (isLoggedIn && userId) {
       const orders = await Order.find({ userId: userId });
-      res.render("./shop/orders.ejs", {
+    return res.render("./shop/orders.ejs", {
         orders,
         docTitle: "Orders",
         path: "/orders",
         isLoggedIn,
+      errorMessage,
+      successMessage,
       });
-    } else {
-      res.redirect("/login");
-    }
   } catch (err) {
     console.log(err);
-    res.redirect("/");
+    // if any error occured, orders view will be rendered with error message.
+    const errorMessage = err?.message
+      ? err.message
+      : "Opps! An error occured. We are sorry for then inconvenience. Please try again later!";
+    return res.render("./shop/orders.ejs", {
+      orders: null,
+      docTitle: "Orders",
+      path: "/orders",
+      isLoggedIn,
+      errorMessage: errorMessage,
+      successMessage: null,
+    });
   }
 };
