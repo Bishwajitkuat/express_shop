@@ -20,7 +20,6 @@ shopRoute.get("/products/:productId", getProductById);
 shopRoute.get("/cart", isLoggedIn, getCart);
 shopRoute.post("/cart", isLoggedIn, postAddToCart);
 shopRoute.post("/cart-remove", isLoggedIn, postRemoveFromCart);
-shopRoute.get("/checkout", isLoggedIn, getCheckout);
 shopRoute.post("/create-order", isLoggedIn, postOrder);
 shopRoute.get("/orders", isLoggedIn, getOrders);
 shopRoute.get("/", getHomePage);

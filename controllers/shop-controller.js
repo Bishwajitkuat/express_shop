@@ -241,16 +241,7 @@ exports.postRemoveFromCart = async (req, res, next) => {
   }
 };
 
-exports.getCheckout = (req, res, next) => {
-  // extracting isLoggedIn value from session
-  const isLoggedIn = req.session.isLoggedIn;
-  res.render("./shop/checkout.ejs", {
-    docTitle: "Checkout",
-    path: "/checkout",
-    isLoggedIn,
-  });
-};
-
+// handles POST request to /create-order route
 exports.postOrder = async (req, res, next) => {
   try {
     const user = await User.findById(req.session.userId);
@@ -261,39 +252,39 @@ exports.postOrder = async (req, res, next) => {
       throw new Error(
         "Sorry! There is no item in cart to place a order! Please add items from products menue!"
       );
-      // restructuring product objects as expected in itmes array in Order model
-      const items = [];
-      for (let item of cart.items) {
-        items.push({
-          title: item.productId.title,
-          price: item.productId.price,
-          quantity: item.quantity,
-        });
-      }
-      // calculating totalQuantity and totalPrice
-      const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
-      const totalPrice = items.reduce(
-        (acc, item) => acc + item.quantity * item.price,
-        0
-      );
-      // creating order object as expected in Order model
-      const order = new Order({
-        items,
-        totalQuantity,
-        totalPrice,
-        date: new Date().toISOString(),
-        userId: userWithCartData._id,
+    // restructuring product objects as expected in itmes array in Order model
+    const items = [];
+    for (let item of cart.items) {
+      items.push({
+        title: item.productId.title,
+        price: item.productId.price,
+        quantity: item.quantity,
       });
-      await order.save();
-      // useing clearCart utility method from UserSchema is used to reset the cart of this user.
-      await userWithCartData.clearCart();
+    }
+    // calculating totalQuantity and totalPrice
+    const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
+    const totalPrice = items.reduce(
+      (acc, item) => acc + item.quantity * item.price,
+      0
+    );
+    // creating order object as expected in Order model
+    const order = new Order({
+      items,
+      totalQuantity,
+      totalPrice,
+      date: new Date().toISOString(),
+      userId: userWithCartData._id,
+    });
+    await order.save();
+    // useing clearCart utility method from UserSchema is used to reset the cart of this user.
+    await userWithCartData.clearCart();
     // if placing oder is successfull, redirects user to /orders route with success message
     req.flash("error", null);
     req.flash(
       "success",
       "Congratulations! You have successfully placed the order!"
     );
-      res.redirect("/orders");
+    res.redirect("/orders");
   } catch (err) {
     console.log(err);
     // if any error occured, user will be redirected to /cart route with error message.
@@ -309,22 +300,22 @@ exports.postOrder = async (req, res, next) => {
 // handles GET request to /order route
 exports.getOrders = async (req, res, next) => {
   // extracting isLoggedIn value from session
-    const isLoggedIn = req.session.isLoggedIn;
+  const isLoggedIn = req.session.isLoggedIn;
   const error = req.flash("error");
   const errorMessage = error.length < 1 ? null : error;
   const success = req.flash("success");
   const successMessage = success.length < 1 ? null : success;
   try {
     const userId = req.session.userId;
-      const orders = await Order.find({ userId: userId });
+    const orders = await Order.find({ userId: userId });
     return res.render("./shop/orders.ejs", {
-        orders,
-        docTitle: "Orders",
-        path: "/orders",
-        isLoggedIn,
+      orders,
+      docTitle: "Orders",
+      path: "/orders",
+      isLoggedIn,
       errorMessage,
       successMessage,
-      });
+    });
   } catch (err) {
     console.log(err);
     // if any error occured, orders view will be rendered with error message.
