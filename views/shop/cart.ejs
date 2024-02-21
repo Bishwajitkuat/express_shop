@@ -36,14 +36,22 @@ include("../components/navbar.ejs")%>
         </form>
         <p><%=product.quantity%></p>
         <form action="/cart-remove" method="POST">
-          <input type="hidden" name="id" value="<%=product.productId._id%>" />
-          <input type="hidden" name="qty" value="1" />
+          <input
+            type="hidden"
+            name="productId"
+            value="<%=product.productId._id%>"
+          />
+          <input type="hidden" name="quantity" value="1" />
           <button class="btn" type="submit">-</button>
           <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
         </form>
         <form action="/cart-remove" method="POST">
-          <input type="hidden" name="id" value="<%=product.productId._id%>" />
-          <input type="hidden" name="qty" value="<%=product.quantity%>" />
+          <input
+            type="hidden"
+            name="productId"
+            value="<%=product.productId._id%>"
+          />
+          <input type="hidden" name="quantity" value="<%=product.quantity%>" />
           <button class="btn" type="submit">&#128465;</button>
           <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
         </form>
