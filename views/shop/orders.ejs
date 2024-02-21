@@ -1,8 +1,15 @@
 <%- include("../components/head.ejs") %> <%-
 include("../components/navbar.ejs")%>
 <main class="main">
+  <h1 class="text-[2rem] text-center pb-[3rem] uppercase tracking-widest">
+    Orders
+  </h1>
+  <% if(errorMessage){ %>
   <h1 class="text-[3rem] text-center pb-[3rem] tracking-wide">Your Orders</h1>
-  <% if (orders.length > 0) { %>
+  <p class="error_message py-[2rem]">Error: <%= errorMessage %></p>
+  <%}%> <% if(successMessage){ %>
+  <p class="success_message py-[2rem]"><%= successMessage %></p>
+  <%}%> <% if (orders && orders.length > 0) { %>
   <ul class="grid gap-8">
     <% orders.forEach(order =>{ %>
     <li>
@@ -37,7 +44,7 @@ include("../components/navbar.ejs")%>
   </ul>
   <% } else { %>
   <div class="h-full flex justify-center items-center">
-    <h1 class="text-[3rem] text-red-400">You do not have any product yet!</h1>
+    <h1 class="text-[1.2rem] text-red-400">You do not have any order yet!</h1>
   </div>
   <%} %>
 </main>

@@ -2,6 +2,9 @@
 include("../components/navbar.ejs")%>
 
 <main class="main">
+  <h1 class="text-[2rem] text-center pb-[3rem] uppercase tracking-widest">
+    Cart
+  </h1>
   <% if(errorMessage){ %>
   <p class="error_message py-[2rem]">Error: <%= errorMessage %></p>
   <%}%> <% if(successMessage){ %>
