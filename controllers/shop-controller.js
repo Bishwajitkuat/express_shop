@@ -256,8 +256,11 @@ exports.postOrder = async (req, res, next) => {
     const user = await User.findById(req.session.userId);
     const userWithCartData = await user.populate("cart.items.productId");
     const cart = userWithCartData.cart;
-    // will not allow if there is no items in cart
-    if (cart.items.length > 0) {
+    // if cart is empty, throw error
+    if (cart?.items?.length < 1)
+      throw new Error(
+        "Sorry! There is no item in cart to place a order! Please add items from products menue!"
+      );
       // restructuring product objects as expected in itmes array in Order model
       const items = [];
       for (let item of cart.items) {
@@ -284,13 +287,22 @@ exports.postOrder = async (req, res, next) => {
       await order.save();
       // useing clearCart utility method from UserSchema is used to reset the cart of this user.
       await userWithCartData.clearCart();
+    // if placing oder is successfull, redirects user to /orders route with success message
+    req.flash("error", null);
+    req.flash(
+      "success",
+      "Congratulations! You have successfully placed the order!"
+    );
       res.redirect("/orders");
-    } else {
-      res.redirect("/cart");
-    }
   } catch (err) {
     console.log(err);
-    res.redirect("/");
+    // if any error occured, user will be redirected to /cart route with error message.
+    const errorMessage = err?.message
+      ? err.message
+      : "Opps! An error occured during placing the order. We are sorry for then inconvenience. Please try again later!";
+    req.flash("success", null);
+    req.flash("error", errorMessage);
+    res.redirect("/cart");
   }
 };
 
