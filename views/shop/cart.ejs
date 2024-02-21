@@ -3,9 +3,9 @@ include("../components/navbar.ejs")%>
 
 <main class="main">
   <% if(errorMessage){ %>
-  <p class="error_message">Error: <%= errorMessage %></p>
+  <p class="error_message py-[2rem]">Error: <%= errorMessage %></p>
   <%}%> <% if(successMessage){ %>
-  <p class="success_message"><%= successMessage %></p>
+  <p class="success_message py-[2rem]"><%= successMessage %></p>
   <%}%> <% if(cart && cart.items.length>0) { %>
   <ul class="grid gap-2">
     <li class="grid grid-cols-4 mb-[1rem]">
