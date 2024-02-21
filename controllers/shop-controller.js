@@ -9,6 +9,10 @@ const User = require("../models/user");
 exports.getHomePage = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   try {
     // findAll() method will return all products in an array
     const products = await Product.find().populate("userId", "name");
@@ -18,8 +22,8 @@ exports.getHomePage = async (req, res, next) => {
       docTitle: "Shop",
       path: "/",
       isLoggedIn,
-      errorMessage: null,
-      successMessage: null,
+      errorMessage: errorMessage,
+      successMessage: successMessage,
     });
   } catch (err) {
     console.log(err);
@@ -39,6 +43,10 @@ exports.getHomePage = async (req, res, next) => {
 exports.getProducts = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   try {
     // findAll() method will return all products in an array
     const products = await Product.find().populate("userId", "name");
@@ -48,8 +56,8 @@ exports.getProducts = async (req, res, next) => {
       path: "/products",
       // passing isLoggedIn value for conditional rendering in navbar.
       isLoggedIn,
-      errorMessage: null,
-      successMessage: null,
+      errorMessage: errorMessage,
+      successMessage: successMessage,
     });
   } catch (err) {
     console.log(err);
@@ -116,6 +124,10 @@ exports.getProductById = async (req, res, next) => {
 exports.getCart = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   try {
     // fetching the user, userId is extracted from session.userId
     const user = await User.findById(req.session.userId);
@@ -142,8 +154,8 @@ exports.getCart = async (req, res, next) => {
       docTitle: "Cart",
       path: "/cart",
       isLoggedIn,
-      successMessage: null,
-      errorMessage: null,
+      successMessage: successMessage,
+      errorMessage: errorMessage,
     });
   } catch (err) {
     console.log(err);
