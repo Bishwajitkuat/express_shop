@@ -50,7 +50,8 @@ app.set("views", path.join(__dirname, "views"));
 
 // by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.
 app.use(express.static(path.join(__dirname, "public")));
-
+// for serving static images
+app.use("/image", express.static(path.join(__dirname, "image")));
 app.use(bodyParser.urlencoded({ extended: false }));
 // middleware
 // middleware to configure session
