@@ -2,6 +2,7 @@
 const express = require("express");
 // importing body-parser module
 const bodyParser = require("body-parser");
+const multer = require("multer");
 // importing path module for node
 const path = require("path");
 // importing admin routesmajority
@@ -37,6 +38,7 @@ const csrf = require("csurf");
 // configuring csrfProtection middleware
 const csrfProtection = csrf();
 const User = require("./models/user");
+const { storage } = require("./lib/multer/multer-storage");
 
 // creating app
 const app = express();
@@ -49,9 +51,12 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // by default browser can not access to any sestem file, with express.static() method we need to allow which file is accessiable to public.
-app.use(express.static(path.join(__dirname, "public")));
 
+app.use(express.static(path.join(__dirname, "public")));
+// for serving static images
+app.use("/image", express.static(path.join(__dirname, "image")));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: storage }).single("image"));
 // middleware
 // middleware to configure session
 app.use(
@@ -77,6 +82,7 @@ app.use((req, res, next) => {
 });
 // adding flash middleware
 app.use(flash());
+
 // admin route
 app.use("/admin", adminRoute);
 // shop route

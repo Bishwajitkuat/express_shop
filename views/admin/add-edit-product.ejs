@@ -4,7 +4,7 @@ include("../components/navbar.ejs")%>
   <h1 class="text-[3rem] text-center pb-[3rem] tracking-wide">
     <%= editing ? "Edit product":"Add new product"; %>
   </h1>
-  <form class="w-[65%] md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST">
+  <form class="w-[65%] md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST" enctype="multipart/form-data">
     <% if(errorMessage){ %>
       <p class="error_message py-[2rem]"><%= errorMessage %></p>
       <%}%>
@@ -32,13 +32,23 @@ include("../components/navbar.ejs")%>
         <p class="error_message text-left"><%= errors?.description %></p>
         <%}%>
     </div>
+
     <div class="grid gap-2">
-      <label class="text-[1.2rem]  tracking-widest" for="imgUrl">Image URL</label>
-      <input class="text_input_base" type="text" name="imgUrl" id="imgUrl" 
-        value="<%= product?.imgUrl %>" />
-        <% if(errors?.imgUrl){ %>
-          <p class="error_message text-left"><%= errors?.imgUrl %></p>
-          <%}%>
+      <label class="text-[1.2rem] border-2 border-gray-500  tracking-widest" for="image">Image</label>
+      <input class="text_input_base" type="file" name="image" id="image" />
+      <% if(product?.imgUrl){ %>
+        <p class="text-left">Current image: <%= product?.imgUrl%></p>
+        <P>NOTE: Please Select a new image file if you want change image.</P>
+        <%} %>
+      <p>Expected file types jpg, jpeg, and png max file size:5MB</p>
+        <% if(errors?.filename){ %>
+          <p class="error_message text-left"><%= errors?.filename %></p>
+          <%} else if(errors?.mimetype){ %>
+            <p class="error_message text-left"><%= errors?.mimetype %></p>
+          <%} else if(errors?.size){ %>
+            <p class="error_message text-left"><%= errors?.size %></p>
+          <%} %>
+
     </div>
     <% if(editing){ %> 
       <input  type="hidden" name="_id" value="<%=product._id %>">

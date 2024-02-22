@@ -3,9 +3,11 @@ const {
   ProductAddInputSchema,
   ProductEditInputSchema,
   IsStringCanBeObjectIdSchema,
+  ImageValidationSchema,
 } = require("../lib/zod-validation/product-validation-schemas");
 const Product = require("../models/product");
 const User = require("../models/user");
+const { deleteFile } = require("../lib/file-system/delete-files");
 
 // controller to handles GET request to /admin/products route
 exports.getProducts = async (req, res, next) => {
@@ -66,25 +68,26 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = async (req, res, next) => {
   try {
     const isLoggedIn = req.session.isLoggedIn;
+    // validation image with zod
+    // if user does not upload image req.file will be undefined, zod does not validation if it is undefined.
+    const imgValidation = ImageValidationSchema.safeParse(req.file || {});
     // zod validation for user inputs
     const validation = ProductAddInputSchema.safeParse(req.body);
     // if validation fails, add-edit-product view will be rendered with prefilled value and feedback.
-    if (validation.success === false) {
-      const error = validation.error.flatten().fieldErrors;
+    if (validation.success === false || imgValidation === false) {
       // creating errors and oldValue object to send into view
-      const errors = {
-        title: error?.title ? error?.title[0] : false,
-        price: error?.price ? error?.price[0] : false,
-        description: error?.description ? error?.description[0] : false,
-        imgUrl: error?.imgUrl ? error?.imgUrl[0] : false,
-      };
-      // view's input fields will be prefield with the old values
-      const product = {
-        title: req.body.title,
-        price: req.body.price,
-        description: req.body.description,
-        imgUrl: req.body.imgUrl,
-      };
+      const inputErrors =
+        validation.success === false
+          ? validation.error.flatten().fieldErrors
+          : {};
+      const imgErrors =
+        imgValidation.success === false
+          ? imgValidation.error.flatten().fieldErrors
+          : {};
+      const errors = { ...inputErrors, ...imgErrors };
+      //if validation fails, uploded image will be deleted.
+      if (req?.file?.path) deleteFile(req.file.path);
+
       // rendering add-edit-product view with prefilled input fields and feedback.
       return res.render("./admin/add-edit-product.ejs", {
         docTitle: "Add Product",
@@ -93,11 +96,13 @@ exports.postAddProduct = async (req, res, next) => {
         isLoggedIn,
         errorMessage: null,
         errors,
-        product,
+        // view's input fields will be prefield with the old values
+        product: req.body,
       });
     }
     // validation is successfull
-    const { title, price, imgUrl, description } = validation.data;
+    const { title, price, description } = validation.data;
+    const imgUrl = imgValidation.data.path;
     // fetching the user, userId is extracted from session.userId
     const user = await User.findById(req.session.userId);
     // if user can not be fetched, a error will be thrown, with a feedback
@@ -110,6 +115,7 @@ exports.postAddProduct = async (req, res, next) => {
       description,
       userId: user._id,
     });
+
     // using mongoose's model's save mthod to store new instance to db
     await newProduct.save();
     req.flash("error", null);
@@ -192,16 +198,39 @@ exports.postEditProduct = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
   try {
+    // global variables for this function
+    const isNewImageUploaded = req.file ? true : false;
+    let imgErrors = {};
+    let inputErrors = {};
+    let isImageValidationFailed = false;
+    let isInputValidationFailed = false;
+
+    // validation of image
+    // image validatin only be done if new image is uploaded
+    if (isNewImageUploaded) {
+      const imgValidation = ImageValidationSchema.safeParse(req.file);
+      if (imgValidation.success === false) {
+        imgErrors = imgValidation.error.flatten().fieldErrors;
+        isImageValidationFailed = true;
+        // removing the currently uploaded file which fails to validate
+        deleteFile(req?.file?.path);
+      }
+    }
     // validating user input with zod schema
     const validation = ProductEditInputSchema.safeParse(req.body);
-    // if validation fails, add-edit-product view will be rendered with feedbacks and prefilled input fields.
     if (validation.success === false) {
-      const errors = validation.error.flatten().fieldErrors;
+      inputErrors = validation.error.flatten().fieldErrors;
+      isInputValidationFailed = true;
+    }
+    // if either or both validations fails, add-edit-product view will be rendered with feedbacks and prefilled input fields.
+    if (isInputValidationFailed || isImageValidationFailed) {
       // if validation fails for productId, will not continue, throw error, because productId comes from hidden fields, if it is change, then somethig is wrong.
-      if (errors?._id)
+      if (inputErrors?._id)
         throw new Error(
           "Wrong product Id, this product can not be updated now. Please try again later!"
         );
+      // creating total errors object
+      const errors = { ...imgErrors, ...inputErrors };
       // rendering add-edit-product with error feedbacks
       return res.render("./admin/add-edit-product.ejs", {
         docTitle: "Edit Product",
@@ -227,11 +256,15 @@ exports.postEditProduct = async (req, res, next) => {
       throw new Error(
         "Sorry! you can not edit product which does not belong to you!"
       );
+    // if new image is uploaded and passed the validation, old image path will be replaced with new image path
+    const updated_imgUrl = isNewImageUploaded ? req.file.path : product.imgUrl;
+    // old image will be deleted
+    if (isNewImageUploaded) deleteFile(product.imgUrl);
     // all check has been passed, so updating and saving back the product in db.
     product.title = updatedProduct.title;
     product.price = updatedProduct.price;
     product.description = updatedProduct.description;
-    product.imgUrl = updatedProduct.imgUrl;
+    product.imgUrl = updated_imgUrl;
     await product.save();
     req.flash("error", null);
     req.flash(
@@ -277,6 +310,8 @@ exports.postDeleteProduct = async (req, res, next) => {
       );
     // if all checks are passed, deletes the product from db.
     await Product.findByIdAndDelete(id);
+    // deleting the image file
+    deleteFile(product.imgUrl);
     // user will be redirected with success feedback messsage
     req.flash("error", null);
     req.flash("success", "The product has been successfully deleted!");
