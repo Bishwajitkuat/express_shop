@@ -68,25 +68,26 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = async (req, res, next) => {
   try {
     const isLoggedIn = req.session.isLoggedIn;
+    // validation image with zod
+    // if user does not upload image req.file will be undefined, zod does not validation if it is undefined.
+    const imgValidation = ImageValidationSchema.safeParse(req.file || {});
     // zod validation for user inputs
     const validation = ProductAddInputSchema.safeParse(req.body);
     // if validation fails, add-edit-product view will be rendered with prefilled value and feedback.
-    if (validation.success === false) {
-      const error = validation.error.flatten().fieldErrors;
+    if (validation.success === false || imgValidation === false) {
       // creating errors and oldValue object to send into view
-      const errors = {
-        title: error?.title ? error?.title[0] : false,
-        price: error?.price ? error?.price[0] : false,
-        description: error?.description ? error?.description[0] : false,
-        imgUrl: error?.imgUrl ? error?.imgUrl[0] : false,
-      };
-      // view's input fields will be prefield with the old values
-      const product = {
-        title: req.body.title,
-        price: req.body.price,
-        description: req.body.description,
-        imgUrl: req.body.imgUrl,
-      };
+      const inputErrors =
+        validation.success === false
+          ? validation.error.flatten().fieldErrors
+          : {};
+      const imgErrors =
+        imgValidation.success === false
+          ? imgValidation.error.flatten().fieldErrors
+          : {};
+      const errors = { ...inputErrors, ...imgErrors };
+      //if validation fails, uploded image will be deleted.
+      if (req?.file?.path) deleteFile(req.file.path);
+
       // rendering add-edit-product view with prefilled input fields and feedback.
       return res.render("./admin/add-edit-product.ejs", {
         docTitle: "Add Product",
@@ -95,11 +96,13 @@ exports.postAddProduct = async (req, res, next) => {
         isLoggedIn,
         errorMessage: null,
         errors,
-        product,
+        // view's input fields will be prefield with the old values
+        product: req.body,
       });
     }
     // validation is successfull
-    const { title, price, imgUrl, description } = validation.data;
+    const { title, price, description } = validation.data;
+    const imgUrl = imgValidation.data.path;
     // fetching the user, userId is extracted from session.userId
     const user = await User.findById(req.session.userId);
     // if user can not be fetched, a error will be thrown, with a feedback
@@ -112,6 +115,7 @@ exports.postAddProduct = async (req, res, next) => {
       description,
       userId: user._id,
     });
+
     // using mongoose's model's save mthod to store new instance to db
     await newProduct.save();
     req.flash("error", null);
