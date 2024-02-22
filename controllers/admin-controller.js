@@ -198,16 +198,39 @@ exports.postEditProduct = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
   try {
+    // global variables for this function
+    const isNewImageUploaded = req.file ? true : false;
+    let imgErrors = {};
+    let inputErrors = {};
+    let isImageValidationFailed = false;
+    let isInputValidationFailed = false;
+
+    // validation of image
+    // image validatin only be done if new image is uploaded
+    if (isNewImageUploaded) {
+      const imgValidation = ImageValidationSchema.safeParse(req.file);
+      if (imgValidation.success === false) {
+        imgErrors = imgValidation.error.flatten().fieldErrors;
+        isImageValidationFailed = true;
+        // removing the currently uploaded file which fails to validate
+        deleteFile(req?.file?.path);
+      }
+    }
     // validating user input with zod schema
     const validation = ProductEditInputSchema.safeParse(req.body);
-    // if validation fails, add-edit-product view will be rendered with feedbacks and prefilled input fields.
     if (validation.success === false) {
-      const errors = validation.error.flatten().fieldErrors;
+      inputErrors = validation.error.flatten().fieldErrors;
+      isInputValidationFailed = true;
+    }
+    // if either or both validations fails, add-edit-product view will be rendered with feedbacks and prefilled input fields.
+    if (isInputValidationFailed || isImageValidationFailed) {
       // if validation fails for productId, will not continue, throw error, because productId comes from hidden fields, if it is change, then somethig is wrong.
-      if (errors?._id)
+      if (inputErrors?._id)
         throw new Error(
           "Wrong product Id, this product can not be updated now. Please try again later!"
         );
+      // creating total errors object
+      const errors = { ...imgErrors, ...inputErrors };
       // rendering add-edit-product with error feedbacks
       return res.render("./admin/add-edit-product.ejs", {
         docTitle: "Edit Product",
@@ -233,11 +256,15 @@ exports.postEditProduct = async (req, res, next) => {
       throw new Error(
         "Sorry! you can not edit product which does not belong to you!"
       );
+    // if new image is uploaded and passed the validation, old image path will be replaced with new image path
+    const updated_imgUrl = isNewImageUploaded ? req.file.path : product.imgUrl;
+    // old image will be deleted
+    if (isNewImageUploaded) deleteFile(product.imgUrl);
     // all check has been passed, so updating and saving back the product in db.
     product.title = updatedProduct.title;
     product.price = updatedProduct.price;
     product.description = updatedProduct.description;
-    product.imgUrl = updatedProduct.imgUrl;
+    product.imgUrl = updated_imgUrl;
     await product.save();
     req.flash("error", null);
     req.flash(
