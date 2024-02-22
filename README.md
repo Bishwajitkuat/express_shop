@@ -1,6 +1,6 @@
 # Express shop
 
-A CRUD app where user can list their products and buy products from other users. It is a ongoing project authentication and loging features yet to complete.
+A CRUD app where user can list their products and buy products from other users.
 
 ## Technologies and features
 
@@ -12,6 +12,7 @@ A CRUD app where user can list their products and buy products from other users.
 - Session & Cookie
 - Authentication
 - User input validation with Zod.
+- Image file management with Multer.
 
 ## Author
 
