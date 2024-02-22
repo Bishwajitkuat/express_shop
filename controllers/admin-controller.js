@@ -283,6 +283,8 @@ exports.postDeleteProduct = async (req, res, next) => {
       );
     // if all checks are passed, deletes the product from db.
     await Product.findByIdAndDelete(id);
+    // deleting the image file
+    deleteFile(product.imgUrl);
     // user will be redirected with success feedback messsage
     req.flash("error", null);
     req.flash("success", "The product has been successfully deleted!");
