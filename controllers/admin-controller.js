@@ -3,9 +3,11 @@ const {
   ProductAddInputSchema,
   ProductEditInputSchema,
   IsStringCanBeObjectIdSchema,
+  ImageValidationSchema,
 } = require("../lib/zod-validation/product-validation-schemas");
 const Product = require("../models/product");
 const User = require("../models/user");
+const { deleteFile } = require("../lib/file-system/delete-files");
 
 // controller to handles GET request to /admin/products route
 exports.getProducts = async (req, res, next) => {
