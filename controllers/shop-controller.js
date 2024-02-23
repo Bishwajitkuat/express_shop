@@ -1,11 +1,12 @@
+const Order = require("../models/order");
+const Product = require("../models/product");
+const User = require("../models/user");
+const { buildInvioice } = require("../lib/pdf-service");
 const {
   IsStringCanBeObjectIdSchema,
   PostAddToCartInputSchema,
   PostRemoveFromCartInputSchema,
 } = require("../lib/zod-validation/product-validation-schemas");
-const Order = require("../models/order");
-const Product = require("../models/product");
-const User = require("../models/user");
 
 // controllers for shop
 exports.getHomePage = async (req, res, next) => {
@@ -316,6 +317,57 @@ exports.getOrders = async (req, res, next) => {
       errorMessage,
       successMessage,
     });
+  } catch (err) {
+    console.log(err);
+    // if any error occured, orders view will be rendered with error message.
+    const errorMessage = err?.message
+      ? err.message
+      : "Opps! An error occured. We are sorry for then inconvenience. Please try again later!";
+    return res.render("./shop/orders.ejs", {
+      orders: null,
+      docTitle: "Orders",
+      path: "/orders",
+      isLoggedIn,
+      errorMessage: errorMessage,
+      successMessage: null,
+    });
+  }
+};
+
+// handles get request to /orders/:orderId
+exports.getDownloadInvoice = async (req, res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
+  try {
+    const validation = IsStringCanBeObjectIdSchema.safeParse(
+      req.params.orderId
+    );
+    // if fails, throw error
+    if (validation.success === false)
+      throw new Error(
+        "Wrong order id! Please clik download button in orders menue to download the invoice!"
+      );
+    // validation passes
+    const orderId = validation.data;
+    // fetching the order from db
+    const order = await Order.findById({ _id: orderId });
+    // if no order found, throw error
+    if (!order)
+      throw new Error(
+        "Opps! An error occured. We are sorry for then inconvenience. Please try again later!"
+      );
+    // if the order does not belongs to current user, throw error
+    if (order.userId.toString() !== req.session.userId.toString())
+      throw new Error("Sorry! One user can not access other user invoice!");
+    // creating and sending invoice to user as stream
+    const stream = res.writeHead(200, {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": "inline",
+    });
+    buildInvioice(
+      order,
+      (chunk) => stream.write(chunk),
+      () => stream.end()
+    );
   } catch (err) {
     console.log(err);
     // if any error occured, orders view will be rendered with error message.
