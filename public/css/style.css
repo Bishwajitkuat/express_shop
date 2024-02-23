@@ -881,6 +881,10 @@ video {
   width: 100%;
 }
 
+.flex-grow {
+  flex-grow: 1;
+}
+
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -963,6 +967,46 @@ video {
   background-color: rgb(20 83 45 / var(--tw-bg-opacity));
 }
 
+.bg-gray-700\/80 {
+  background-color: rgb(55 65 81 / 0.8);
+}
+
+.bg-gray-600\/80 {
+  background-color: rgb(75 85 99 / 0.8);
+}
+
+.bg-gray-500\/80 {
+  background-color: rgb(107 114 128 / 0.8);
+}
+
+.bg-green-500\/80 {
+  background-color: rgb(34 197 94 / 0.8);
+}
+
+.bg-green-500\/40 {
+  background-color: rgb(34 197 94 / 0.4);
+}
+
+.bg-green-900\/40 {
+  background-color: rgb(20 83 45 / 0.4);
+}
+
+.bg-green-900\/60 {
+  background-color: rgb(20 83 45 / 0.6);
+}
+
+.bg-green-900\/70 {
+  background-color: rgb(20 83 45 / 0.7);
+}
+
+.bg-green-900\/80 {
+  background-color: rgb(20 83 45 / 0.8);
+}
+
+.bg-green-900\/90 {
+  background-color: rgb(20 83 45 / 0.9);
+}
+
 .bg-\[url\(\/img\/bg_home\.jpg\)\] {
   background-image: url(/img/bg_home.jpg);
 }
@@ -988,6 +1032,11 @@ video {
 .py-\[2rem\] {
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .pb-\[1\.2rem\] {
@@ -1111,6 +1160,46 @@ video {
   color: rgb(253 224 71 / var(--tw-text-opacity));
 }
 
+.text-slate-900 {
+  --tw-text-opacity: 1;
+  color: rgb(15 23 42 / var(--tw-text-opacity));
+}
+
+.text-green-900 {
+  --tw-text-opacity: 1;
+  color: rgb(20 83 45 / var(--tw-text-opacity));
+}
+
+.text-green-100 {
+  --tw-text-opacity: 1;
+  color: rgb(220 252 231 / var(--tw-text-opacity));
+}
+
+.text-yellow-500 {
+  --tw-text-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-text-opacity));
+}
+
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
+.text-slate-400 {
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity));
+}
+
+.text-slate-950 {
+  --tw-text-opacity: 1;
+  color: rgb(2 6 23 / var(--tw-text-opacity));
+}
+
+.text-slate-100 {
+  --tw-text-opacity: 1;
+  color: rgb(241 245 249 / var(--tw-text-opacity));
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -1159,6 +1248,11 @@ video {
 
   .md\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .md\:px-\[2rem\] {
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 
   .md\:text-left {

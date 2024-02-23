@@ -1,9 +1,9 @@
 <%- include("../components/head.ejs") %> <%-
 include("../components/navbar.ejs")%>
-<main class="main bg-[url(/img/bg_home.jpg)] bg-center bg-no-repeat">
-  <div class="w-full h-full bg-gray-900/80 text-slate-200 pt-[5rem]">
+<main class="flex-grow bg-[url(/img/bg_home.jpg)] bg-center bg-no-repeat">
+  <div class="w-full h-full bg-green-900/80 text-slate-200 pt-[5rem]">
     <h1 class="text-[3rem] text-center pb-[3rem] tracking-wide">
-      Wellcom to express shop
+      Wellcom to ExpressShop
     </h1>
     <h2 class="text-[1.5rem] text-center pb-[1.2rem]">
       Sell your old stuff && buy stuff cheap!!!
@@ -20,7 +20,9 @@ include("../components/navbar.ejs")%>
     <%}%> <% if(successMessage){ %>
     <p class="success_message"><%= successMessage %></p>
     <%}%>
-    <div class="flex gap-4 justify-center mt-6">
+    <div
+      class="flex gap-4 justify-center px-2 md:px-[2rem] my-[2rem] text-center flex-wrap"
+    >
       <a class="btn" href="/login">Lgoin</a>
       <a class="btn" href="/signup">Join us</a>
       <a class="btn" href="/products">Start shoping</a>
