@@ -9,12 +9,6 @@ include("../components/navbar.ejs")%>
   <p class="success_message py-[2rem]"><%= successMessage %></p>
   <%}%> <% if(cart && cart.items.length>0) { %>
   <ul class="grid gap-2">
-    <li class="grid grid-cols-4 mb-[1rem]">
-      <p></p>
-      <p class="font-bold">Products</p>
-      <p class="font-bold">Unit Price(€)</p>
-      <p class="font-bold">Quantity</p>
-    </li>
     <% cart.items.forEach(product =>{%>
     <li class="grid grid-cols-4 items-center">
       <img
@@ -22,9 +16,11 @@ include("../components/navbar.ejs")%>
         src="<%=product.productId.imgUrl%>"
         alt="<%=product.productId.title%>"
       />
-      <p><%=product.productId.title%></p>
-      <p><%=product.productId.price%></p>
-      <div class="grid grid-cols-4 items-center justify-end">
+      <div>
+        <p><%=product.productId.title%></p>
+        <p><%=product.productId.price%> €</p>
+      </div>
+      <div class="col-span-2 grid grid-cols-4 items-center justify-end">
         <form action="/cart" method="POST">
           <input
             type="hidden"
@@ -35,7 +31,7 @@ include("../components/navbar.ejs")%>
           <button class="btn" type="submit">+</button>
           <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
         </form>
-        <p><%=product.quantity%></p>
+        <p class="text-center"><%=product.quantity%></p>
         <form action="/cart-remove" method="POST">
           <input
             type="hidden"
@@ -62,9 +58,9 @@ include("../components/navbar.ejs")%>
     <%}) %>
     <li class="grid grid-cols-4 text-[1.2rem] pt-[2rem]">
       <p>Totals</p>
+      <p><%= cart.totalQuantity %> items</p>
       <p></p>
-      <p><%= cart.totalPrice %></p>
-      <p><%= cart.totalQuantity %></p>
+      <p><%= cart.totalPrice %> €</p>
     </li>
   </ul>
   <form class="flex justify-end mt-[2rem]" action="/create-order" method="POST">
