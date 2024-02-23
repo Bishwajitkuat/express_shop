@@ -1,0 +1,17 @@
+<article class="flex justify-center mt-[2rem]">
+  <div class="flex gap-2 items-center">
+    <p>Pages</p>
+    <% for(let i=1; i<=numberOfPages; i++) { %>
+    <a
+    <% if(page==i){ %> 
+
+      class="pagination_link_active"
+      <%} else { %> 
+        class="pagination_link"
+        <%}%> 
+      href="/products/?page=<%=i%>"
+      ><%=i%></a
+    >
+    <%} %>
+  </div>
+</article>

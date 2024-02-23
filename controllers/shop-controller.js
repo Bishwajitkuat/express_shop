@@ -1,6 +1,7 @@
 const Order = require("../models/order");
 const Product = require("../models/product");
 const User = require("../models/user");
+const { z } = require("zod");
 const { buildInvioice } = require("../lib/pdf-service");
 const {
   IsStringCanBeObjectIdSchema,
@@ -50,11 +51,29 @@ exports.getProducts = async (req, res, next) => {
   const errorMessage = error.length < 1 ? null : error;
   const success = req.flash("success");
   const successMessage = success.length < 1 ? null : success;
+  const productsPerPage = 3;
   try {
+    // fetching total number of document in db
+    const productCount = await Product.find().countDocuments();
+    // calculating total number of pages
+    const numberOfPages = Math.ceil(productCount / productsPerPage);
+    let page = req?.query?.page ? req.query.page : 1;
+    // checking page query value convertible to number
+    const validation = z.coerce.number().safeParse(page);
+    // if page query passes the validation, uses validated number value or default 1;
+    page = validation.success === true ? validation.data : 1;
     // findAll() method will return all products in an array
-    const products = await Product.find().populate("userId", "name");
+    // limiting product fetching base on page query and productsPerPage values
+    const products = await Product.find()
+      .skip((page - 1) * productsPerPage)
+      .limit(productsPerPage)
+      .populate("userId", "name");
     return res.render("./shop/product-list.ejs", {
       products,
+      // this will be used for pagination
+      numberOfPages,
+      // conditional styling of active page
+      page,
       docTitle: "Products",
       path: "/products",
       // passing isLoggedIn value for conditional rendering in navbar.
@@ -66,6 +85,8 @@ exports.getProducts = async (req, res, next) => {
     console.log(err);
     return res.render("./shop/product-list.ejs", {
       products: null,
+      numberOfPages: null,
+      page: null,
       docTitle: "Products",
       path: "/products",
       isLoggedIn,

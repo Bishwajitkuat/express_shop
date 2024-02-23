@@ -34,7 +34,8 @@ include("../components/navbar.ejs")%>
     </article>
     <%} %>
   </div>
-  <% } else { %>
+  <%- include("../components/pagination.ejs", {numberOfPages, page})%> <% } else
+  { %>
   <div class="h-full flex justify-center items-center">
     <h3 class="error_message">
       You do not have any listed product! Please create new product from Add

@@ -13,15 +13,33 @@ const { deleteFile } = require("../lib/file-system/delete-files");
 exports.getProducts = async (req, res, next) => {
   // extracting isLoggedIn value from session
   const isLoggedIn = req.session.isLoggedIn;
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
+  const productsPerPage = 3;
   try {
-    const error = req.flash("error");
-    const errorMessage = error.length < 1 ? null : error;
-    const success = req.flash("success");
-    const successMessage = success.length < 1 ? null : success;
     const userId = req.session.userId;
-    const products = await Product.find({ userId: userId });
+    // fetching total number of document in db
+    const productCount = await Product.find({
+      userId: userId,
+    }).countDocuments();
+    // calculating total number of pages
+    const numberOfPages = Math.ceil(productCount / productsPerPage);
+    let page = req?.query?.page ? req.query.page : 1;
+    // checking page query value convertible to number
+    const validation = z.coerce.number().safeParse(page);
+    // if page query passes the validation, uses validated number value or default 1;
+    page = validation.success === true ? validation.data : 1;
+    const products = await Product.find({ userId: userId })
+      .skip((page - 1) * productsPerPage)
+      .limit(productsPerPage);
     return res.render("./admin/products.ejs", {
       products,
+      // this will be used for pagination
+      numberOfPages,
+      // conditional styling of active page
+      page,
       docTitle: "Admin Product",
       path: "/admin/products",
       isLoggedIn,
@@ -33,6 +51,8 @@ exports.getProducts = async (req, res, next) => {
     // if any error occures, /admin/products.ejs view will be rendered with error message
     return res.render("./admin/products.ejs", {
       products: null,
+      numberOfPages: null,
+      page: null,
       docTitle: "Admin Product",
       path: "/admin/products",
       isLoggedIn,
