@@ -7,7 +7,7 @@
     @apply bg-[#334155] px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 uppercase hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900;
   }
   .main {
-    @apply flex-grow bg-gray-900 text-slate-400 px-[5rem] py-[3rem];
+    @apply flex-grow bg-gray-900 text-slate-400 px-[1rem] md:px-[5rem] py-[3rem];
   }
   .text_input_base {
     @apply rounded bg-slate-300 px-[1rem] py-[0.5rem] text-gray-950 outline-none focus:ring-2 focus:ring-blue-400 hover:ring-2 hover:ring-blue-400;
@@ -16,19 +16,19 @@
     @apply h-full bg-gradient-to-br from-blue-500 via-red-500 to-lime-500 p-[1px] rounded shadow-sm shadow-yellow-100 hover:shadow-md hover:shadow-yellow-100;
   }
   .product_cart {
-    @apply bg-gray-900 h-full p-2 flex flex-col;
+    @apply bg-gray-900 h-full px-4 py-2 flex flex-col;
   }
   .product_cart_heading {
     @apply text-[1.5rem] text-center py-[1rem] font-semibold tracking-widest;
   }
   .product_cart_img {
-    @apply w-full overflow-hidden rounded-md shadow-lg shadow-gray-700;
+    @apply w-full flex-grow overflow-hidden rounded-md shadow-lg shadow-gray-700;
   }
   .product_cart_subheading {
     @apply my-[1rem] text-[1.5rem] text-slate-200 tracking-tighter text-left;
   }
   .product_cart_description {
-    @apply flex-grow text-justify;
+    @apply text-justify;
   }
   .product_cart_btn_div {
     @apply flex justify-center items-center gap-2 my-[2rem];
