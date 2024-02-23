@@ -11,8 +11,10 @@ A CRUD app where user can list their products and buy products from other users.
 - Mongoose ODM
 - Session & Cookie
 - Authentication
-- User input validation with Zod.
-- Image file management with Multer.
+- Authorization
+- Zod : User input or params are validated with Zod schemas.
+- Multer : User can upload image from local machine.
+- pdfKit : User can download invoice as pdf.
 
 ## Author
 
