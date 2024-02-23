@@ -1,9 +1,7 @@
 <header
   class="sticky top-0 bg-green-900 text-slate-300 text-[1rem] font-semibold tracking-widest shadow-sm shadow-green-300"
 >
-  <nav
-    class="flex justify-between items-center flex-nowrap px-[2rem] py-[1rem]"
-  >
+  <nav class="flex justify-between items-center flex-wrap px-[2rem] py-[1rem]">
     <p class="text-[2rem]">
       <a
         class="<%= path === '/'? 'drop-shadow-2xl drop-shadow-yellow-200': ''%> flex items-center"
@@ -14,7 +12,7 @@
         ><span class="text-yellow-300">Shop</span></a
       >
     </p>
-    <ul class="flex gap-4">
+    <ul class="flex flex-wrap gap-4">
       <li class="navbar_li">
         <a
           class="<%= path === '/products'? 'text-yellow-300': ''%>"

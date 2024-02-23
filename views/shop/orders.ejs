@@ -16,15 +16,15 @@ include("../components/navbar.ejs")%>
         <p>Date: <%= order.date %></p>
       </div>
       <ul class="grid gap-2">
-        <li class="grid grid-cols-4">
-          <p class="font-bold">Products</p>
+        <li class="grid grid-cols-5">
+          <p class="font-bold col-span-2">Products</p>
           <p class="font-bold">Price($)</p>
           <p class="font-bold">Qty</p>
           <p class="font-bold">Total($)</p>
         </li>
         <% order.items.forEach(product=>{ %>
-        <li class="grid grid-cols-4">
-          <p><%=product.title%></p>
+        <li class="grid grid-cols-5">
+          <p class="col-span-2"><%=product.title%></p>
           <p><%=product.price%></p>
           <p><%=product.quantity %></p>
           <p><%=(product.price * product.quantity) %></p>
