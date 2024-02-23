@@ -1,7 +1,9 @@
 <header
   class="sticky top-0 bg-green-900 text-slate-300 text-[1rem] font-semibold tracking-widest shadow-sm shadow-green-300"
 >
-  <nav class="flex justify-between items-center px-[2rem] py-[1rem]">
+  <nav
+    class="flex justify-between items-center flex-nowrap px-[2rem] py-[1rem]"
+  >
     <p class="text-[2rem]">
       <a
         class="<%= path === '/'? 'drop-shadow-2xl drop-shadow-yellow-200': ''%> flex items-center"
@@ -13,76 +15,55 @@
       >
     </p>
     <ul class="flex gap-4">
-      <li
-        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
-      >
+      <li class="navbar_li">
         <a
           class="<%= path === '/products'? 'text-yellow-300': ''%>"
           href="/products"
           >Products</a
         >
       </li>
-      <li
-        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
-      >
-        <a class="<%= path === '/cart'? 'text-yellow-300': ''%>" href="/cart"
-          >Cart</a
-        >
-      </li>
-      <li
-        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
-      >
-        <a
-          class="<%= path === '/orders'? 'text-yellow-300': ''%>"
-          href="/orders"
-          >Orders</a
-        >
-      </li>
+
       <% if(isLoggedIn) { %>
-      <li
-        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
-      >
+      <li class="navbar_li">
         <a
           class="<%= path === '/admin/add-product'? 'text-yellow-300': ''%>"
           href="/admin/add-product"
-          >List Product</a
+          >Add Product</a
         >
       </li>
-      <li
-        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
-      >
+      <li class="navbar_li">
         <a
           class="<%= path === '/admin/products'? 'text-yellow-300': ''%>"
           href="/admin/products"
           >My Listing</a
         >
       </li>
-      <li
-        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
-      >
+      <li class="navbar_li">
         <form action="/logout" method="POST">
-          <button type="submit">Logout</button>
+          <button class="uppercase" type="submit">Logout</button>
           <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
         </form>
       </li>
       <% } %> <% if(!isLoggedIn) { %>
-      <li
-        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
-      >
+      <li class="navbar_li">
         <a class="<%= path === '/login'? 'text-yellow-300': ''%>" href="/login"
           >Login</a
         >
       </li>
-      <li
-        class="px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300"
-      >
-        <a
-          class="<%= path === '/singup'? 'text-yellow-300': ''%>"
-          href="/signup"
-          >Signup</a
+
+      <% } %>
+      <li class="navbar_li">
+        <a class="<%= path === '/cart'? 'text-yellow-300': ''%>" href="/cart"
+          >🛒</a
         >
       </li>
-      <% } %>
+      <li class="navbar_li">
+        <a
+          class="<%= path === '/orders'? 'text-yellow-300': ''%>"
+          href="/orders"
+          >📦</a
+        >
+      </li>
     </ul>
   </nav>
 </header>

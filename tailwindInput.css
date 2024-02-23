@@ -45,4 +45,7 @@
   .pagination_link_active {
     @apply bg-green-900 text-yellow-300 px-[1rem] py-[0.5rem] rounded shadow-sm hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900;
   }
+  .navbar_li {
+    @apply font-light px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300 uppercase;
+  }
 }
