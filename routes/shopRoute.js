@@ -9,6 +9,7 @@ const {
   getOrders,
   getProductById,
   postOrder,
+  getDownloadInvoice,
 } = require("../controllers/shop-controller");
 const { isLoggedIn } = require("../controllers/protected-route-controller");
 
@@ -22,6 +23,7 @@ shopRoute.post("/cart", isLoggedIn, postAddToCart);
 shopRoute.post("/cart-remove", isLoggedIn, postRemoveFromCart);
 shopRoute.post("/create-order", isLoggedIn, postOrder);
 shopRoute.get("/orders", isLoggedIn, getOrders);
+shopRoute.get("/orders/:orderId", isLoggedIn, getDownloadInvoice);
 shopRoute.get("/", getHomePage);
 
 module.exports = shopRoute;
