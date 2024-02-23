@@ -752,6 +752,10 @@ video {
   color: rgb(17 24 39 / var(--tw-text-opacity));
 }
 
+.static {
+  position: static;
+}
+
 .absolute {
   position: absolute;
 }
