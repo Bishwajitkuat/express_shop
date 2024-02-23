@@ -7,9 +7,7 @@ include("../components/navbar.ejs")%>
   <%}%> <% if(successMessage){ %>
   <p class="success_message"><%= successMessage %></p>
   <%}%> <%if(product) {%>
-  <h1 class="text-[3rem] text-center pb-[1rem] tracking-wide">
-    <%= product.title%>
-  </h1>
+  <h1 class="page_heading"><%= product.title%></h1>
 
   <div class="pt-[2rem] grid grid-cols-2 gap-4">
     <img

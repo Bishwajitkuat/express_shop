@@ -1,10 +1,10 @@
 <%- include("../components/head.ejs")%> <%-
 include("../components/navbar.ejs")%>
 <main class="main">
-  <h1 class="text-[3rem] text-center pb-[3rem] tracking-wide">
+  <h1 class="page_heading">
     <%= editing ? "Edit product":"Add new product"; %>
   </h1>
-  <form class="w-[65%] md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST" enctype="multipart/form-data">
+  <form class="w-full md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST" enctype="multipart/form-data">
     <% if(errorMessage){ %>
       <p class="error_message py-[2rem]"><%= errorMessage %></p>
       <%}%>

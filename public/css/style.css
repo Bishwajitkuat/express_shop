@@ -788,6 +788,20 @@ video {
   --tw-shadow: var(--tw-shadow-colored);
 }
 
+.page_heading {
+  padding-bottom: 3rem;
+  text-align: center;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+@media (min-width: 768px) {
+  .page_heading {
+    font-size: 3rem;
+  }
+}
+
 .absolute {
   position: absolute;
 }
@@ -856,10 +870,6 @@ video {
 
 .min-h-\[5rem\] {
   min-height: 5rem;
-}
-
-.w-\[65\%\] {
-  width: 65%;
 }
 
 .w-full {
