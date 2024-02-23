@@ -31,7 +31,7 @@ include("../components/navbar.ejs")%>
           <button class="btn" type="submit">+</button>
           <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
         </form>
-        <p class="text-center"><%=product.quantity%></p>
+        <p class="text-center md:text-left"><%=product.quantity%></p>
         <form action="/cart-remove" method="POST">
           <input
             type="hidden"
