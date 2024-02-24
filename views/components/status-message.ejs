@@ -1,0 +1,11 @@
+<% if(errorMessage){ %>
+<div class="error_status_message py-[2rem]" id="errorMessage">
+  <p>Error: <%= errorMessage %></p>
+  <button class="status_message_btn" id="errorStatauMessageClose">X</button>
+</div>
+<%}%> <% if(successMessage){ %>
+<div class="success_status_message py-[2rem]" id="successMessage">
+  <p><%= successMessage %></p>
+  <button class="status_message_btn" id="successStatauMessageClose">X</button>
+</div>
+<%}%>
