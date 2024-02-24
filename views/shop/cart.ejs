@@ -60,10 +60,106 @@ include("../components/navbar.ejs")%>
       <p><%= cart.totalPrice %> €</p>
     </li>
   </ul>
-  <form class="flex justify-end mt-[2rem]" action="/create-order" method="POST">
-    <button class="btn" type="submit">Order</button>
-    <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
-  </form>
+  <div class="mt-[4rem] grid md:grid-cols-2 gap-y-6 gap-x-[8rem]">
+    <div class="md:order-2">
+      <h2 class="uppercase md:text-[2rem]">Payment Method</h2>
+      <p>Pay on delivary</p>
+    </div>
+    <form
+      class="w-full flex flex-col gap-4"
+      action="/create-order"
+      method="POST"
+    >
+      <h2 class="uppercase md:text-[2rem]">Delivary Address</h2>
+      <div class="grid gap-2">
+        <label class="text-[1.2rem] tracking-widest" for="price">Name</label>
+        <input
+          class="text_input_base"
+          type="text"
+          name="name"
+          id="name"
+          value="<%= address?.name %>"
+        />
+        <% if(errors?.name){ %>
+        <p class="error_message text-left"><%= errors?.name %></p>
+        <%}%>
+      </div>
+      <div class="grid gap-2">
+        <label class="text-[1.2rem] tracking-widest" for="price"
+          >Street Address</label
+        >
+        <input
+          class="text_input_base"
+          type="text"
+          name="street_address"
+          id="street_address"
+          value="<%= address?.street_address %>"
+        />
+        <% if(errors?.address){ %>
+        <p class="error_message text-left"><%= errors?.street_address %></p>
+        <%}%>
+      </div>
+      <div class="grid gap-2">
+        <label class="text-[1.2rem] tracking-widest" for="price">City</label>
+        <input
+          class="text_input_base"
+          type="text"
+          name="city"
+          id="city"
+          value="<%= address?.city %>"
+        />
+        <% if(errors?.city){ %>
+        <p class="error_message text-left"><%= errors?.city %></p>
+        <%}%>
+      </div>
+      <div class="grid gap-2">
+        <label class="text-[1.2rem] tracking-widest" for="price"
+          >Postal Code</label
+        >
+        <input
+          class="text_input_base"
+          type="text"
+          name="postal_code"
+          id="postal_code"
+          value="<%= address?.postal_code %>"
+        />
+        <% if(errors?.postal_code){ %>
+        <p class="error_message text-left"><%= errors?.postal_code %></p>
+        <%}%>
+      </div>
+      <div class="grid gap-2">
+        <label class="text-[1.2rem] tracking-widest" for="price">Country</label>
+        <input
+          class="text_input_base"
+          type="text"
+          name="country"
+          id="country"
+          value="<%= address?.country %>"
+        />
+        <% if(errors?.country){ %>
+        <p class="error_message text-left"><%= errors?.country %></p>
+        <%}%>
+      </div>
+      <div class="grid gap-2">
+        <label class="text-[1.2rem] tracking-widest" for="description"
+          >Note</label
+        >
+        <textarea
+          class="text_input_base h-[5rem]"
+          name="note"
+          id="note"
+          rows="10"
+        >
+<%=address?.note%></textarea
+        >
+        <% if(errors?.note){ %>
+        <p class="error_message text-left"><%= errors?.note %></p>
+        <%}%>
+      </div>
+      <button class="btn" type="submit">Order</button>
+      <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+    </form>
+  </div>
   <%} else { %>
   <div class="h-full flex justify-center items-center">
     <h1 class="text-[1.2rem] text-red-400">
