@@ -20,14 +20,14 @@ const MongoDBStore = require("connect-mongo");
 const flash = require("connect-flash");
 
 // livereload
-const liveReload = require("livereload");
-const liverReloadServer = liveReload.createServer();
-liverReloadServer.watch(path.join(__dirname));
-liverReloadServer.server.once("connection", () => {
-  setTimeout(() => {
-    liverReloadServer.refresh("/");
-  }, 100);
-});
+// const liveReload = require("livereload");
+// const liverReloadServer = liveReload.createServer();
+// liverReloadServer.watch(path.join(__dirname));
+// liverReloadServer.server.once("connection", () => {
+//   setTimeout(() => {
+//     liverReloadServer.refresh("/");
+//   }, 100);
+// });
 
 const connectLiveReload = require("connect-livereload");
 // importing mongoose
@@ -44,7 +44,7 @@ const { storage } = require("./lib/multer/multer-storage");
 const app = express();
 
 //registering connectliveReload
-app.use(connectLiveReload());
+// app.use(connectLiveReload());
 // registering ejs templeting engine
 app.set("view engine", "ejs");
 // registering default view dir
