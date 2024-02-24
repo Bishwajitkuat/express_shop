@@ -1,7 +1,9 @@
 <header
   class="sticky top-0 bg-green-900 text-slate-300 text-[1rem] font-semibold tracking-widest shadow-sm shadow-green-300"
 >
-  <nav class="flex justify-between items-center flex-wrap px-[2rem] py-[1rem]">
+  <nav
+    class="grid grid-cols-6 justify-between items-center px-[2rem] py-[1rem]"
+  >
     <p class="text-[2rem]">
       <a
         class="<%= path === '/'? 'drop-shadow-2xl drop-shadow-yellow-200': ''%> flex items-center"
@@ -12,7 +14,23 @@
         ><span class="text-yellow-300">Shop</span></a
       >
     </p>
-    <ul class="flex flex-wrap gap-4">
+    <button id="menuButton" class="col-span-5 justify-self-end lg:hidden">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-9 h-9"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
+        />
+      </svg>
+    </button>
+    <ul class="lg:col-span-5 hidden lg:flex flex-wrap gap-4 justify-end">
       <li class="navbar_li">
         <a
           class="<%= path === '/products'? 'text-yellow-300': ''%>"
@@ -56,6 +74,60 @@
         >
       </li>
       <li class="navbar_li">
+        <a
+          class="<%= path === '/orders'? 'text-yellow-300': ''%>"
+          href="/orders"
+          >📦</a
+        >
+      </li>
+    </ul>
+    <ul
+      id="mobileNavManue"
+      class="lg:hidden flex flex-col gap-1 items-end col-span-6 justify-self-end z-50 hidden"
+    >
+      <li class="navbar_li_mobile">
+        <a
+          class="<%= path === '/products'? 'text-yellow-300': ''%>"
+          href="/products"
+          >Products</a
+        >
+      </li>
+
+      <% if(isLoggedIn) { %>
+      <li class="navbar_li_mobile">
+        <a
+          class="<%= path === '/admin/add-product'? 'text-yellow-300': ''%>"
+          href="/admin/add-product"
+          >Add Product</a
+        >
+      </li>
+      <li class="navbar_li_mobile">
+        <a
+          class="<%= path === '/admin/products'? 'text-yellow-300': ''%>"
+          href="/admin/products"
+          >My Listing</a
+        >
+      </li>
+      <li class="navbar_li_mobile">
+        <form action="/logout" method="POST">
+          <button class="uppercase" type="submit">Logout</button>
+          <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+        </form>
+      </li>
+      <% } %> <% if(!isLoggedIn) { %>
+      <li class="navbar_li_mobile">
+        <a class="<%= path === '/login'? 'text-yellow-300': ''%>" href="/login"
+          >Login</a
+        >
+      </li>
+
+      <% } %>
+      <li class="navbar_li_mobile">
+        <a class="<%= path === '/cart'? 'text-yellow-300': ''%>" href="/cart"
+          >🛒</a
+        >
+      </li>
+      <li class="navbar_li_mobile">
         <a
           class="<%= path === '/orders'? 'text-yellow-300': ''%>"
           href="/orders"

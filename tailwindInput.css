@@ -48,6 +48,9 @@
   .navbar_li {
     @apply font-light px-4 py-2 rounded-xl shadow-sm shadow-green-300 hover:shadow-sm hover:shadow-yellow-200 hover:text-yellow-300 uppercase;
   }
+  .navbar_li_mobile {
+    @apply font-light  hover:text-yellow-300 uppercase;
+  }
   .page_heading {
     @apply text-[1.2rem] md:text-[3rem] uppercase text-center pb-[3rem] tracking-wide;
   }
