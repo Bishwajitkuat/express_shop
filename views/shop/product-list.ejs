@@ -33,8 +33,8 @@ include("../components/navbar.ejs")%>
     </article>
     <%} %>
   </div>
-  <%- include("../components/pagination.ejs", {numberOfPages, page})%> <% } else
-  { %>
+  <%- include("../components/pagination.ejs", {numberOfPages, page,
+  route:"/products/"})%> <% } else { %>
   <div class="h-full flex justify-center items-center">
     <h3 class="text-[1.2rem] text-red-400">
       Currently no product is available!
