@@ -3,11 +3,8 @@ include("../components/navbar.ejs")%>
 
 <main class="main">
   <h1 class="page_heading">Cart</h1>
-  <% if(errorMessage){ %>
-  <p class="error_message py-[2rem]">Error: <%= errorMessage %></p>
-  <%}%> <% if(successMessage){ %>
-  <p class="success_message py-[2rem]"><%= successMessage %></p>
-  <%}%> <% if(cart && cart.items.length>0) { %>
+  <%-include("../components/status-message.ejs", {errorMessage,
+  successMessage})%> <% if(cart && cart.items.length>0) { %>
   <ul class="grid gap-2">
     <% cart.items.forEach(product =>{%>
     <li class="grid grid-cols-4 items-center">

@@ -5,9 +5,8 @@ include("../components/navbar.ejs")%>
     <%= editing ? "Edit product":"Add new product"; %>
   </h1>
   <form class="w-full md:w-[50%] mx-auto grid gap-4" action=<%= editing ? "/admin/edit-product":"/admin/add-product"; %> method="POST" enctype="multipart/form-data">
-    <% if(errorMessage){ %>
-      <p class="error_message py-[2rem]"><%= errorMessage %></p>
-      <%}%>
+    <%-include("../components/status-message.ejs", {errorMessage,
+      successMessage: null})%>
     <div class="grid gap-2">
       <label class="text-[1.2rem]  tracking-widest" for="title">Title</label>
       <input class="text_input_base" type="text" name="title" id="title" 

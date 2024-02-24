@@ -2,11 +2,8 @@
 include("../components/navbar.ejs")%>
 
 <main class="main">
-  <% if(errorMessage){ %>
-  <p class="error_message">Error: <%= errorMessage %></p>
-  <%}%> <% if(successMessage){ %>
-  <p class="success_message"><%= successMessage %></p>
-  <%}%> <%if(product) {%>
+  <%-include("../components/status-message.ejs", {errorMessage,
+  successMessage})%> <%if(product) {%>
   <h1 class="page_heading"><%= product.title%></h1>
 
   <div class="pt-[2rem] grid md:grid-cols-2 gap-4">
