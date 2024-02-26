@@ -4,7 +4,7 @@
 
 @layer components {
   .btn {
-    @apply bg-[#334155] text-[0.75rem] lg:text-[1rem] px-[1rem] py-[0.5rem] rounded shadow-sm text-slate-200 uppercase hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900;
+    @apply bg-[#334155] text-[0.75rem] lg:text-[1rem] px-[1rem] py-[0.5rem] rounded text-slate-200 uppercase shadow-md shadow-gray-900 hover:bg-gradient-to-br from-yellow-300 to-red-400 hover:text-gray-900;
   }
   .main {
     @apply min-w-[360px] flex-grow bg-gray-900 text-slate-400 px-[1rem] md:px-[5rem] py-[3rem];

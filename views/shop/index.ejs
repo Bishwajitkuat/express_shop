@@ -1,28 +1,40 @@
 <%- include("../components/head.ejs") %> <%-
 include("../components/navbar.ejs")%>
-<main class="flex-grow bg-[url(/img/bg_home.jpg)] bg-center bg-no-repeat">
-  <div class="w-full h-full bg-green-900/80 text-slate-200 pt-[5rem]">
-    <h1 class="text-[3rem] text-center pb-[3rem] tracking-wide">
-      Wellcom to ExpressShop
+<main
+  class="main grid md:grid-cols-2 gap-8 justify-center bg-[url(/img/bg_home.jpg)] bg-center bg-no-repeat"
+>
+  <%-include("../components/status-message.ejs", {errorMessage,
+  successMessage})%>
+  <div
+    class="w-full flex flex-col gap-6 md:gap-12 text-center bg-slate-900/60 text-slate-200 px-[1rem] py-[2rem] md:px-[2rem] md:py-[4rem] rounded-xl shadow-md shadow-gray-900"
+  >
+    <h1 class="text-slate-50 text-[1.5rem] md:text-[3rem] text-center">
+      Be proud for you contribution against climate change!!!
     </h1>
-    <h2 class="text-[1.5rem] text-center pb-[1.2rem]">
+    <h2 class="text-[1.2rem] text-center">
       Sell your old stuff && buy stuff cheap!!!
     </h2>
-    <h2 class="text-[1.5rem] text-center pb-[1.2rem]">
-      Save Resources === Save the World
-    </h2>
-    <h2 class="text-[1.5rem] text-center pb-[1.2rem]">&&</h2>
-    <h2 class="text-[1.5rem] text-center pb-[1.2rem]">
-      Be proud for you contribution against climate change!!!
-    </h2>
-    <%-include("../components/status-message.ejs", {errorMessage,
-    successMessage})%>
+    <h2 class="text-[1.2rem] text-center">Save Resources === Save World</h2>
+  </div>
+  <div class="flex justify-center items-center">
     <div
-      class="flex gap-4 justify-center px-2 md:px-[2rem] my-[2rem] text-center flex-wrap"
+      class="flex gap-4 md:gap-12 items-center justify-center px-2 text-center flex-wrap"
     >
-      <a class="btn" href="/login">Lgoin</a>
-      <a class="btn" href="/signup">Join us</a>
-      <a class="btn" href="/products">Start shoping</a>
+      <a
+        class="bg-slate-900/80 shadow-md shadow-gray-900 md:px-[2rem] md:py-[1rem] md:text-[2rem] btn"
+        href="/login"
+        >Lgoin</a
+      >
+      <a
+        class="bg-slate-900/80 shadow-md shadow-gray-900 md:px-[2rem] md:py-[1rem] md:text-[2rem] btn"
+        href="/signup"
+        >Join us</a
+      >
+      <a
+        class="bg-slate-900/80 shadow-md shadow-gray-900 md:px-[2rem] md:py-[1rem] md:text-[2rem] btn"
+        href="/products"
+        >Start shoping</a
+      >
     </div>
   </div>
 </main>
