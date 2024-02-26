@@ -33,7 +33,10 @@ include("../components/navbar.ejs")%>
           <p><%= order.totalPrice %></p>
         </li>
 
-        <a class="underline text-blue-400" href="/orders/<%= order._id %>"
+        <a
+          class="underline text-blue-400"
+          href="/orders/<%= order._id %>"
+          target="_blank"
           >Download invoice</a
         >
       </ul>
