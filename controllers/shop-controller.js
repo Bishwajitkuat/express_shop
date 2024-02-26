@@ -161,8 +161,10 @@ exports.getCart = async (req, res, next) => {
       docTitle: "Cart",
       path: "/cart",
       isLoggedIn,
+      address: null,
       successMessage: successMessage,
       errorMessage: errorMessage,
+      errors: null,
     });
   } catch (err) {
     console.log(err);
@@ -172,10 +174,12 @@ exports.getCart = async (req, res, next) => {
       docTitle: "Cart",
       path: "/cart",
       isLoggedIn,
+      address: null,
       successMessage: null,
       errorMessage: err?.message
         ? err.message
         : "Sorry! an error occured during data fetching items in the cart. Please try again later!",
+      errors: null,
     });
   }
 };
