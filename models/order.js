@@ -34,7 +34,32 @@ const OrderSchema = new mongoose.Schema({
     type: Date,
     require: true,
   },
-  // delivery address and billing address can be added
+  address: {
+    name: {
+      type: String,
+      require: true,
+    },
+    street_address: {
+      type: String,
+      require: true,
+    },
+    city: {
+      type: String,
+      require: true,
+    },
+    postal_code: {
+      type: String,
+      require: true,
+    },
+    country: {
+      type: String,
+      require: true,
+    },
+    note: {
+      type: String,
+      require: true,
+    },
+  },
 });
 
 module.exports = mongoose.model("Order", OrderSchema);
