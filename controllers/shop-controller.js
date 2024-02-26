@@ -8,6 +8,9 @@ const {
   PostAddToCartInputSchema,
   PostRemoveFromCartInputSchema,
 } = require("../lib/zod-validation/product-validation-schemas");
+const {
+  AddressInputSchema,
+} = require("../lib/zod-validation/delivary-address");
 const { getCartFromUserId } = require("../lib/get-cart-from-userId");
 
 // controllers for shop
@@ -252,7 +255,31 @@ exports.postRemoveFromCart = async (req, res, next) => {
 
 // handles POST request to /create-order route
 exports.postOrder = async (req, res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
+  const error = req.flash("error");
+  const errorMessage = error.length < 1 ? null : error;
+  const success = req.flash("success");
+  const successMessage = success.length < 1 ? null : success;
   try {
+    // validation of address input data
+    const validation = AddressInputSchema.safeParse(req.body);
+    // if address data validation fails, cart view will be rendered with error message
+    if (validation.success === false) {
+      const errors = validation.error.flatten().fieldErrors;
+      const cart = await getCartFromUserId(req.session.userId);
+      return res.render("./shop/cart.ejs", {
+        cart,
+        docTitle: "Cart",
+        path: "/cart",
+        isLoggedIn,
+        address: req.body,
+        successMessage: successMessage,
+        errorMessage: errorMessage,
+        errors,
+      });
+    }
+    // address validation is successfull
+    const address = validation.data;
     const user = await User.findById(req.session.userId);
     const userWithCartData = await user.populate("cart.items.productId");
     const cart = userWithCartData.cart;
@@ -302,7 +329,7 @@ exports.postOrder = async (req, res, next) => {
       : "Opps! An error occured during placing the order. We are sorry for then inconvenience. Please try again later!";
     req.flash("success", null);
     req.flash("error", errorMessage);
-    res.redirect("/cart");
+    res.render("/cart");
   }
 };
 
