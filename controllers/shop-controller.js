@@ -344,7 +344,7 @@ exports.getOrders = async (req, res, next) => {
   const successMessage = success.length < 1 ? null : success;
   try {
     const userId = req.session.userId;
-    const orders = await Order.find({ userId: userId });
+    const orders = await Order.find({ userId: userId }).sort({ date: -1 });
     return res.render("./shop/orders.ejs", {
       orders,
       docTitle: "Orders",
