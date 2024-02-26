@@ -310,6 +310,7 @@ exports.postOrder = async (req, res, next) => {
       totalPrice,
       date: new Date().toISOString(),
       userId: userWithCartData._id,
+      address: address,
     });
     await order.save();
     // useing clearCart utility method from UserSchema is used to reset the cart of this user.
