@@ -4,8 +4,7 @@
   "description": "a CRUD app build with express",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon --ext js,ejs,css",
-    "css-build": "npx tailwindcss -i ./tailwindInput.css -o ./public/css/style.css --watch"
+    "start": "node app.js"
   },
   "author": "Bishwajit Das",
   "license": "ISC",
