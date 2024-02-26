@@ -95,7 +95,7 @@ include("../components/navbar.ejs")%>
           id="street_address"
           value="<%= address?.street_address %>"
         />
-        <% if(errors?.address){ %>
+        <% if(errors?.street_address){ %>
         <p class="error_message text-left"><%= errors?.street_address %></p>
         <%}%>
       </div>
