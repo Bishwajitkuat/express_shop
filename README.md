@@ -1,6 +1,6 @@
 # Express shop
 
-It is a Full stuck CRUD app built with Nodejs, Express, Ejs, and MongoDB. This app is a website for a C2C business. Users can create Their own accounts and list products to sell and buy products from others. They can update or delete their listing from the admin route. If a user forgets their password, they can reset the password throw the email address they have used during registration. All the user inputs and params values come to the server and go throw Zod validation. If the validations fail users are given feedback.
+It is a Full stuck CRUD app built with Nodejs, Express, Ejs, and MongoDB. This app is a website for a C2C business. Users can create Their own accounts and list products to sell and buy products from others. They can update or delete their listing from the admin route. If a user forgets their password, they can reset the password through the email address they have used during registration. All the user inputs and params values come to the server and go through Zod validation. If the validations fail users are given feedback.
 
 ## Live site
 
