@@ -19,17 +19,6 @@ const MongoDBStore = require("connect-mongo");
 // importing connect-flash package
 const flash = require("connect-flash");
 
-// livereload
-// const liveReload = require("livereload");
-// const liverReloadServer = liveReload.createServer();
-// liverReloadServer.watch(path.join(__dirname));
-// liverReloadServer.server.once("connection", () => {
-//   setTimeout(() => {
-//     liverReloadServer.refresh("/");
-//   }, 100);
-// });
-
-const connectLiveReload = require("connect-livereload");
 // importing mongoose
 const mongoose = require("mongoose");
 require("dotenv").config();
@@ -43,8 +32,6 @@ const { storage } = require("./lib/multer/multer-storage");
 // creating app
 const app = express();
 
-//registering connectliveReload
-// app.use(connectLiveReload());
 // registering ejs templeting engine
 app.set("view engine", "ejs");
 // registering default view dir
@@ -96,20 +83,7 @@ mongoose
   .connect(
     `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@cluster0.ttv2qxt.mongodb.net/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`
   )
-  .then((response) => {
-    // creating and saving user in db for test
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "bisso",
-          email: "bisso@gmail.com",
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-    });
-    app.listen(3000, () => console.log("listening at port 3000"));
-  })
+  .then((response) =>
+    app.listen(3000, () => console.log("listening at port 3000"))
+  )
   .catch((err) => console.log(err));
