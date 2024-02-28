@@ -4,7 +4,7 @@ It is a Full stuck CRUD app built with Nodejs, Express, Ejs, and MongoDB. This a
 
 ## Live site
 
-<a href="https://fine-tick-nightgown.cyclic.app/" target="_blank" >https://express-shop-mx2o.onrender.com/</a>
+<a href="https://express-shop-mx2o.onrender.com" target="_blank" >https://express-shop-mx2o.onrender.com/</a>
 
 ## Technologies and features
 
